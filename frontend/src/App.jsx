@@ -4,6 +4,7 @@ import AnnouncementBar from './components/AnnouncementBar';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import MovieSlider from './components/MovieSlider';
+import MovieCalendar from './components/MovieCalendar';
 import NewsGrid from './components/NewsGrid';
 import CelebGrid from './components/CelebGrid';
 import VideoGrid from './components/VideoGrid';
@@ -53,17 +54,18 @@ const ProtectedRoute = ({ children }) => {
 
 // Helper for landing page
 const HomePage = () => (
-  <main className="max-w-[1200px] mx-auto px-5 py-8">
-    <div className="flex flex-col lg:flex-row gap-8">
-      <div className="lg:w-[70%] xl:w-[75%]">
+  <main className="w-[96%] max-w-[1800px] mx-auto px-2 py-8">
+    <div className="flex flex-col lg:flex-row gap-5">
+      <div className="lg:w-[78%] xl:w-[80%]">
         <Hero />
         <MovieSlider />
+        <MovieCalendar />
         <NewsGrid />
         <CelebGrid />
         <VideoGrid />
       </div>
       
-      <aside className="lg:w-[30%] xl:w-[25%] flex flex-col gap-4 sticky top-[220px] self-start">
+      <aside className="lg:w-[25%] xl:w-[22%] flex flex-col gap-4 sticky top-[220px] self-start">
         <WeatherWidget />
         <MarketWidget />
       </aside>

@@ -5,8 +5,12 @@
 @tailwind utilities;
 
 @layer base {
+  body {
+    font-family: 'Open Sans', 'Roboto', Arial, Helvetica, sans-serif;
+  }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    font-weight: 700;
   }
 }
 
@@ -88,7 +92,35 @@ body {
   100% { transform: translateY(100%); }
 }
 
-.animate-scanline {
-  animation: scanline 8s linear infinite;
+
+/* Hero Section Animations */
+@keyframes reveal {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
+@keyframes slideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.animate-reveal {
+  animation: reveal 0.8s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+}
+
+@keyframes slideInfinite {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-slide-infinite {
+  animation: slideInfinite 3s linear infinite;
+}
+
+.text-shadow-premium {
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.5);
+}

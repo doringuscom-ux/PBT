@@ -11,7 +11,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-dark-bg text-white pt-12 pb-5">
-      <div className="max-w-[1200px] mx-auto px-5">
+      <div className="w-[96%] max-w-[1800px] mx-auto px-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
           <div className="footer-column">
             <Logo className="h-20 w-auto items-start mb-6" />

@@ -27,7 +27,7 @@ const AnnouncementBar = () => {
         onMouseLeave={() => setIsHovered(false)}
         className="bg-slate-900 border-b border-white/5 overflow-hidden group cursor-pointer"
     >
-        <div className="max-w-[1200px] mx-auto px-5 flex items-center h-10">
+        <div className="w-[96%] max-w-[1800px] mx-auto px-5 flex items-center h-10">
             <div className="bg-primary-red text-white px-3 h-full flex items-center gap-2 shrink-0">
                 <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
                 <span className="font-black text-[10px] uppercase tracking-widest italic">Breaking</span>

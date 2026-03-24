@@ -36,7 +36,7 @@ const Header = () => {
 
   return (
     <header className="bg-white">
-      <div className="max-w-[1200px] mx-auto px-5">
+      <div className="w-[96%] max-w-[1800px] mx-auto px-5">
         <div className="flex justify-between items-center py-4 flex-wrap md:flex-nowrap gap-4">
           <Link to="/" className="no-underline group shrink-0">
             <Logo className="h-10 md:h-16 w-auto" />

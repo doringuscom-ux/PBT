@@ -5,16 +5,25 @@ const { upload } = require('../config/cloudinary');
 
 // Helper to enrich news with isLiked status for comments
 const enrichNews = (articles, sessionUser) => {
+    if (!articles) return [];
     const userId = sessionUser ? sessionUser.id : null;
     
     return articles.map(article => {
-        const articleObj = article.toObject();
-        articleObj.comments = articleObj.comments.map(comment => ({
-            ...comment,
-            isLiked: userId && comment.likedBy ? comment.likedBy.includes(userId) : false
-        }));
+        if (!article) return null;
+        const articleObj = typeof article.toObject === 'function' ? article.toObject() : article;
+        
+        // Ensure comments is an array
+        if (articleObj.comments && Array.isArray(articleObj.comments)) {
+            articleObj.comments = articleObj.comments.map(comment => ({
+                ...comment,
+                isLiked: userId && comment.likedBy ? comment.likedBy.includes(userId) : false
+            }));
+        } else {
+            articleObj.comments = [];
+        }
+        
         return articleObj;
-    });
+    }).filter(Boolean);
 };
 
 router.get('/', async (req, res) => {
@@ -29,6 +38,7 @@ router.get('/', async (req, res) => {
         const news = await query.sort({ createdAt: -1 });
         res.json(enrichNews(news, req.session.user));
     } catch (err) {
+        console.error("News GET Error:", err);
         res.status(500).json({ message: err.message });
     }
 });
@@ -53,29 +63,51 @@ router.get('/today', async (req, res) => {
         const news = await query.sort({ createdAt: -1 }); 
         res.json(enrichNews(news, req.session.user));
     } catch (err) {
+        console.error("News Today GET Error:", err);
         res.status(500).json({ message: err.message });
     }
 });
 
-router.post('/', upload.single('image'), async (req, res) => {
-    const newsData = { ...req.body };
-    if (req.file) {
-        newsData.image = req.file.path;
-    }
-    if (req.session.user) {
-        newsData.createdBy = req.session.user.id;
-    }
-    const news = new News(newsData);
+router.post('/', (req, res, next) => {
+    upload.single('image')(req, res, (err) => {
+        if (err) {
+            console.error("News POST Multer Error:", err);
+            return res.status(500).json({ message: "Image upload failed: " + (err.message || "Unknown error") });
+        }
+        next();
+    });
+}, async (req, res) => {
     try {
+        const newsData = { ...req.body };
+        if (req.file) {
+            newsData.image = req.file.path;
+        }
+        if (req.session.user) {
+            newsData.createdBy = req.session.user.id;
+        }
+        const news = new News(newsData);
         const newNews = await news.save();
         res.status(201).json(newNews);
     } catch (err) {
+        console.error("News POST Error:", err);
         res.status(400).json({ message: err.message });
     }
 });
 
 // Update News
-router.put('/:id', upload.single('image'), async (req, res) => {
+router.put('/:id', (req, res, next) => {
+    // Custom wrapper for multer to catch 500s from Cloudinary
+    upload.single('image')(req, res, (err) => {
+        if (err) {
+            console.error("Multer/Cloudinary Upload Error:", err);
+            return res.status(500).json({ 
+                message: "Image upload failed: " + (err.message || "Unknown error"),
+                details: err
+            });
+        }
+        next();
+    });
+}, async (req, res) => {
     try {
         const updateData = { ...req.body };
         if (req.file) {
@@ -96,6 +128,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         if (!updatedNews) return res.status(404).json({ message: 'Article not found' });
         res.json(enrichNews([updatedNews], req.session.user)[0]);
     } catch (err) {
+        console.error("News PUT Error (Final):", err);
         res.status(400).json({ message: err.message });
     }
 });

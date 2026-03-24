@@ -31,7 +31,7 @@ const NewsGrid = () => {
             </div>
             
             <div className="flex gap-5">
-                <span className="text-4xl font-black text-slate-100 group-hover:text-primary-red/20 transition-colors italic leading-none shrink-0">
+                <span className="text-4xl font-black text-slate-400 group-hover:text-primary-red transition-colors italic leading-none shrink-0">
                     {String(index + 1).padStart(2, '0')}
                 </span>
                 <div className="p-4 rounded-3xl group-hover:bg-white transition-all">

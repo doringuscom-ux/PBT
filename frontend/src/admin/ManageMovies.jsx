@@ -24,7 +24,7 @@ const ManageMovies = () => {
     title: '', image: '', rating: '', genre: '', year: '', 
     overview: '', director: '', runtime: '', certification: '', 
     performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-    fullStory: '', trailerUrl: '', likes: 0
+    fullStory: '', trailerUrl: '', likes: 0, releaseDate: ''
   });
   const [showForm, setShowForm] = useState(false);
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
@@ -79,7 +79,7 @@ const ManageMovies = () => {
       title: '', image: '', rating: '', genre: '', year: '', 
       overview: '', director: '', runtime: '', certification: '', 
       performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-      fullStory: '', trailerUrl: '', likes: 0
+      fullStory: '', trailerUrl: '', likes: 0, releaseDate: ''
     });
     setSelectedFile(null);
     setImageSource('url');
@@ -137,13 +137,36 @@ const ManageMovies = () => {
                     title: '', image: '', rating: '', genre: '', year: '', 
                     overview: '', director: '', runtime: '', certification: '', 
                     performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-                    fullStory: '', trailerUrl: '', likes: 0
+                    fullStory: '', trailerUrl: '', likes: 0, releaseDate: ''
                   }); 
                   setIsCustomIndustry(false);
                 }}
                 className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-primary-red/20"
               >
                 <i className="fas fa-plus"></i> <span className="hidden sm:inline">Add Movie</span>
+              </button>
+              <button 
+                onClick={async () => {
+                  if (window.confirm('Add 4 dummy upcoming movies for testing?')) {
+                    const dummyMovies = [
+                      { title: 'Amar Singh Chamkila 2', genre: 'Biography/Music', year: 2026, rating: 9.2, releaseDate: '2026-04-15', industry: 'Pollywood', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1712745600/chamkila_dummy.jpg' },
+                      { title: 'Jatt & Juliet 4', genre: 'Comedy/Romance', year: 2026, rating: 8.8, releaseDate: '2026-05-22', industry: 'Pollywood', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1712745600/jatt_juliet_dummy.jpg' },
+                      { title: 'Pushpa 3: The Rule', genre: 'Action/Drama', year: 2026, rating: 9.5, releaseDate: '2026-08-15', industry: 'Tollywood', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1712745600/pushpa_dummy.jpg' },
+                      { title: 'Carry on Jatta 4', genre: 'Comedy', year: 2026, rating: 8.5, releaseDate: '2026-06-10', industry: 'Pollywood', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1712745600/carry_on_jatta_dummy.jpg' }
+                    ];
+                    
+                    for (const movie of dummyMovies) {
+                      const data = new FormData();
+                      Object.keys(movie).forEach(key => data.append(key, movie[key]));
+                      data.append('performance', JSON.stringify({ day1: '', weekend: '', status: 'Upcoming' }));
+                      await addMovie(data);
+                    }
+                    alert('Dummy data seeded successfully!');
+                  }
+                }}
+                className="bg-slate-800 text-white px-4 py-2 rounded-lg font-bold hover:bg-black transition-all flex items-center gap-2 whitespace-nowrap shadow-lg"
+              >
+                <i className="fas fa-database text-xs text-primary-red"></i> <span className="hidden sm:inline">Seed Data</span>
               </button>
             </div>
           </div>
@@ -279,6 +302,27 @@ const ManageMovies = () => {
                 placeholder="Likes" className="p-2 border rounded w-full bg-slate-50 font-bold"
                 value={formData.likes} onChange={e => setFormData({...formData, likes: parseInt(e.target.value) || 0})}
                 />
+            </div>
+          </div>
+          <div className="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 className="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest">Release Information</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Expected Release Date</label>
+                    <input 
+                        type="date" 
+                        className="p-2 border rounded font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primary-red/20"
+                        value={formData.releaseDate ? new Date(formData.releaseDate).toISOString().split('T')[0] : ''} 
+                        onChange={e => setFormData({...formData, releaseDate: e.target.value})}
+                    />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Current Status</label>
+                    <input 
+                        placeholder="e.g. Blockbuster, Trending, Upcoming" className="p-2 border rounded font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primary-red/20"
+                        value={formData.performance?.status} onChange={e => setFormData({...formData, performance: {...formData.performance, status: e.target.value}})}
+                    />
+                </div>
             </div>
           </div>
           <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded border border-gray-200">

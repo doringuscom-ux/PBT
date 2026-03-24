@@ -18,6 +18,7 @@ const MovieSchema = new mongoose.Schema({
     industry: { type: String, default: 'Pollywood' },
     fullStory: { type: String },
     trailerUrl: { type: String },
+    releaseDate: { type: Date },
     likes: { type: Number, default: 0 },
     comments: [{
         user: { type: String, required: true },
