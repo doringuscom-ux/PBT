@@ -2,21 +2,12 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 
-const MOCK_UPCOMING_MOVIES = [
-  { _id: 'mock1', title: 'Amar Singh Chamkila 2', genre: 'Biography/Music', releaseDate: '2026-04-15', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/chamkila_dummy.jpg' },
-  { _id: 'mock2', title: 'Jatt & Juliet 4', genre: 'Comedy/Romance', releaseDate: '2026-05-22', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/jatt_juliet_dummy.jpg' },
-  { _id: 'mock3', title: 'Pushpa 3: The Rule', genre: 'Action/Drama', releaseDate: '2026-08-15', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/pushpa_dummy.jpg' },
-  { _id: 'mock4', title: 'Carry on Jatta 4', genre: 'Comedy', releaseDate: '2026-06-10', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/carry_on_jatta_dummy.jpg' }
-];
-
 const MovieCalendar = () => {
   const { movies } = useData();
   const scrollRef = useRef(null);
 
-  // Merge real movies with mock movies for immediate testing visibility
-  const allMovies = [...MOCK_UPCOMING_MOVIES, ...movies];
-
-  const upcomingMovies = allMovies
+  // Filter for movies with a release date in the future
+  const upcomingMovies = movies
     .filter(movie => movie.releaseDate && new Date(movie.releaseDate) > new Date())
     .sort((a, b) => new Date(a.releaseDate) - new Date(b.releaseDate));
 
@@ -118,44 +109,34 @@ const MovieCalendar = () => {
           <Link 
             key={movie._id} 
             to={`/movie/${movie._id}`}
-            className="min-w-[200px] md:min-w-[240px] group cursor-pointer no-underline animate-slide-up"
+            className="min-w-[180px] bg-white rounded-lg overflow-hidden shadow-lg hover:-translate-y-1 transition-transform group no-underline text-inherit animate-slide-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >
-            <div className="relative aspect-[2/3] rounded-[2rem] overflow-hidden mb-5 shadow-2xl transition-transform duration-500 group-hover:-translate-y-2">
-              <img 
+            <div className="relative h-[250px] overflow-hidden">
+                <img 
                 src={movie.image} 
                 alt={movie.title} 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              
-              {/* Overlay with Date */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60"></div>
-              
-              <div className="absolute top-5 left-5 bg-white/10 backdrop-blur-md border border-white/20 text-white p-2 rounded-2xl flex flex-col items-center justify-center min-w-[50px]">
-                <span className="text-[10px] font-black uppercase tracking-tighter opacity-70">
-                    {new Date(movie.releaseDate).toLocaleDateString('en-US', { month: 'short' })}
-                </span>
-                <span className="text-xl font-black leading-none">
-                    {new Date(movie.releaseDate).getDate()}
-                </span>
-              </div>
-
-              {/* Play Button Icon on Hover */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="w-16 h-16 bg-primary-red text-white rounded-full flex items-center justify-center shadow-2xl shadow-primary-red/50 scale-75 group-hover:scale-100 transition-transform duration-500">
-                  <i className="fas fa-play ml-1"></i>
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                
+                {/* Date Badge */}
+                <div className="absolute top-3 left-3 bg-primary-red/90 text-white px-2 py-1 rounded-md flex flex-col items-center justify-center min-w-[35px] shadow-lg backdrop-blur-sm scale-90">
+                    <span className="text-[8px] font-black uppercase tracking-tighter opacity-90 leading-none mb-0.5">
+                        {new Date(movie.releaseDate).toLocaleDateString('en-US', { month: 'short' })}
+                    </span>
+                    <span className="text-sm font-black leading-none uppercase">
+                        {new Date(movie.releaseDate).getDate()}
+                    </span>
                 </div>
-              </div>
             </div>
 
-            <div className="space-y-1 px-2">
-              <h3 className="text-lg font-black text-slate-900 group-hover:text-primary-red transition-colors italic tracking-tighter uppercase leading-tight line-clamp-1">
+            <div className="p-4 bg-white">
+              <h3 className="font-bold mb-1.5 text-lg truncate group-hover:text-primary-red transition-colors">
                 {movie.title}
               </h3>
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{movie.genre}</span>
-                <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
-                <span className="text-[10px] font-bold text-primary-red uppercase italic">Coming Soon</span>
+              <div className="text-slate-400 text-xs flex justify-between items-center font-bold uppercase tracking-tighter">
+                <span>{movie.genre}</span>
+                <span className="text-primary-red italic">COMING SOON</span>
               </div>
             </div>
           </Link>

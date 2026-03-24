@@ -24,7 +24,7 @@ const ManageMovies = () => {
     title: '', image: '', rating: '', genre: '', year: '', 
     overview: '', director: '', runtime: '', certification: '', 
     performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-    fullStory: '', trailerUrl: '', likes: 0, releaseDate: ''
+    fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: []
   });
   const [showForm, setShowForm] = useState(false);
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
@@ -34,9 +34,15 @@ const ManageMovies = () => {
   const [isCustomIndustry, setIsCustomIndustry] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [activeSection, setActiveSection] = useState('all'); // 'all' or 'upcoming'
   const selectedMovie = movies.find(m => m._id === selectedMovieId);
 
   const filteredMovies = movies
+    .filter(movie => {
+      const isUpcoming = movie.releaseDate && new Date(movie.releaseDate) > new Date();
+      if (activeSection === 'upcoming') return isUpcoming;
+      return true;
+    })
     .filter(movie => 
       movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       movie.genre.toLowerCase().includes(searchTerm.toLowerCase())
@@ -57,7 +63,7 @@ const ManageMovies = () => {
 
     Object.keys(formData).forEach(key => {
         if (!fieldsToExclude.includes(key)) {
-            if (key === 'performance') {
+            if (key === 'performance' || key === 'cast') {
                 data.append(key, JSON.stringify(formData[key]));
             } else if (key !== 'image' || imageSource === 'url') {
                 data.append(key, formData[key]);
@@ -79,7 +85,7 @@ const ManageMovies = () => {
       title: '', image: '', rating: '', genre: '', year: '', 
       overview: '', director: '', runtime: '', certification: '', 
       performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-      fullStory: '', trailerUrl: '', likes: 0, releaseDate: ''
+      fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: []
     });
     setSelectedFile(null);
     setImageSource('url');
@@ -91,7 +97,8 @@ const ManageMovies = () => {
     const movie = movies[index];
     setFormData({
       ...movie,
-      performance: movie.performance || { day1: '', weekend: '', status: '' }
+      performance: movie.performance || { day1: '', weekend: '', status: '' },
+      cast: movie.cast || []
     });
     setIsCustomIndustry(movie.industry && !INDUSTRIES.includes(movie.industry));
     setShowForm(true);
@@ -144,29 +151,6 @@ const ManageMovies = () => {
                 className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-primary-red/20"
               >
                 <i className="fas fa-plus"></i> <span className="hidden sm:inline">Add Movie</span>
-              </button>
-              <button 
-                onClick={async () => {
-                  if (window.confirm('Add 4 dummy upcoming movies for testing?')) {
-                    const dummyMovies = [
-                      { title: 'Amar Singh Chamkila 2', genre: 'Biography/Music', year: 2026, rating: 9.2, releaseDate: '2026-04-15', industry: 'Pollywood', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1712745600/chamkila_dummy.jpg' },
-                      { title: 'Jatt & Juliet 4', genre: 'Comedy/Romance', year: 2026, rating: 8.8, releaseDate: '2026-05-22', industry: 'Pollywood', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1712745600/jatt_juliet_dummy.jpg' },
-                      { title: 'Pushpa 3: The Rule', genre: 'Action/Drama', year: 2026, rating: 9.5, releaseDate: '2026-08-15', industry: 'Tollywood', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1712745600/pushpa_dummy.jpg' },
-                      { title: 'Carry on Jatta 4', genre: 'Comedy', year: 2026, rating: 8.5, releaseDate: '2026-06-10', industry: 'Pollywood', image: 'https://res.cloudinary.com/dzvk7womv/image/upload/v1712745600/carry_on_jatta_dummy.jpg' }
-                    ];
-                    
-                    for (const movie of dummyMovies) {
-                      const data = new FormData();
-                      Object.keys(movie).forEach(key => data.append(key, movie[key]));
-                      data.append('performance', JSON.stringify({ day1: '', weekend: '', status: 'Upcoming' }));
-                      await addMovie(data);
-                    }
-                    alert('Dummy data seeded successfully!');
-                  }
-                }}
-                className="bg-slate-800 text-white px-4 py-2 rounded-lg font-bold hover:bg-black transition-all flex items-center gap-2 whitespace-nowrap shadow-lg"
-              >
-                <i className="fas fa-database text-xs text-primary-red"></i> <span className="hidden sm:inline">Seed Data</span>
               </button>
             </div>
           </div>
@@ -322,24 +306,84 @@ const ManageMovies = () => {
                         placeholder="e.g. Blockbuster, Trending, Upcoming" className="p-2 border rounded font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primary-red/20"
                         value={formData.performance?.status} onChange={e => setFormData({...formData, performance: {...formData.performance, status: e.target.value}})}
                     />
-                </div>
             </div>
           </div>
-          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded border border-gray-200">
-            <h4 className="md:col-span-3 text-xs font-bold uppercase text-gray-400">Box Office Performance</h4>
-            <input 
-              placeholder="Day 1 Collection" className="p-2 border rounded"
-              value={formData.performance?.day1} onChange={e => setFormData({...formData, performance: {...formData.performance, day1: e.target.value}})}
-            />
-            <input 
-              placeholder="Weekend Collection" className="p-2 border rounded"
-              value={formData.performance?.weekend} onChange={e => setFormData({...formData, performance: {...formData.performance, weekend: e.target.value}})}
-            />
-            <input 
-              placeholder="Status (e.g. Blockbuster)" className="p-2 border rounded"
-              value={formData.performance?.status} onChange={e => setFormData({...formData, performance: {...formData.performance, status: e.target.value}})}
-            />
+        </div>
+          
+          <div className="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div className="flex justify-between items-center mb-4">
+                <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Cast & Crew Members</h4>
+                <button 
+                    type="button" 
+                    onClick={() => setFormData({...formData, cast: [...formData.cast, { name: '', role: 'Actor', image: '' }]})}
+                    className="text-[10px] font-black uppercase text-white bg-primary-red px-3 py-1 rounded shadow-sm hover:scale-105 transition-transform"
+                >
+                    <i className="fas fa-plus mr-1"></i> Add Member
+                </button>
+            </div>
+            
+            <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                {formData.cast?.length > 0 ? formData.cast.map((member, idx) => (
+                    <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-2 p-3 bg-white rounded-lg border border-slate-100 shadow-sm relative group animate-in fade-in slide-in-from-top-1">
+                        <input 
+                            placeholder="Actor Name" className="p-2 border rounded text-xs" 
+                            value={member.name} onChange={e => {
+                                const newCast = [...formData.cast];
+                                newCast[idx].name = e.target.value;
+                                setFormData({...formData, cast: newCast});
+                            }}
+                        />
+                        <input 
+                            placeholder="Role (e.g. Lead Actor)" className="p-2 border rounded text-xs" 
+                            value={member.role} onChange={e => {
+                                const newCast = [...formData.cast];
+                                newCast[idx].role = e.target.value;
+                                setFormData({...formData, cast: newCast});
+                            }}
+                        />
+                        <div className="flex gap-2">
+                            <input 
+                                placeholder="Image URL" className="p-2 border rounded text-xs flex-1" 
+                                value={member.image} onChange={e => {
+                                    const newCast = [...formData.cast];
+                                    newCast[idx].image = e.target.value;
+                                    setFormData({...formData, cast: newCast});
+                                }}
+                            />
+                            <button 
+                                type="button" 
+                                onClick={() => setFormData({...formData, cast: formData.cast.filter((_, i) => i !== idx)})}
+                                className="text-red-500 hover:bg-red-50 p-2 rounded-md transition-colors"
+                            >
+                                <i className="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                )) : (
+                    <div className="bg-white/50 border-2 border-dashed border-slate-200 p-6 rounded-xl text-center">
+                        <p className="text-[10px] font-black uppercase text-slate-300 tracking-widest leading-relaxed">No cast members added yet.<br/>Click "Add Member" to begin.</p>
+                    </div>
+                )}
+            </div>
           </div>
+          
+          {(!formData.releaseDate || new Date(formData.releaseDate) <= new Date()) && (
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded border border-gray-200 animate-in fade-in duration-500">
+                <h4 className="md:col-span-3 text-xs font-bold uppercase text-gray-400">Box Office Performance</h4>
+                <input 
+                placeholder="Day 1 Collection" className="p-2 border rounded"
+                value={formData.performance?.day1} onChange={e => setFormData({...formData, performance: {...formData.performance, day1: e.target.value}})}
+                />
+                <input 
+                placeholder="Weekend Collection" className="p-2 border rounded"
+                value={formData.performance?.weekend} onChange={e => setFormData({...formData, performance: {...formData.performance, weekend: e.target.value}})}
+                />
+                <input 
+                placeholder="Status (e.g. Blockbuster)" className="p-2 border rounded"
+                value={formData.performance?.status} onChange={e => setFormData({...formData, performance: {...formData.performance, status: e.target.value}})}
+                />
+            </div>
+          )}
           <div className="md:col-span-2 flex gap-2 pt-4">
             <button type="submit" className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-green-700 transition-all">Save Changes</button>
             <button type="button" onClick={() => setShowForm(false)} className="bg-gray-100 text-gray-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all">Cancel</button>
@@ -391,7 +435,25 @@ const ManageMovies = () => {
         </div>
       </Modal>
 
-      <div className="overflow-x-auto border rounded-xl">
+      <div className="flex gap-2 mb-2 p-1 bg-gray-200/50 rounded-xl w-fit">
+        <button 
+          onClick={() => setActiveSection('all')}
+          className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeSection === 'all' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+        >
+          All Movies
+        </button>
+        <button 
+          onClick={() => setActiveSection('upcoming')}
+          className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeSection === 'upcoming' ? 'bg-primary-red text-white shadow-lg shadow-primary-red/20' : 'text-slate-400 hover:text-slate-600'}`}
+        >
+          Upcoming Calendar
+          {movies.filter(m => m.releaseDate && new Date(m.releaseDate) > new Date()).length > 0 && (
+            <span className={`w-2 h-2 rounded-full ${activeSection === 'upcoming' ? 'bg-white animate-pulse' : 'bg-primary-red'}`}></span>
+          )}
+        </button>
+      </div>
+
+      <div className="overflow-x-auto border rounded-xl bg-white shadow-sm">
         <table className="w-full text-left">
           <thead className="bg-gray-50 border-b">
             <tr>
@@ -408,8 +470,18 @@ const ManageMovies = () => {
             {filteredMovies.map((movie, index) => (
               <tr key={movie._id || index} className="hover:bg-gray-50 transition-colors">
                 <td className="p-4 flex items-center gap-3">
-                  <img src={movie.image} className="w-10 h-14 object-cover rounded" alt="" />
-                  <span className="font-bold text-text-dark">{movie.title}</span>
+                  <div className="relative">
+                    <img src={movie.image} className="w-10 h-14 object-cover rounded shadow-sm" alt="" />
+                    {movie.releaseDate && new Date(movie.releaseDate) > new Date() && (
+                        <div className="absolute -top-1 -left-1 bg-primary-red text-white text-[6px] font-black uppercase px-1 rounded-sm shadow-sm">Upcoming</div>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-bold text-text-dark">{movie.title}</span>
+                    {movie.releaseDate && new Date(movie.releaseDate) > new Date() && (
+                        <span className="text-[9px] font-black text-primary-red uppercase tracking-tighter">Live in Calendar</span>
+                    )}
+                  </div>
                 </td>
                 <td className="p-4 text-sm text-text-gray">{movie.genre}</td>
                 <td className="p-4 text-sm text-text-gray">{movie.year}</td>

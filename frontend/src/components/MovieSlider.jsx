@@ -6,9 +6,15 @@ const MovieSlider = () => {
   const { movies } = useData();
   const sliderRef = useRef(null);
 
+  // Filter for movies that are already released (past or today) OR have no release date set yet
+  const releasedMovies = movies.filter(movie => {
+    if (!movie.releaseDate) return true;
+    return new Date(movie.releaseDate) <= new Date();
+  });
+
   useEffect(() => {
     const slider = sliderRef.current;
-    if (!slider || movies.length === 0) return;
+    if (!slider || releasedMovies.length === 0) return;
 
     let intervalId = null;
     const scrollStep = 1;
@@ -45,7 +51,7 @@ const MovieSlider = () => {
       slider.removeEventListener('touchstart', handleMouseEnter);
       slider.removeEventListener('touchend', handleMouseLeave);
     };
-  }, [movies]);
+  }, [releasedMovies]);
 
   return (
     <div className="mb-12">
@@ -70,7 +76,7 @@ const MovieSlider = () => {
             }
           `}
         </style>
-        {movies.map((movie) => (
+        {releasedMovies.map((movie) => (
           <Link to={`/movie/${movie._id}`} key={movie._id} className="min-w-[180px] bg-white rounded-lg overflow-hidden shadow-lg hover:-translate-y-1 transition-transform group no-underline text-inherit">
             <img 
               src={movie.image} 

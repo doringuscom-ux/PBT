@@ -27,6 +27,7 @@ import NewsList from './pages/NewsList';
 import NewsDetail from './pages/NewsDetail';
 import MovieList from './pages/MovieList';
 import MovieDetail from './pages/MovieDetail';
+import ActorDetail from './pages/ActorDetail';
 import CelebList from './pages/CelebList';
 import CelebDetail from './pages/CelebDetail';
 import VideosList from './pages/VideosList';
@@ -86,6 +87,7 @@ function App() {
             <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/movies" element={<MovieList />} />
             <Route path="/movie/:id" element={<MovieDetail />} />
+            <Route path="/actor/:name" element={<ActorDetail />} />
             <Route path="/celebs" element={<CelebList />} />
             <Route path="/celeb/:id" element={<CelebDetail />} />
             <Route path="/videos" element={<VideosList />} />

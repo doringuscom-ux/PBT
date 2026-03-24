@@ -84,6 +84,42 @@ const MovieDetail = () => {
                             </div>
                         </div>
 
+                        {/* Visual Cast Section */}
+                        {movie.cast && movie.cast.length > 0 && (
+                            <div className="mb-12">
+                                <div className="flex items-center gap-2 mb-8">
+                                    <span className="w-8 h-1 bg-primary-red"></span>
+                                    <h2 className="text-xl font-black uppercase italic tracking-tighter text-slate-900">Movie Cast</h2>
+                                </div>
+                                <div className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar px-2">
+                                    {movie.cast.map((actor, idx) => (
+                                        <Link 
+                                            key={idx} 
+                                            to={`/actor/${encodeURIComponent(actor.name)}`}
+                                            className="flex flex-col items-center gap-3 min-w-[120px] group no-underline"
+                                        >
+                                            <div className="relative">
+                                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-primary-red p-1 group-hover:scale-110 transition-transform duration-500 overflow-hidden shadow-lg">
+                                                    <img 
+                                                        src={actor.image || 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/default_actor.jpg'} 
+                                                        alt={actor.name} 
+                                                        className="w-full h-full object-cover rounded-full"
+                                                    />
+                                                </div>
+                                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-primary-red text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full scale-90 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    View Bio
+                                                </div>
+                                            </div>
+                                            <div className="text-center">
+                                                <div className="text-xs font-black text-slate-900 uppercase tracking-tighter group-hover:text-primary-red transition-colors">{actor.name}</div>
+                                                <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{actor.role || 'Actor'}</div>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Additional Info Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                             <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100">
@@ -103,23 +139,26 @@ const MovieDetail = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm">
-                                <h3 className="font-black italic text-sm text-primary-red uppercase tracking-widest mb-6 border-b pb-4">Performance</h3>
-                                <div className="space-y-4">
-                                    <div className="flex justify-between border-b border-gray-100 pb-3">
-                                        <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Day 1</span>
-                                        <span className="font-black text-green-600 text-sm italic">{movie.performance?.day1 || '₹8.4 Crore'}</span>
-                                    </div>
-                                    <div className="flex justify-between border-b border-gray-100 pb-3">
-                                        <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Weekend</span>
-                                        <span className="font-black text-green-600 text-sm italic">{movie.performance?.weekend || '₹28 Crore'}</span>
-                                    </div>
-                                    <div className="flex justify-between text-slate-400">
-                                        <span className="text-xs font-black uppercase tracking-widest">Status</span>
-                                        <span className="font-black text-slate-900 text-sm italic uppercase tracking-tighter">{movie.performance?.status || 'Blockbuster'}</span>
+                            
+                            {(!movie.releaseDate || new Date(movie.releaseDate) <= new Date()) && (
+                                <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm animate-in fade-in duration-700">
+                                    <h3 className="font-black italic text-sm text-primary-red uppercase tracking-widest mb-6 border-b pb-4">Performance</h3>
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between border-b border-gray-100 pb-3">
+                                            <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Day 1</span>
+                                            <span className="font-black text-green-600 text-sm italic">{movie.performance?.day1 || '₹8.4 Crore'}</span>
+                                        </div>
+                                        <div className="flex justify-between border-b border-gray-100 pb-3">
+                                            <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Weekend</span>
+                                            <span className="font-black text-green-600 text-sm italic">{movie.performance?.weekend || '₹28 Crore'}</span>
+                                        </div>
+                                        <div className="flex justify-between text-slate-400">
+                                            <span className="text-xs font-black uppercase tracking-widest">Status</span>
+                                            <span className="font-black text-slate-900 text-sm italic uppercase tracking-tighter">{movie.performance?.status || 'Blockbuster'}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                         
                         <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6 mb-12">

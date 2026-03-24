@@ -20,6 +20,11 @@ const MovieSchema = new mongoose.Schema({
     trailerUrl: { type: String },
     releaseDate: { type: Date },
     likes: { type: Number, default: 0 },
+    cast: [{
+        name: { type: String, required: true },
+        role: { type: String, required: true },
+        image: { type: String }
+    }],
     comments: [{
         user: { type: String, required: true },
         content: { type: String, required: true },
