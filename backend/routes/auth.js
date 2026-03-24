@@ -45,27 +45,24 @@ router.post('/register', async (req, res) => {
             phone, 
             password, 
             role: 'user',
-            isVerified: false,
-            otp,
-            otpExpires: Date.now() + 600000 // 10 mins
+            isVerified: true
         });
         await user.save();
 
-        // Send OTP Email
-        const { sendOtpEmail } = require('../utils/emailService');
-        await sendOtpEmail(email, otp);
+        const userData = { id: user._id, username: user.username, role: user.role };
+        req.session.user = userData;
 
         res.status(201).json({ 
             success: true, 
-            message: 'Registration successful! Please verify your email with the OTP sent.',
-            email
+            message: 'Registration successful! Welcome to Pbtadka.',
+            user: userData
         });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
 });
 
-// Verify Registration OTP
+// Verify Registration OTP (Keep for legacy but redundant for new users)
 router.post('/verify-registration', async (req, res) => {
     const { email, otp } = req.body;
     try {
@@ -160,13 +157,10 @@ router.post('/login', async (req, res) => {
         const isMatch = await user.comparePassword(password);
         if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid credentials' });
 
-        if (!user.isVerified) {
-            return res.status(403).json({ success: true, message: 'verification_pending', email: user.email });
-        }
-
         if (user.isBlocked) {
             return res.status(403).json({ success: false, message: 'Your account has been blocked. Please contact support.' });
         }
+
 
         const userData = { id: user._id, username: user.username, role: user.role };
         req.session.user = userData;

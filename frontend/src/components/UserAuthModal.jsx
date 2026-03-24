@@ -20,8 +20,7 @@ const UserAuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isVerifyingRegistration, setIsVerifyingRegistration] = useState(false);
-  const [verificationEmail, setVerificationEmail] = useState('');
+
 
   const validatePassword = (pass) => {
     const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
@@ -50,41 +49,18 @@ const UserAuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       } else {
         const res = await register({ username, email, fullName, phone, password });
         if (res.data.success) {
-          setVerificationEmail(email);
-          setIsVerifyingRegistration(true);
-          setMessage(res.data.message);
+          setUser(res.data.user);
+          if (onAuthSuccess) onAuthSuccess(res.data);
+          onClose();
         }
       }
     } catch (err) {
-      if (err.response?.data?.message === 'verification_pending') {
-        setVerificationEmail(err.response.data.email);
-        setIsVerifyingRegistration(true);
-        setError('Please verify your email to complete registration.');
-      } else {
-        setError(err.response?.data?.message || 'Authentication failed');
-      }
+      setError(err.response?.data?.message || 'Authentication failed');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleVerifyRegistration = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    try {
-      const res = await api.post('/auth/verify-registration', { email: verificationEmail, otp });
-      if (res.data.success) {
-        setUser(res.data.user);
-        if (onAuthSuccess) onAuthSuccess(res.data);
-        onClose();
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Verification failed');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
@@ -244,43 +220,9 @@ const UserAuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
               </div>
             )}
             
-              {isVerifyingRegistration ? (
-                <div className="space-y-4 animate-in fade-in duration-500">
-                  <div className="p-4 rounded-xl bg-primary-red/5 border border-primary-red/10 text-center">
-                    <p className="text-[10px] font-black text-primary-red uppercase tracking-widest mb-1">Verification Required</p>
-                    <p className="text-[11px] font-bold text-slate-500">We've sent a 6-digit code to <span className="text-slate-900">{verificationEmail}</span></p>
-                  </div>
-                  <div className="group">
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-focus-within:text-primary-red">Enter OTP</label>
-                    <div className="relative">
-                      <i className="fas fa-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-red text-xs"></i>
-                      <input 
-                        className="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-primary-red/5 focus:bg-white focus:border-primary-red transition-all text-sm font-bold text-slate-900"
-                        placeholder="000000"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <button 
-                    onClick={handleVerifyRegistration}
-                    disabled={isLoading}
-                    className="w-full bg-slate-900 text-white font-black py-5 rounded-2xl hover:bg-primary-red transition-all uppercase tracking-widest text-[11px]"
-                  >
-                    {isLoading ? 'Verifying...' : 'Verify & Complete'}
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => setIsVerifyingRegistration(false)}
-                    className="w-full text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 pt-2"
-                  >
-                    Back to Registration
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  {!isLogin && (
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {!isLogin && (
+
                     <div className="grid grid-cols-1 gap-4">
                       <div className="group">
                         <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-focus-within:text-primary-red">Full Legal Name</label>
@@ -372,8 +314,8 @@ const UserAuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
                     )}
                   </div>
                 </form>
-              )}
           </div>
+
         </div>
       </div>
     </Modal>
