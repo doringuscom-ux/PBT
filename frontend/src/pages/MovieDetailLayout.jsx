@@ -196,8 +196,12 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 mb-8">Main Cast & Production Crew</h2>
                                 <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-8 px-2">
-                                    {movie.cast?.map((actor, idx) => (
-                                        <Link key={idx} to={`/actor/${encodeURIComponent(actor.name)}`} className="group flex flex-col items-center gap-3 no-underline">
+                                {movie.cast?.map((actor, idx) => (
+                                    <Link 
+                                        key={idx} 
+                                        to={actor.celebrity ? `/celeb/${actor.celebrity.slug || actor.celebrity._id || actor.celebrity}` : `/actor/${encodeURIComponent(actor.name)}`} 
+                                        className="group flex flex-col items-center gap-3 no-underline"
+                                    >
                                             <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-xl overflow-hidden transition-transform group-hover:scale-110 duration-500 relative">
                                                 <img src={actor.image || 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/default_actor.jpg'} className="w-full h-full object-cover" alt="" />
                                                 <div className="absolute inset-0 bg-primary-red/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

@@ -17,7 +17,12 @@ const CelebDetail = () => {
     if (!celeb) return <div className="p-10 text-center font-bold">Celebrity not found</div>;
 
     // Data Filtering
-    const celebMovies = movies.filter(m => m.cast?.some(a => a.name.toLowerCase() === celeb.name.toLowerCase()));
+    const celebMovies = movies.filter(m => 
+        m.cast?.some(a => 
+            (a.celebrity?._id === celeb._id || a.celebrity === celeb._id) || 
+            a.name.toLowerCase() === celeb.name.toLowerCase()
+        )
+    );
     const celebArticles = news.filter(n => 
         n.title.toLowerCase().includes(celeb.name.toLowerCase()) || 
         n.excerpt?.toLowerCase().includes(celeb.name.toLowerCase())
@@ -29,63 +34,138 @@ const CelebDetail = () => {
         { id: 'Videos', label: 'Videos', count: celeb.videos?.filter(v => v).length || 0 },
         { id: 'Photos', label: 'Photos', count: (celeb.photos?.filter(p => p).length || 0) + (celebMovies.length > 0 ? 4 : 0) },
         { id: 'Filmography', label: 'Filmography', count: celebMovies.length },
-    ];
+    ].filter(tab => tab.id === 'All' || tab.count > 0);
 
     return (
         <div className="bg-white min-h-screen">
-            {/* Minimal Breadcrumb */}
-            <div className="bg-gray-50 border-b py-3">
-                <div className="page-container flex justify-between items-center">
-                    <nav className="text-[10px] font-black uppercase tracking-widest text-gray-400">
-                        <Link to="/" className="hover:text-primary-red transition-colors">Home</Link>
-                        <span className="mx-2">/</span>
-                        <Link to="/celebs" className="hover:text-primary-red transition-colors">Celebrities</Link>
-                        <span className="mx-2">/</span>
-                        <span className="text-slate-900">{celeb.name}</span>
-                    </nav>
-                    <div className="flex gap-4">
-                        <i className="fas fa-share-alt text-gray-400 hover:text-primary-red cursor-pointer transition-colors"></i>
-                        <i className="fas fa-search text-gray-400 hover:text-primary-red cursor-pointer transition-colors"></i>
-                    </div>
+
+            {/* Cinematic Profile Header Section */}
+            <div className="relative overflow-hidden bg-slate-950">
+                {/* Background Banner with Blurry Overlay */}
+                <div className="absolute inset-0 z-0">
+                    <img src={celeb.image} className="w-full h-full object-cover opacity-20 blur-3xl scale-125" alt="" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
                 </div>
-            </div>
 
-            {/* Profile Header Sections */}
-            <div className="page-container py-8 md:py-12">
-                <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
-                    {/* Left: Avatar */}
-                    <div className="w-full md:w-64 lg:w-80 flex-shrink-0">
-                        <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
-                            <img src={celeb.image} alt={celeb.name} className="w-full h-full object-cover" />
-                        </div>
-                    </div>
-
-                    {/* Right: Info */}
-                    <div className="flex-1 space-y-6">
-                        <div>
-                            <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter mb-2">{celeb.name}</h1>
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-bold text-slate-500 uppercase tracking-wide italic">
-                                <span className="text-primary-red not-italic font-black border-r pr-4">{celeb.role}</span>
-                                <span>Official Profile</span>
-                                {celeb.industry && <span className="border-l pl-4">Industry: {celeb.industry}</span>}
+                <div className="page-container relative z-10 py-12 md:py-16">
+                    <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center lg:items-start text-center lg:text-left">
+                        {/* Left: Avatar */}
+                        <div className="w-64 lg:w-80 flex-shrink-0">
+                            <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 relative group">
+                                <img src={celeb.image} alt={celeb.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                <div className="absolute top-4 left-4 bg-primary-red text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">Trending #1</div>
                             </div>
                         </div>
 
-                        <div className="space-y-4">
-                            {celeb.birthDate && (
-                                <p className="text-slate-700 font-medium">
-                                    <span className="font-black uppercase text-[11px] tracking-widest text-slate-400 block mb-1">Born</span>
-                                    {celeb.birthDate} {celeb.birthPlace && <>in {celeb.birthPlace}</>}
+                        {/* Middle: Name & Biography */}
+                        <div className="flex-1 space-y-8 py-4">
+                            <div>
+                                <div className="flex flex-col lg:flex-row items-center lg:items-end gap-3 mb-4">
+                                    <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none">{celeb.name}</h1>
+                                    <i className="fas fa-check-circle text-blue-400 text-2xl lg:mb-2" title="Verified Profile"></i>
+                                </div>
+                                <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-4 gap-y-2 text-sm font-bold text-slate-400 uppercase tracking-wide italic">
+                                    <span className="text-primary-red not-italic font-black border-r border-white/10 pr-4">{celeb.role}</span>
+                                    <span>Official Profile</span>
+                                    {celeb.industry && <span className="border-l border-white/10 pl-4">Industry: {celeb.industry}</span>}
+                                </div>
+                                
+                                { (celeb.birthDate || celeb.birthPlace) && (
+                                    <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-6 gap-y-2 text-[10px] font-black uppercase tracking-[0.15em] text-white py-1">
+                                        {celeb.birthDate && (
+                                            <div className="flex items-center gap-2">
+                                                <i className="fas fa-calendar-alt text-primary-red text-[11px]"></i>
+                                                <span>Born: <span className="text-slate-200">{celeb.birthDate}</span></span>
+                                            </div>
+                                        )}
+                                        {celeb.birthPlace && (
+                                            <div className="flex items-center gap-2 border-l border-white/20 pl-6">
+                                                <i className="fas fa-map-marker-alt text-primary-red text-[11px]"></i>
+                                                <span className="text-slate-200">{celeb.birthPlace}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="space-y-8 max-w-3xl mx-auto lg:mx-0">
+                                <p className="text-slate-300 leading-relaxed text-xl italic font-medium pl-8 border-l-4 border-primary-red py-2">
+                                    "{celeb.bio}"
                                 </p>
-                            )}
-                            <div className="text-slate-600 leading-relaxed text-lg italic border-l-4 border-primary-red pl-6 py-1">
-                                "{celeb.bio}"
+                                
+                                <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
+                                    <button className="bg-primary-red text-white px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl shadow-primary-red/40 flex items-center gap-2">
+                                        <i className="fas fa-plus"></i> Follow
+                                    </button>
+                                    <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:bg-white/20 transition-all shadow-lg">
+                                        Add to Collection
+                                    </button>
+                                    <button className="w-14 h-14 rounded-full bg-white/5 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/60 hover:text-primary-red hover:border-primary-red transition-all">
+                                        <i className="fas fa-share-alt"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="flex gap-3 pt-4">
-                            <button className="bg-primary-red text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-lg shadow-primary-red/20">Follow</button>
-                            <button className="bg-slate-100 text-slate-900 px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest hover:bg-slate-200 transition-colors">Add to List</button>
+                        {/* Right: Media Showcase (Fills the 'Empty' Space) */}
+                        <div className="w-full lg:w-96 space-y-6 pt-4 lg:pt-0 hidden xl:block">
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 pb-2 border-b border-white/10">Featured Showcase</h3>
+                            
+                            {/* Featured Video or Image */}
+                            {celeb.videos?.filter(v => v).length > 0 ? (
+                                <div className="aspect-video rounded-3xl overflow-hidden bg-slate-900 border border-white/10 shadow-2xl group relative cursor-pointer" onClick={() => setActiveSection('Videos')}>
+                                    <img src={celeb.image} className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700" alt="" />
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="w-16 h-16 rounded-full bg-primary-red text-white flex items-center justify-center shadow-2xl shadow-primary-red/50 group-hover:scale-110 transition-transform">
+                                            <i className="fas fa-play ml-1 text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div className="absolute bottom-4 left-4 right-4">
+                                        <p className="text-[10px] font-black text-white uppercase tracking-widest bg-black/40 backdrop-blur-sm px-3 py-1 rounded-lg inline-block">Official Interview</p>
+                                    </div>
+                                </div>
+                            ) : celeb.photos?.filter(p => p).length > 0 ? (
+                                <div className="grid grid-cols-2 gap-3 h-48">
+                                    {celeb.photos.filter(p => p).slice(0, 2).map((p, i) => (
+                                        <div key={i} className="rounded-2xl overflow-hidden border border-white/10 shadow-xl group cursor-pointer" onClick={() => setActiveSection('Photos')}>
+                                            <img src={p} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10 space-y-4">
+                                    <div className="flex items-center gap-4 text-white/60">
+                                        <i className="fas fa-chart-line text-2xl"></i>
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Career Ranking</p>
+                                            <p className="text-sm font-black text-white italic">#1 Trending in Pollywood</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-white/60">
+                                        <i className="fas fa-user-friends text-2xl"></i>
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Engagement</p>
+                                            <p className="text-sm font-black text-white italic">9.8M Daily Interactions</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Mini Stats Bar */}
+                            <div className="grid grid-cols-3 gap-1 pt-4 border-t border-white/10">
+                                <div className="text-center">
+                                    <p className="text-lg font-black text-white leading-none">1.2M</p>
+                                    <p className="text-[8px] font-black uppercase tracking-widest text-white/30 mt-1">Fans</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-lg font-black text-white leading-none">42</p>
+                                    <p className="text-[8px] font-black uppercase tracking-widest text-white/30 mt-1">Movies</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-lg font-black text-white leading-none">98</p>
+                                    <p className="text-[8px] font-black uppercase tracking-widest text-white/30 mt-1">Noms</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -150,20 +230,21 @@ const CelebDetail = () => {
                                     </section>
                                 )}
 
-                                {/* Milestones */}
-                                <section>
-                                    <h3 className="text-lg font-black uppercase italic tracking-tighter text-slate-900 mb-8 flex items-center gap-3 border-b pb-4">
-                                        <i className="fas fa-trophy text-yellow-500"></i> Historic Milestones
-                                    </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {(celeb.milestones?.length ? celeb.milestones : [{year: '2026', text: 'Nominated for Global Punjabi Icon Award.'}]).map((item, i) => (
-                                            <div key={i} className="flex gap-6 items-center p-4 rounded-2xl bg-white shadow-sm border border-gray-100 transition-all hover:border-primary-red/10">
-                                                <div className="bg-slate-900 text-white font-black px-4 py-1.5 rounded-lg text-sm italic tracking-tighter leading-none">{item.year}</div>
-                                                <div className="text-sm font-black text-slate-700 pt-0.5 italic tracking-tight uppercase leading-snug line-clamp-2">{item.text}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </section>
+                                {celeb.milestones?.length > 0 && (
+                                    <section>
+                                        <h3 className="text-lg font-black uppercase italic tracking-tighter text-slate-900 mb-8 flex items-center gap-3 border-b pb-4">
+                                            <i className="fas fa-trophy text-yellow-500"></i> Historic Milestones
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {celeb.milestones.map((item, i) => (
+                                                <div key={i} className="flex gap-6 items-center p-4 rounded-2xl bg-white shadow-sm border border-gray-100 transition-all hover:border-primary-red/10">
+                                                    <div className="bg-slate-900 text-white font-black px-4 py-1.5 rounded-lg text-sm italic tracking-tighter leading-none">{item.year}</div>
+                                                    <div className="text-sm font-black text-slate-700 pt-0.5 italic tracking-tight uppercase leading-snug line-clamp-2">{item.text}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </section>
+                                )}
                             </div>
                         )}
 
@@ -285,25 +366,6 @@ const CelebDetail = () => {
 
                     {/* Sidebar */}
                     <aside className="lg:w-[30%] xl:w-[25%] space-y-8">
-                        {/* Quick Stats */}
-                        <div className="bg-slate-900 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-                            <h3 className="font-black text-white text-[10px] uppercase tracking-widest mb-6 border-b border-white/10 pb-4 italic">Celebrity Stats</h3>
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center py-2 border-b border-white/5">
-                                    <span className="text-white/40 text-[9px] font-black uppercase tracking-widest">Industry</span>
-                                    <span className="text-white font-black italic">{celeb.industry || 'Pollywood'}</span>
-                                </div>
-                                <div className="flex justify-between items-center py-2 border-b border-white/5">
-                                    <span className="text-white/40 text-[9px] font-black uppercase tracking-widest">Fan Base</span>
-                                    <span className="text-white font-black italic">{celeb.stats?.fanBase || 'Multi-Million'}</span>
-                                </div>
-                                <div className="flex justify-between items-center py-2 border-b border-white/5">
-                                    <span className="text-white/40 text-[9px] font-black uppercase tracking-widest">Impact</span>
-                                    <span className="text-primary-red font-black italic">{celeb.stats?.impactScore || 'Top Tier'}</span>
-                                </div>
-                            </div>
-                        </div>
-
                         {/* Recent News */}
                         <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
                             <h3 className="text-xs font-black text-primary-red uppercase tracking-widest mb-6 flex items-center gap-2 italic">

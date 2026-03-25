@@ -130,6 +130,12 @@ const ManageCelebs = () => {
                   fullBio: '', 
                   milestones: [{ year: '', text: '' }],
                   stats: { fanBase: '', tours: '', impactScore: '' },
+                  birthDate: '',
+                  birthPlace: '',
+                  photos: [''],
+                  videos: [''],
+                  industry: 'Pollywood',
+                  category: 'Actor',
                   slug: ''
                 }); 
               }}

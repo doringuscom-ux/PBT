@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
             query = query.populate('createdBy', 'username employeeId fullName');
         }
         
-        const movies = await query.sort({ createdAt: -1 });
+        const movies = await query.populate('cast.celebrity').sort({ createdAt: -1 });
         res.json(enrich(movies, req.session.user));
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -93,7 +93,8 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         }
 
         const updatedMovie = await Movie.findByIdAndUpdate(req.params.id, updateData, { new: true })
-            .populate('createdBy', 'username employeeId fullName');
+            .populate('createdBy', 'username employeeId fullName')
+            .populate('cast.celebrity');
 
         if (!updatedMovie) return res.status(404).json({ message: 'Movie not found' });
         res.json(enrich([updatedMovie], req.session.user)[0]);

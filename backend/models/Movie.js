@@ -24,7 +24,8 @@ const MovieSchema = new mongoose.Schema({
     cast: [{
         name: { type: String, required: true },
         role: { type: String, required: true },
-        image: { type: String }
+        image: { type: String },
+        celebrity: { type: mongoose.Schema.Types.ObjectId, ref: 'Celebrity' }
     }],
     comments: [{
         user: { type: String, required: true },
