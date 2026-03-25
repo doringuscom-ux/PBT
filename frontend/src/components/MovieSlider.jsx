@@ -77,7 +77,7 @@ const MovieSlider = () => {
           `}
         </style>
         {releasedMovies.map((movie) => (
-          <Link to={`/movie/${movie._id}`} key={movie._id} className="min-w-[180px] bg-white rounded-lg overflow-hidden shadow-lg hover:-translate-y-1 transition-transform group no-underline text-inherit">
+          <Link to={`/movie/${movie.slug || movie._id}`} key={movie._id} className="min-w-[180px] bg-white rounded-lg overflow-hidden shadow-lg hover:-translate-y-1 transition-transform group no-underline text-inherit">
             <img 
               src={movie.image} 
               alt={movie.title} 

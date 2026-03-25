@@ -108,7 +108,7 @@ const MovieCalendar = () => {
         {upcomingMovies.map((movie, index) => (
           <Link 
             key={movie._id} 
-            to={`/movie/${movie._id}`}
+            to={`/movie/${movie.slug || movie._id}`}
             className="min-w-[180px] bg-white rounded-lg overflow-hidden shadow-lg hover:-translate-y-1 transition-transform group no-underline text-inherit animate-slide-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >

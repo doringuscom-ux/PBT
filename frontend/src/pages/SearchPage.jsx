@@ -90,7 +90,11 @@ const SearchPage = () => {
                 <h2 className="text-xl font-black text-text-dark mb-6 flex items-center gap-3 border-l-4 border-accent-gold pl-4 uppercase tracking-wider">Movies</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                   {results.movies.map(movie => (
-                    <Link key={movie._id} to={`/movie/${movie._id}`} className="group">
+                    <Link 
+                      key={movie._id} 
+                      to={`/movie/${movie.slug || movie._id}`}
+                      className="group flex flex-col no-underline text-inherit"
+                    >
                       <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg group-hover:scale-95 transition-all">
                         <img src={movie.image} className="w-full h-full object-cover" alt="" />
                         <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black text-white">

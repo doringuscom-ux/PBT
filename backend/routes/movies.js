@@ -52,6 +52,9 @@ router.post('/', upload.single('image'), async (req, res) => {
     if (typeof movieData.cast === 'string') {
         try { movieData.cast = JSON.parse(movieData.cast); } catch (e) { console.error("Cast parse error:", e); }
     }
+    if (typeof movieData.photos === 'string') {
+        try { movieData.photos = JSON.parse(movieData.photos); } catch (e) { console.error("Photos parse error:", e); }
+    }
 
     const movie = new Movie(movieData);
     try {
@@ -79,6 +82,9 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         }
         if (typeof updateData.cast === 'string') {
             try { updateData.cast = JSON.parse(updateData.cast); } catch (e) { console.error("Cast parse error:", e); }
+        }
+        if (typeof updateData.photos === 'string') {
+            try { updateData.photos = JSON.parse(updateData.photos); } catch (e) { console.error("Photos parse error:", e); }
         }
 
         // Heal corrupted data (remove invalid string entries if passed)

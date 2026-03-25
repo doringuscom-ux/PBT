@@ -102,7 +102,7 @@ const ManageUpcoming = () => {
       ...movie,
       performance: movie.performance || { day1: '', weekend: '', status: 'Upcoming' },
       cast: movie.cast || [],
-      photos: movie.photos || [],
+      photos: Array.isArray(movie.photos) ? movie.photos : (typeof movie.photos === 'string' ? JSON.parse(movie.photos) : []),
       coverImage: movie.coverImage || ''
     });
     setIsCustomIndustry(movie.industry && !INDUSTRIES.includes(movie.industry));
@@ -397,9 +397,9 @@ const ManageUpcoming = () => {
           <thead className="bg-gray-50 border-b">
             <tr>
               <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Movie</th>
-              <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Release Date</th>
-              <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-              <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Performance</th>
+              <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Category</th>
+              <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Author</th>
+              <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Date</th>
               <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
             </tr>
           </thead>
@@ -409,31 +409,27 @@ const ManageUpcoming = () => {
                 <td className="p-4">
                   <div className="flex items-center gap-4">
                     <img src={movie.image} className="w-12 h-16 object-cover rounded-lg shadow-sm border" alt="" />
-                    <div>
-                        <div className="font-black text-slate-900 uppercase tracking-tighter">{movie.title}</div>
-                        <div className="text-[10px] font-bold text-gray-400 uppercase">{movie.genre}</div>
+                    <div className="flex flex-col">
+                        <span className="font-black text-slate-900 uppercase tracking-tighter leading-tight">{movie.title}</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase italic">{movie.genre}</span>
                     </div>
                   </div>
                 </td>
-                <td className="p-4 font-black text-primary-red uppercase tracking-tighter italic">
-                    {new Date(movie.releaseDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                </td>
-                <td className="p-4">
-                    <span className="bg-blue-50 text-blue-600 text-[10px] font-black uppercase px-2 py-1 rounded-full border border-blue-100">
-                        {movie.performance?.status || 'Active'}
-                    </span>
-                </td>
-                <td className="p-4">
-                    <div className="flex items-center gap-4">
-                        <div className="flex flex-col items-center">
-                            <span className="text-[10px] font-black text-slate-900">{(movie.cast?.length || 0)}</span>
-                            <span className="text-[8px] font-bold text-slate-400 uppercase">Cast</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-[10px] font-black text-slate-900">{(movie.photos?.length || 0)}</span>
-                            <span className="text-[8px] font-bold text-slate-400 uppercase">Photos</span>
-                        </div>
+                <td className="p-4 text-center">
+                    <div className="inline-block bg-primary-red text-white text-[10px] font-black uppercase px-3 py-1.5 rounded-full shadow-sm">
+                        {movie.industry}
                     </div>
+                </td>
+                <td className="p-4 text-center">
+                    <div className="flex flex-col items-center">
+                        <span className="text-[11px] font-black text-primary-red uppercase leading-none">{movie.createdBy?.fullName || 'SYSTEM'}</span>
+                        <span className="text-[9px] font-bold text-gray-400 mt-1 uppercase">ID: {movie.createdBy?.employeeId || 'N/A'}</span>
+                    </div>
+                </td>
+                <td className="p-4 text-center">
+                    <span className="text-gray-500 font-bold uppercase text-[11px]">
+                        {new Date(movie.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </span>
                 </td>
                 <td className="p-4">
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

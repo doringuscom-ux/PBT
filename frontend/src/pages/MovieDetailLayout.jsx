@@ -213,7 +213,7 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
                                 <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 pb-4 border-b">Suggested For You</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     {recentMovies.map(m => (
-                                        <Link key={m._id} to={`/movie/${m._id}`} className="group flex flex-col gap-2 no-underline">
+                                        <Link key={m._id} to={`/movie/${m.slug || m._id}`} className="group flex flex-col gap-2 no-underline">
                                             <div className="aspect-[2/3] rounded-lg overflow-hidden shadow-md border-2 border-white group-hover:border-primary-red transition-all duration-300 relative">
                                                 <img src={m.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
                                                 <div className="absolute bottom-0 inset-x-0 p-1 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
