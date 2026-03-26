@@ -19,6 +19,7 @@ export const addMovieComment = (id, data) => api.post(`/movies/${id}/comments`, 
 export const deleteMovieComment = (id, commentId) => api.delete(`/movies/${id}/comments/${commentId}`);
 export const likeMovieComment = (id, commentId) => api.post(`/movies/${id}/comments/${commentId}/like`);
 export const updateMovieComment = (id, commentId, data) => api.put(`/movies/${id}/comments/${commentId}`, data);
+export const rateMovie = (id, rating) => api.post(`/movies/${id}/rate`, { rating });
 
 export const getNews = () => api.get('/news');
 export const getTodayNews = () => api.get('/news/today');
@@ -39,6 +40,7 @@ export const addCelebComment = (id, data) => api.post(`/celebrities/${id}/commen
 export const deleteCelebComment = (id, commentId) => api.delete(`/celebrities/${id}/comments/${commentId}`);
 export const likeCelebComment = (id, commentId) => api.post(`/celebrities/${id}/comments/${commentId}/like`);
 export const updateCelebComment = (id, commentId, data) => api.put(`/celebrities/${id}/comments/${commentId}`, data);
+export const followCelebrity = (id) => api.post(`/celebrities/${id}/follow`);
 
 // Video API
 export const getVideos = () => api.get('/videos');

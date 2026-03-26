@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { useData } from '../context/DataContext';
 import CountdownTimer from '../components/CountdownTimer';
 import CommentSection from '../components/CommentSection';
 
-const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeComment, onUpdateComment, onDeleteComment }) => {
+const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
+    const { movies, rateMovie, user, addMovieComment, likeMovieComment, updateMovieComment, deleteMovieComment } = useData();
+    
+    // Always use the latest movie data from context to ensure real-time rating updates show immediately
+    const movie = movies.find(m => m._id === propMovie._id) || propMovie;
+
     const [activeTab, setActiveTab] = useState('Timeline');
     const [vote, setVote] = useState(null); 
     const [watchScore, setWatchScore] = useState(64);
@@ -103,17 +109,45 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
                             ) : (
                                 <div className="w-48 md:w-56 bg-white shadow-2xl p-3 border-t-4 border-primary-red transform md:-translate-y-4">
                                     <div className="flex flex-col">
-                                        <div className="flex items-center gap-2 mb-1 justify-between">
-                                            <span className="text-xl font-black text-slate-900 italic transform -skew-x-12">{movie.rating}/10</span>
-                                            <div className="flex text-yellow-400 text-[10px] gap-0.5">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <i key={i} className={`fas fa-star ${i < Math.floor(movie.rating/2) ? 'text-yellow-400' : 'text-gray-200'}`}></i>
-                                                ))}
+                                        <div className="flex flex-col items-center justify-between gap-3 mt-auto">
+                                            <div className="w-full flex flex-col items-center gap-1 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
+                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Rate this movie</span>
+                                                <div className="flex gap-2 text-base">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <button 
+                                                            key={star}
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                if (user) {
+                                                                    rateMovie(movie._id, star);
+                                                                } else {
+                                                                    alert("Please log in to rate movies.");
+                                                                }
+                                                            }}
+                                                            className="hover:scale-125 transition-transform active:scale-95"
+                                                            disabled={!user}
+                                                        >
+                                                            <i className={`fas fa-star ${star <= (movie.myRating || 0) ? 'text-yellow-400' : 'text-slate-200'}`}></i>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div className="w-full flex items-center justify-between bg-slate-900 px-4 py-3 rounded-xl border border-white/10 shadow-xl overflow-hidden relative group">
+                                                {/* Background Glow */}
+                                                <div className="absolute inset-0 bg-primary-red/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                                
+                                                <div className="relative z-10 flex flex-col">
+                                                    <span className="text-[8px] font-black text-white/40 uppercase tracking-widest leading-none mb-1 text-left">Community</span>
+                                                    <span className="text-[8px] font-black text-white uppercase tracking-widest leading-none text-left">
+                                                        {movie.totalRatings || 0} Ratings
+                                                    </span>
+                                                </div>
+                                                <div className="relative z-10 flex items-center gap-2">
+                                                    <i className="fas fa-star text-yellow-500 text-xs"></i>
+                                                    <span className="text-2xl font-black text-white italic tracking-tighter leading-none">{(movie.averageRating || 0).toFixed(1)}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none bg-gray-50 px-2 py-2 rounded-md border border-gray-100 text-center">
-                                            {movie.likes || 0} User Ratings
-                                        </span>
                                     </div>
                                 </div>
                             )}
@@ -193,10 +227,10 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
                                     <CommentSection 
                                         itemId={movie._id}
                                         comments={movie.comments}
-                                        onAdd={onAddComment}
-                                        onLike={onLikeComment}
-                                        onUpdate={onUpdateComment}
-                                        onDelete={onDeleteComment}
+                                        onAdd={addMovieComment}
+                                        onLike={likeMovieComment}
+                                        onUpdate={updateMovieComment}
+                                        onDelete={deleteMovieComment}
                                     />
                                 </div>
                             </div>

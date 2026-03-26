@@ -8,6 +8,7 @@ const enrich = (items, sessionUser) => {
     const userId = sessionUser ? sessionUser.id : null;
     return items.map(item => {
         const itemObj = item.toObject();
+        itemObj.isFollowing = userId && itemObj.followers ? itemObj.followers.some(id => id.toString() === userId) : false;
         if (itemObj.comments) {
             itemObj.comments = itemObj.comments.map(comment => ({
                 ...comment,
@@ -211,5 +212,28 @@ router.put('/:id/comments/:commentId', async (req, res) => {
         res.json(enrich([celeb], req.session.user)[0]);
     } catch (err) { res.status(500).json({ message: err.message }); }
 });
-
+ 
+// Follow/Unfollow Celebrity
+router.post('/:id/follow', async (req, res) => {
+    try {
+        const celeb = await Celebrity.findById(req.params.id);
+        if (!celeb) return res.status(404).json({ message: 'Celebrity not found' });
+ 
+        if (!req.session.user) return res.status(401).json({ message: 'Login required' });
+        const userId = req.session.user.id;
+        
+        if (!celeb.followers) celeb.followers = [];
+        
+        const index = celeb.followers.indexOf(userId);
+        if (index > -1) {
+            celeb.followers.splice(index, 1);
+        } else {
+            celeb.followers.push(userId);
+        }
+        
+        await celeb.save();
+        res.json(enrich([celeb], req.session.user)[0]);
+    } catch (err) { res.status(500).json({ message: err.message }); }
+});
+ 
 module.exports = router;

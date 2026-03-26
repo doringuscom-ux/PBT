@@ -29,7 +29,8 @@ const ManageCelebs = () => {
     videos: [''],
     industry: 'Pollywood',
     category: 'Actor',
-    slug: ''
+    slug: '',
+    bonusFollowers: 0
   });
   const [showForm, setShowForm] = useState(false);
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
@@ -82,7 +83,8 @@ const ManageCelebs = () => {
       videos: [''],
       industry: 'Pollywood',
       category: 'Actor',
-      slug: ''
+      slug: '',
+      bonusFollowers: 0
     });
     setSelectedFile(null);
     setImageSource('url');
@@ -100,7 +102,8 @@ const ManageCelebs = () => {
       photos: celeb.photos?.length ? celeb.photos : [''],
       videos: celeb.videos?.length ? celeb.videos : [''],
       industry: celeb.industry || 'Pollywood',
-      category: celeb.category || 'Actor'
+      category: celeb.category || 'Actor',
+      bonusFollowers: celeb.bonusFollowers || 0
     });
     setShowForm(true);
   };
@@ -136,7 +139,8 @@ const ManageCelebs = () => {
                   videos: [''],
                   industry: 'Pollywood',
                   category: 'Actor',
-                  slug: ''
+                  slug: '',
+                  bonusFollowers: 0
                 }); 
               }}
               className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-primary-red/20"
@@ -238,7 +242,7 @@ const ManageCelebs = () => {
 
           <div className="md:col-span-2 p-4 bg-white rounded border border-gray-200">
             <h4 className="text-xs font-bold uppercase text-gray-400 mb-4">Quick Stats</h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <input 
                 placeholder="Fans (e.g. 1.2M)" className="p-2 border rounded text-sm font-bold"
                 value={formData.stats?.fanBase} onChange={e => setFormData({...formData, stats: {...formData.stats, fanBase: e.target.value}})}
@@ -250,6 +254,11 @@ const ManageCelebs = () => {
               <input 
                 placeholder="Nominations (e.g. 98)" className="p-2 border rounded text-sm font-bold"
                 value={formData.stats?.nominations} onChange={e => setFormData({...formData, stats: {...formData.stats, nominations: e.target.value}})}
+              />
+              <input 
+                type="number"
+                placeholder="Bonus Followers (Boost)" className="p-2 border rounded text-sm font-bold bg-green-50 shadow-inner"
+                value={formData.bonusFollowers} onChange={e => setFormData({...formData, bonusFollowers: parseInt(e.target.value) || 0})}
               />
             </div>
           </div>

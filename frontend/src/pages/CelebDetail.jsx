@@ -5,7 +5,7 @@ import CommentSection from '../components/CommentSection';
 
 const CelebDetail = () => {
     const { id } = useParams();
-    const { celebs, news, movies, addCelebComment, likeCelebComment, updateCelebComment, deleteCelebComment } = useData();
+    const { celebs, news, movies, addCelebComment, likeCelebComment, updateCelebComment, deleteCelebComment, followCeleb, user } = useData();
     const [activeSection, setActiveSection] = React.useState('All');
     
     const celeb = celebs.find(item => item._id === id || item.slug === id);
@@ -93,8 +93,11 @@ const CelebDetail = () => {
                                 </p>
                                 
                                 <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
-                                    <button className="bg-primary-red text-white px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl shadow-primary-red/40 flex items-center gap-2">
-                                        <i className="fas fa-plus"></i> Follow
+                                    <button 
+                                        onClick={() => followCeleb(celeb._id)}
+                                        className={`${celeb.isFollowing ? 'bg-white/20 border-white/40' : 'bg-primary-red shadow-primary-red/40'} text-white px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl flex items-center gap-2 border`}
+                                    >
+                                        <i className={`fas ${celeb.isFollowing ? 'fa-check' : 'fa-plus'}`}></i> {celeb.isFollowing ? 'Following' : 'Follow'}
                                     </button>
                                     <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:bg-white/20 transition-all shadow-lg">
                                         Add to Collection
@@ -134,7 +137,7 @@ const CelebDetail = () => {
                             ) : (
                                 <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 flex justify-between items-center text-center">
                                     <div className="flex-1">
-                                        <p className="text-3xl font-black text-white italic tracking-tighter leading-none mb-2">{celeb.stats?.fanBase || '0'}</p>
+                                        <p className="text-3xl font-black text-white italic tracking-tighter leading-none mb-2">{(celeb.followers?.length || 0) + (celeb.bonusFollowers || 0)}</p>
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Fans</p>
                                     </div>
                                     <div className="w-px h-10 bg-white/10"></div>
@@ -153,7 +156,7 @@ const CelebDetail = () => {
                             {/* Mini Stats Bar */}
                             <div className="grid grid-cols-3 gap-1 pt-4 border-t border-white/10">
                                 <div className="text-center">
-                                    <p className="text-lg font-black text-white leading-none">1.2M</p>
+                                    <p className="text-lg font-black text-white leading-none">{(celeb.followers?.length || 0) + (celeb.bonusFollowers || 0)}</p>
                                     <p className="text-[8px] font-black uppercase tracking-widest text-white/30 mt-1">Fans</p>
                                 </div>
                                 <div className="text-center">

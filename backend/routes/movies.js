@@ -8,6 +8,13 @@ const enrich = (items, sessionUser) => {
     const userId = sessionUser ? sessionUser.id : null;
     return items.map(item => {
         const itemObj = item.toObject();
+        if (userId && itemObj.userRatings) {
+            const userRating = itemObj.userRatings.find(r => r.user?.toString() === userId);
+            itemObj.myRating = userRating ? userRating.rating : null;
+        } else {
+            itemObj.myRating = null;
+        }
+
         if (itemObj.comments) {
             itemObj.comments = itemObj.comments.map(comment => ({
                 ...comment,
@@ -209,5 +216,38 @@ router.put('/:id/comments/:commentId', async (req, res) => {
         res.json(enrich([movie], req.session.user)[0]);
     } catch (err) { res.status(500).json({ message: err.message }); }
 });
-
+ 
+// Rate a movie
+router.post('/:id/rate', async (req, res) => {
+    try {
+        const movie = await Movie.findById(req.params.id);
+        if (!movie) return res.status(404).json({ message: 'Movie not found' });
+ 
+        if (!req.session.user) return res.status(401).json({ message: 'Login required' });
+        const { rating } = req.body;
+        const userId = req.session.user.id;
+ 
+        if (!rating || rating < 1 || rating > 5) {
+            return res.status(400).json({ message: 'Invalid rating. Must be between 1 and 5.' });
+        }
+ 
+        if (!movie.userRatings) movie.userRatings = [];
+ 
+        const existingRatingIndex = movie.userRatings.findIndex(r => r.user?.toString() === userId);
+        if (existingRatingIndex > -1) {
+            movie.userRatings[existingRatingIndex].rating = rating;
+        } else {
+            movie.userRatings.push({ user: userId, rating });
+        }
+ 
+        // Recalculate average
+        movie.totalRatings = movie.userRatings.length;
+        const sum = movie.userRatings.reduce((acc, r) => acc + r.rating, 0);
+        movie.averageRating = sum / movie.totalRatings;
+ 
+        await movie.save();
+        res.json(enrich([movie], req.session.user)[0]);
+    } catch (err) { res.status(500).json({ message: err.message }); }
+});
+ 
 module.exports = router;

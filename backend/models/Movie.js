@@ -36,6 +36,13 @@ const MovieSchema = new mongoose.Schema({
         createdAt: { type: Date, default: Date.now }
     }],
     slug: { type: String, unique: true, sparse: true },
+    userRatings: [{
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        rating: { type: Number, min: 1, max: 5 },
+        createdAt: { type: Date, default: Date.now }
+    }],
+    averageRating: { type: Number, default: 0 },
+    totalRatings: { type: Number, default: 0 },
     photos: [{ type: String }],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });

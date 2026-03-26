@@ -29,6 +29,8 @@ const CelebritySchema = new mongoose.Schema({
     photos: [{ type: String }],
     videos: [{ type: String }],
     slug: { type: String, unique: true, sparse: true },
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    bonusFollowers: { type: Number, default: 0 },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 

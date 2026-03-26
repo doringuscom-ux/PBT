@@ -28,11 +28,6 @@ const MovieDetail = () => {
         <MovieDetailLayout 
             movie={movie} 
             sidebarNews={sidebarNews} 
-            movies={movies}
-            onAddComment={addMovieComment}
-            onLikeComment={likeMovieComment}
-            onUpdateComment={updateMovieComment}
-            onDeleteComment={deleteMovieComment}
         />
     );
 };

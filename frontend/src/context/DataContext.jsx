@@ -131,6 +131,17 @@ export const DataProvider = ({ children }) => {
     } catch (err) { console.error(err); }
   };
 
+  const rateMovie = async (id, rating) => {
+    try {
+      const res = await api.rateMovie(id, rating);
+      setMovies(movies.map(m => m._id === id ? res.data : m));
+      return { success: true };
+    } catch (err) { 
+      console.error(err); 
+      return { success: false, error: err.response?.data?.message || err.message };
+    }
+  };
+
   const updateMovieComment = async (id, commentId, data) => {
     try {
       if (!id || !commentId) throw new Error("Missing id or commentId");
@@ -373,6 +384,17 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const followCeleb = async (id) => {
+    try {
+      const res = await api.followCelebrity(id);
+      setCelebs(celebs.map(c => c._id === id ? res.data : c));
+      return { success: true };
+    } catch (err) { 
+      console.error(err); 
+      return { success: false, error: err.response?.data?.message || err.message };
+    }
+  };
+
 
   const updateAnnouncements = (newAnns) => {
     setAnnouncements(newAnns);
@@ -404,9 +426,9 @@ export const DataProvider = ({ children }) => {
         updateAnnouncements,
         user, setUser, logout,
         refreshData: fetchData,
-        addMovieComment, deleteMovieComment, likeMovieComment, updateMovieComment,
+        addMovieComment, deleteMovieComment, likeMovieComment, updateMovieComment, rateMovie,
         addVideoComment, deleteVideoComment, likeVideoComment, updateVideoComment,
-        addCelebComment, deleteCelebComment, likeCelebComment, updateCelebComment
+        addCelebComment, deleteCelebComment, likeCelebComment, updateCelebComment, followCeleb
       }}>
       {children}
     </DataContext.Provider>
