@@ -68,7 +68,13 @@ const ManageMovies = () => {
         if (!fieldsToExclude.includes(key)) {
             if (key === 'performance' || key === 'cast' || key === 'photos') {
                 data.append(key, JSON.stringify(formData[key]));
-            } else if ((key !== 'image' || imageSource === 'url') && (key !== 'trailerUrl' || trailerSource === 'url')) {
+            } else if (key === 'image') {
+                if (imageSource === 'url') data.append('image', formData[key]);
+            } else if (key === 'trailerUrl') {
+                if (trailerSource === 'url' || trailerSource === 'link') {
+                    data.append('trailerUrl', formData[key]);
+                }
+            } else {
                 data.append(key, formData[key]);
             }
         }

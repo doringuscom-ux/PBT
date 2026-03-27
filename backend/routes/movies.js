@@ -66,10 +66,14 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
         try { movieData.photos = JSON.parse(movieData.photos); } catch (e) { console.error("Photos parse error:", e); }
     }
 
-    const movie = new Movie(movieData);
     try {
-        const newMessage = await movie.save();
-        res.status(201).json(newMessage);
+        const movie = new Movie(movieData);
+        await movie.save();
+        const newMessage = await Movie.findById(movie._id)
+            .populate('createdBy', 'username employeeId fullName')
+            .populate('cast.celebrity')
+            .populate('trailerVideo');
+        res.status(201).json(enrich([newMessage], req.session.user)[0]);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
