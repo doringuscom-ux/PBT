@@ -24,7 +24,7 @@ const ManageMovies = () => {
     title: '', image: '', coverImage: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
     overview: '', director: '', runtime: '', certification: '', 
     performance: { day1: '', weekend: '', status: 'Blockbuster' }, industry: 'Bollywood',
-    fullStory: '', trailerUrl: '', likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
+    fullStory: '', trailerUrl: '', trailerVideo: null, likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
   });
 
   const [showForm, setShowForm] = useState(false);
@@ -39,6 +39,11 @@ const ManageMovies = () => {
   const [showComments, setShowComments] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const selectedMovie = movies.find(m => m._id === selectedMovieId);
+  
+  // New state for trailer selection
+  const { videos } = useData();
+  const [trailerSearchTerm, setTrailerSearchTerm] = useState('');
+  const [showTrailerDropdown, setShowTrailerDropdown] = useState(false);
 
   // Released movies only (release date is today or past)
   const releasedMovies = movies.filter(movie => !movie.releaseDate || new Date(movie.releaseDate) <= new Date());
@@ -89,7 +94,7 @@ const ManageMovies = () => {
       title: '', image: '', coverImage: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
       overview: '', director: '', runtime: '', certification: '', 
       performance: { day1: '', weekend: '', status: 'Blockbuster' }, industry: 'Bollywood',
-      fullStory: '', trailerUrl: '', likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
+      fullStory: '', trailerUrl: '', trailerVideo: null, likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
     });
     setSelectedFile(null);
     setImageSource('url');
@@ -109,7 +114,8 @@ const ManageMovies = () => {
       performance: movie.performance || { day1: '', weekend: '', status: 'Blockbuster' },
       cast: movie.cast || [],
       photos: Array.isArray(movie.photos) ? movie.photos : (typeof movie.photos === 'string' ? JSON.parse(movie.photos) : []),
-      coverImage: movie.coverImage || ''
+      coverImage: movie.coverImage || '',
+      trailerVideo: movie.trailerVideo?._id || movie.trailerVideo || null
     });
     setIsCustomIndustry(movie.industry && !INDUSTRIES.includes(movie.industry));
     setShowForm(true);
@@ -257,15 +263,70 @@ const ManageMovies = () => {
                 </div>
                 
                 <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Trailer Video</label>
-                    <div className="flex gap-2">
-                        <button type="button" onClick={() => setTrailerSource('url')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest ${trailerSource === 'url' ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-500'}`}>URL</button>
-                        <button type="button" onClick={() => setTrailerSource('file')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest ${trailerSource === 'file' ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-500'}`}>Upload</button>
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1 italic tracking-widest">Trailer / Promotional Video</label>
+                    <div className="flex gap-2 p-1 bg-slate-100 rounded-xl w-fit">
+                        <button type="button" onClick={() => setTrailerSource('url')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${trailerSource === 'url' ? 'bg-white text-primary-red shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>URL</button>
+                        <button type="button" onClick={() => setTrailerSource('link')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${trailerSource === 'link' ? 'bg-white text-primary-red shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>Link Vault</button>
+                        <button type="button" onClick={() => setTrailerSource('file')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${trailerSource === 'file' ? 'bg-white text-primary-red shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>Upload</button>
                     </div>
-                    {trailerSource === 'url' ? (
-                        <input placeholder="Trailer/YouTube URL" className="p-3 border rounded-xl w-full" value={formData.trailerUrl} onChange={e => setFormData({...formData, trailerUrl: e.target.value})} />
-                    ) : (
-                        <input type="file" accept="video/*" onChange={e => setTrailerFile(e.target.files[0])} className="w-full text-xs p-2 border rounded-xl" />
+                    
+                    {trailerSource === 'link' && (
+                        <div className="relative animate-in zoom-in-95 duration-200">
+                             <div className="relative group/search">
+                                <input 
+                                    type="text"
+                                    className={`w-full p-4 border rounded-2xl text-xs font-bold outline-none transition-all pr-12 
+                                        ${showTrailerDropdown ? 'ring-2 ring-primary-red/20 border-primary-red shadow-xl' : 'bg-slate-50 border-gray-200'}`}
+                                    placeholder="Search trailer vault..."
+                                    value={showTrailerDropdown ? trailerSearchTerm : (videos.find(v => v._id === formData.trailerVideo)?.title || 'No video linked')}
+                                    onFocus={() => { setShowTrailerDropdown(true); setTrailerSearchTerm(''); }}
+                                    onChange={e => setTrailerSearchTerm(e.target.value)}
+                                />
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                    {formData.trailerVideo && !showTrailerDropdown && <i className="fas fa-link text-primary-red animate-pulse"></i>}
+                                    <i className="fas fa-chevron-down text-slate-300 text-[10px]"></i>
+                                </div>
+
+                                {showTrailerDropdown && (
+                                    <>
+                                        <div className="fixed inset-0 z-40" onClick={() => setShowTrailerDropdown(false)}></div>
+                                        <div className="absolute z-50 left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-[2rem] shadow-[0_25px_60px_rgba(0,0,0,0.2)] max-h-72 overflow-y-auto animate-in slide-in-from-top-4 duration-300 custom-scrollbar p-2">
+                                            <div className="p-3 text-[9px] font-black uppercase text-slate-400 tracking-widest border-b border-dashed mb-1">Select from Trailer Vault</div>
+                                            {videos
+                                                .filter(v => v.title.toLowerCase().includes(trailerSearchTerm.toLowerCase()))
+                                                .map(v => (
+                                                    <button 
+                                                        key={v._id}
+                                                        type="button"
+                                                        className="w-full text-left p-3 hover:bg-slate-50 flex items-center gap-4 rounded-2xl transition-all group/v"
+                                                        onClick={() => {
+                                                            setFormData({ ...formData, trailerVideo: v._id, trailerUrl: v.videoUrl });
+                                                            setShowTrailerDropdown(false);
+                                                        }}
+                                                    >
+                                                        <div className="w-16 aspect-video rounded-lg overflow-hidden border shadow-sm group-hover/v:border-primary-red transition-colors shrink-0">
+                                                            <img src={v.image} className="w-full h-full object-cover" alt="" />
+                                                        </div>
+                                                        <div className="min-w-0 flex-1">
+                                                            <p className="text-xs font-black text-slate-900 truncate group-hover/v:text-primary-red">{v.title}</p>
+                                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{v.industry} • {v.category}</p>
+                                                        </div>
+                                                        <i className="fas fa-plus-circle text-slate-200 group-hover/v:text-primary-red transition-colors"></i>
+                                                    </button>
+                                                ))
+                                            }
+                                        </div>
+                                    </>
+                                )}
+                             </div>
+                        </div>
+                    )}
+
+                    {trailerSource === 'url' && (
+                        <input placeholder="Trailer/YouTube URL" className="p-3 border rounded-xl w-full font-bold text-sm bg-slate-50" value={formData.trailerUrl} onChange={e => setFormData({...formData, trailerUrl: e.target.value})} />
+                    )}
+                    {trailerSource === 'file' && (
+                        <input type="file" accept="video/*" onChange={e => setTrailerFile(e.target.files[0])} className="w-full text-xs p-2 border rounded-xl bg-slate-50" />
                     )}
                 </div>
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">

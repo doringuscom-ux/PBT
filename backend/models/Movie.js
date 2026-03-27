@@ -19,6 +19,7 @@ const MovieSchema = new mongoose.Schema({
     industry: { type: String, default: 'Pollywood' },
     fullStory: { type: String },
     trailerUrl: { type: String },
+    trailerVideo: { type: mongoose.Schema.Types.ObjectId, ref: 'Video' },
     releaseDate: { type: Date },
     likes: { type: Number, default: 0 },
     cast: [{

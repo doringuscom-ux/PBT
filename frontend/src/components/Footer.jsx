@@ -10,69 +10,91 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-dark-bg text-white pt-12 pb-5">
-      <div className="w-[96%] max-w-[1800px] mx-auto px-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
-          <div className="footer-column">
-            <Logo className="h-20 w-auto items-start mb-6" />
-            <p className="text-gray-400 text-sm leading-relaxed mb-5">
-              Your premier destination for cinema news, reviews, trailers, and celebrity interviews. Stay updated with everything happening in the cinematic world.
+    <footer className="bg-slate-950 text-white pt-16 pb-8 relative overflow-hidden border-t-4 border-primary-red">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-red/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none translate-y-1/2 -translate-x-1/2"></div>
+      
+      <div className="page-container relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 mb-16">
+          
+          {/* Brand Column */}
+          <div className="lg:col-span-4 flex flex-col items-start">
+            <Link to="/" className="mb-6 inline-block no-underline shrink-0">
+                <Logo className="h-20 w-auto" />
+            </Link>
+            <p className="text-slate-400 text-sm leading-relaxed mb-8 font-medium italic pr-4">
+              Your premier destination for cinema news, reviews, trailers, and celebrity interviews. Experience the magic of the cinematic universe in premium quality.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <SocialIcon icon="fab fa-facebook-f" />
               <SocialIcon icon="fab fa-twitter" />
               <SocialIcon icon="fab fa-instagram" />
               <SocialIcon icon="fab fa-youtube" />
-              <SocialIcon icon="fab fa-whatsapp" />
             </div>
           </div>
           
-          <div className="footer-column">
-            <h3 className="text-xl font-bold mb-5 text-accent-gold">Quick Links</h3>
-            <ul className="list-none">
+          {/* Quick Links */}
+          <div className="lg:col-span-2">
+            <h3 className="text-lg font-black mb-6 text-white uppercase tracking-widest flex items-center gap-2">
+                <span className="w-1.5 h-6 bg-primary-red rounded-sm"></span> Explore
+            </h3>
+            <ul className="list-none space-y-4 m-0 p-0">
               <FooterLink text="Home" path="/" />
-              <FooterLink text="Movies" path="/movies" />
-              <FooterLink text="Celebrities" path="/celebs" />
               <FooterLink text="News" path="/news" />
-              <FooterLink text="Videos" path="/videos" />
-            </ul>
-          </div>
-          
-          <div className="footer-column">
-            <h3 className="text-xl font-bold mb-5 text-accent-gold">Categories</h3>
-            <ul className="list-none">
-              <FooterLink text="Regional Cinema" path="/news" />
-              <FooterLink text="Bollywood" path="/news" />
-              <FooterLink text="Hollywood" path="/news" />
-              <FooterLink text="Reviews" path="/news" />
               <FooterLink text="Trailers" path="/videos" />
-              <FooterLink text="Box Office" path="/movies" />
+              <FooterLink text="Celebrities" path="/celebs" />
+              <FooterLink text="Movies Vault" path="/movies" />
             </ul>
           </div>
           
-          <div className="footer-column">
-            <h3 className="text-xl font-bold mb-5 text-accent-gold">Newsletter</h3>
-            <p className="text-gray-400 text-sm mb-5">Subscribe to our newsletter to get daily updates about the world of cinema.</p>
-            <form className="flex flex-col gap-2.5" onSubmit={handleSubmit}>
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                className="py-3 px-4 border-none rounded text-text-dark text-sm outline-none"
-                required 
-              />
+          {/* Additional Pages */}
+          <div className="lg:col-span-2">
+            <h3 className="text-lg font-black mb-6 text-white uppercase tracking-widest flex items-center gap-2">
+                <span className="w-1.5 h-6 bg-blue-500 rounded-sm"></span> Portals
+            </h3>
+            <ul className="list-none space-y-4 m-0 p-0">
+              <FooterLink text="Search Area" path="/search" />
+              <FooterLink text="Today's News" path="/today-news" />
+              <FooterLink text="Sports Actions" path="/sports" />
+              <FooterLink text="Upcoming Movies" path="/upcoming" />
+              <FooterLink text="Contact Us" path="/contact-us" />
+            </ul>
+          </div>
+          
+          {/* Newsletter */}
+          <div className="lg:col-span-4 bg-slate-900/50 p-6 sm:p-8 rounded-3xl border border-white/5 shadow-2xl">
+            <h3 className="text-lg font-black mb-4 text-white uppercase tracking-widest">Newsletter</h3>
+            <p className="text-slate-400 text-sm mb-6 leading-relaxed">Join our inner circle. Get the latest exclusive trailers, breaking news, and reviews directly to your inbox.</p>
+            <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+              <div className="relative">
+                <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                <input 
+                  type="email" 
+                  placeholder="Enter your email address" 
+                  className="w-full py-3.5 pl-11 pr-4 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm outline-none focus:border-primary-red focus:bg-slate-900 transition-all font-medium placeholder:text-slate-600"
+                  required 
+                />
+              </div>
               <button 
                 type="submit" 
-                className="bg-primary-red text-white border-none py-3 px-5 rounded font-bold cursor-pointer hover:bg-secondary-red transition-colors"
+                className="w-full bg-primary-red text-white border-none py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-[0.2em] cursor-pointer hover:bg-red-600 active:scale-[0.98] transition-all shadow-lg shadow-primary-red/20 flex items-center justify-center gap-2"
               >
-                Subscribe
+                Subscribe Now <i className="fas fa-paper-plane"></i>
               </button>
             </form>
           </div>
         </div>
         
-        <div className="text-center pt-5 border-t border-white/10 text-gray-500 text-sm flex flex-col sm:flex-row justify-center items-center gap-2">
-          <span>&copy; 2026 PB TADKA. All Rights Reserved. | Designed for Global Cinema Lovers</span>
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-slate-400 text-xs font-bold tracking-wider uppercase">
+            &copy; {new Date().getFullYear()} PB TADKA. All Rights Reserved.
+          </div>
           
+          <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.2em]">
+             <span className="text-slate-500">Designed by</span>
+             <a href="#" className="text-primary-red hover:text-white transition-colors no-underline">digital orra</a>
+          </div>
         </div>
       </div>
     </footer>
@@ -80,15 +102,15 @@ const Footer = () => {
 };
 
 const SocialIcon = ({ icon }) => (
-  <a href="#" className="inline-flex items-center justify-center w-10 h-10 bg-white/10 rounded-full text-white text-lg hover:bg-primary-red hover:-translate-y-1 transition-all">
+  <a href="#" className="inline-flex items-center justify-center w-10 h-10 bg-slate-800 border border-white/5 rounded-full text-slate-400 hover:text-white hover:bg-primary-red hover:border-primary-red hover:-translate-y-1 transition-all duration-300">
     <i className={icon}></i>
   </a>
 );
 
 const FooterLink = ({ text, path }) => (
-  <li className="mb-3">
-    <Link to={path || "#"} className="text-gray-400 no-underline text-sm hover:text-primary-red hover:pl-1 transition-all">
-      {text}
+  <li>
+    <Link to={path || "#"} className="text-slate-400 font-medium no-underline text-sm hover:text-primary-red hover:pl-2 transition-all flex items-center gap-2 group">
+      <i className="fas fa-chevron-right text-[8px] text-slate-600 group-hover:text-primary-red transition-colors"></i> {text}
     </Link>
   </li>
 );

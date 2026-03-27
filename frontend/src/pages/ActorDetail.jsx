@@ -33,7 +33,7 @@ const ActorDetail = () => {
                         <img 
                             src={actorInfo?.image || 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/default_actor.jpg'} 
                             alt={actorName} 
-                            className="w-full h-full object-cover rounded-full"
+                            className="w-full h-full object-cover object-top rounded-full"
                         />
                     </div>
                     <div className="text-center md:text-left">

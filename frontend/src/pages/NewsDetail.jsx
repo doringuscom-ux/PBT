@@ -38,7 +38,7 @@ const NewsDetail = () => {
             <main className="page-container py-8 mt-4">
                 <div className="flex flex-col lg:flex-row gap-8">
                     
-                    <div className="lg:w-[70%] xl:w-[72%] min-w-0">
+                    <div className="lg:w-[65%] xl:w-[65%] min-w-0">
                         <nav className="mb-6 text-[10px] font-black uppercase tracking-widest text-gray-400">
                             <Link to="/" className="hover:text-primary-red">Home</Link> 
                             <span className="mx-2">/</span>
@@ -84,26 +84,31 @@ const NewsDetail = () => {
                         />
                     </div>
 
-                    <aside className="lg:w-[30%] xl:w-[28%]">
-                        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 sticky top-24">
-                            <h3 className="text-sm font-black text-primary-red uppercase tracking-widest mb-8 flex items-center gap-2 italic">
-                                <span className="w-2.5 h-2.5 bg-primary-red rounded-full animate-pulse"></span> Related Stories
-                            </h3>
-                            
-                            <div className="space-y-8">
-                                {relatedNews.map((item) => (
-                                    <Link key={item._id} to={`/news/${item._id}`} className="flex gap-4 group cursor-pointer no-underline">
-                                        <div className="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden shadow-sm">
-                                            <img src={item.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
-                                        </div>
-                                        <div className="flex flex-col justify-center">
-                                            <h4 className="text-[12px] font-black text-slate-800 leading-[1.3] line-clamp-3 group-hover:text-primary-red transition-colors uppercase tracking-tight italic">
-                                                {item.title}
-                                            </h4>
-                                            <span className="text-[9px] text-gray-400 font-bold mt-2 uppercase tracking-tighter">Cinema Update</span>
-                                        </div>
-                                    </Link>
-                                ))}
+                    <aside className="lg:w-[35%] xl:w-[35%] relative">
+                        <div className="sticky top-[140px] h-[calc(100vh-160px)] flex flex-col">
+                            <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex flex-col h-full overflow-hidden">
+                                <h3 className="text-sm font-black text-primary-red uppercase tracking-widest mb-8 flex items-center gap-2 italic shrink-0">
+                                    <span className="w-2.5 h-2.5 bg-primary-red rounded-full animate-pulse"></span> Related Stories
+                                </h3>
+                                
+                                <div className="space-y-8 overflow-y-auto flex-1 pr-2 no-scrollbar">
+                                    {relatedNews.map((item) => (
+                                        <Link key={item._id} to={`/news/${item._id}`} className="flex gap-4 group cursor-pointer no-underline items-center">
+                                            <div className="w-24 h-24 lg:w-28 lg:h-24 flex-shrink-0 rounded-2xl overflow-hidden shadow-md relative">
+                                                <img src={item.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            </div>
+                                            <div className="flex flex-col justify-center">
+                                                <h4 className="text-xs lg:text-[13px] font-black text-slate-900 leading-[1.3] line-clamp-3 group-hover:text-primary-red transition-colors uppercase tracking-tight italic">
+                                                    {item.title}
+                                                </h4>
+                                                <div className="mt-2 text-[9px] text-gray-400 font-black uppercase tracking-widest italic flex items-center gap-1.5">
+                                                    <span className="w-1.5 h-1.5 bg-primary-red rounded-full"></span> Cinema Update
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </aside>

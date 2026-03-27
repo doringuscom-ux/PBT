@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 
 const SearchPage = () => {
   const { news, movies, celebs, videos } = useData();
   const location = useLocation();
+  const navigate = useNavigate();
   const query = new URLSearchParams(location.search).get('q')?.toLowerCase() || '';
 
   const results = useMemo(() => {
@@ -32,122 +33,205 @@ const SearchPage = () => {
     };
   }, [query, news, movies, celebs, videos]);
 
-  const loading = false; // Data is already in context
   const hasResults = results.news.length > 0 || results.movies.length > 0 || results.celebs.length > 0 || results.videos.length > 0;
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Recent';
-    return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(dateString).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
+  // Trending Fallback Data
+  const trendingMovies = useMemo(() => [...movies].sort(() => 0.5 - Math.random()).slice(0, 6), [movies]);
+  const trendingCelebs = useMemo(() => [...celebs].sort((a, b) => ((b.followers?.length || 0) + (b.bonusFollowers || 0)) - ((a.followers?.length || 0) + (a.bonusFollowers || 0))).slice(0, 6), [celebs]);
+  const latestNews = useMemo(() => [...news].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 4), [news]);
+
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="page-container">
-        <div className="mb-12">
-          <h1 className="text-4xl font-black text-text-dark uppercase tracking-tight italic">
-            Search Results for: <span className="text-primary-red">"{query}"</span>
-          </h1>
-          {!loading && !hasResults && (
-             <div className="mt-12 bg-white rounded-3xl p-20 text-center border border-gray-100 shadow-sm">
-                <i className="fas fa-search text-5xl text-gray-200 mb-6"></i>
-                <h2 className="text-2xl font-bold text-gray-400">No results found</h2>
-                <p className="text-gray-400 mt-2">Try searching with different keywords or check out our latest news.</p>
-                <Link to="/news" className="inline-block mt-8 text-primary-red font-bold hover:underline">Explore News</Link>
-             </div>
-          )}
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-12 h-12 border-4 border-primary-red border-t-transparent rounded-full animate-spin"></div>
+    <div className="min-h-screen bg-[#f8f9fa] flex flex-col">
+      {/* Cinematic Header Block - Only show when there is an active search query */}
+      {query && (
+          <div className="bg-slate-900 pt-16 pb-16 relative overflow-hidden shadow-2xl shrink-0">
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-red/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            
+            <div className="page-container relative z-20 flex flex-col items-center text-center">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter italic drop-shadow-lg mb-6 leading-tight">
+                    Search Results for <br/><span className="text-primary-red">"{query}"</span>
+                </h1>
+                
+                <p className="text-slate-400 text-xs md:text-sm font-bold uppercase tracking-widest mt-6 bg-slate-800/50 py-2 px-6 rounded-full border border-slate-700/50 backdrop-blur-sm">
+                    {hasResults ? 'Matches Found Below' : 'No exact matches found'}
+                </p>
+            </div>
           </div>
-        ) : (
-          <div className="space-y-16">
-            {/* News Results */}
-            {results.news.length > 0 && (
-              <section>
-                <h2 className="text-xl font-black text-text-dark mb-6 flex items-center gap-3 border-l-4 border-primary-red pl-4 uppercase tracking-wider">News Updates</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {results.news.map(item => (
-                    <Link key={item._id} to={`/news/${item._id}`} className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all">
-                      <div className="flex p-4 gap-4">
-                        <img src={item.image} className="w-24 h-24 object-cover rounded-xl" alt="" />
-                        <div className="flex-1 min-w-0">
-                          <span className="text-[10px] font-black text-primary-red uppercase tracking-widest">{item.category}</span>
-                          <h3 className="font-bold text-sm text-text-dark mt-1 line-clamp-2 group-hover:text-primary-red transition-all">{item.title}</h3>
-                          <span className="text-[9px] text-gray-400 font-bold block mt-2 uppercase">{formatDate(item.createdAt || item.date)}</span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
+      )}
 
-            {/* Movies Results */}
+      <main className="page-container py-12 flex-1">
+        {query && !hasResults && (
+            <div className="mb-16 bg-white p-12 rounded-3xl shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6 shadow-inner border border-slate-100">
+                    <i className="fas fa-ghost text-4xl text-slate-300"></i>
+                </div>
+                <h2 className="text-2xl font-black text-slate-900 italic tracking-tight uppercase mb-2">Nothing found for "{query}"</h2>
+                <p className="text-slate-500 font-medium text-sm">But don't worry, there is plenty of other amazing content to explore.</p>
+            </div>
+        )}
+
+        <div className="space-y-16">
+            
+            {/* -------------------- DYNAMIC SEARCH RESULTS -------------------- */}
+
             {results.movies.length > 0 && (
-              <section>
-                <h2 className="text-xl font-black text-text-dark mb-6 flex items-center gap-3 border-l-4 border-accent-gold pl-4 uppercase tracking-wider">Movies</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+                <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-8 flex items-center gap-3 italic uppercase tracking-tighter">
+                    <span className="w-2 h-8 bg-primary-red rounded-sm"></span> Matching Movies
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                   {results.movies.map(movie => (
-                    <Link 
-                      key={movie._id} 
-                      to={`/movie/${movie.slug || movie._id}`}
-                      className="group flex flex-col no-underline text-inherit"
-                    >
-                      <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg group-hover:scale-95 transition-all">
-                        <img src={movie.image} className="w-full h-full object-cover" alt="" />
-                        <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black text-white">
-                          <span className="text-[9px] font-bold">⭐ {movie.rating}</span>
+                    <Link key={movie._id} to={`/movie/${movie.slug || movie._id}`} className="group flex flex-col no-underline text-inherit">
+                      <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border-2 border-white group-hover:border-primary-red transition-all duration-300">
+                        <img src={movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                        <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+                          <span className="text-[10px] font-black text-yellow-400 flex items-center gap-1 drop-shadow-md">
+                            <i className="fas fa-star"></i> {movie.averageRating ? movie.averageRating.toFixed(1) : 'New'}
+                          </span>
                         </div>
                       </div>
-                      <h3 className="font-bold text-xs truncate group-hover:text-primary-red transition-all">{movie.title}</h3>
+                      <h3 className="font-black text-xs md:text-sm truncate group-hover:text-primary-red transition-colors italic tracking-tight">{movie.title}</h3>
+                      <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">{movie.industry}</span>
                     </Link>
                   ))}
                 </div>
               </section>
             )}
 
-             {/* Celebs Results */}
              {results.celebs.length > 0 && (
-              <section>
-                <h2 className="text-xl font-black text-text-dark mb-6 flex items-center gap-3 border-l-4 border-blue-500 pl-4 uppercase tracking-wider">Celebrities</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+                <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-8 flex items-center gap-3 italic uppercase tracking-tighter">
+                    <span className="w-2 h-8 bg-blue-500 rounded-sm"></span> Matching Celebrities
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                   {results.celebs.map(celeb => (
-                    <Link key={celeb._id} to={`/celebrity/${celeb._id}`} className="flex flex-col items-center group text-center">
-                      <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary-red mb-3 group-hover:scale-110 transition-all shadow-md">
-                        <img src={celeb.image} className="w-full h-full object-cover" alt="" />
+                    <Link key={celeb._id} to={`/celeb/${celeb._id}`} className="group flex flex-col text-center no-underline text-inherit bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                      <div className="relative w-full aspect-[4/5] overflow-hidden bg-slate-100">
+                        <img src={celeb.image} className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700" alt="" />
                       </div>
-                      <h3 className="font-bold text-xs line-clamp-1">{celeb.name}</h3>
-                      <span className="text-[9px] text-gray-400 font-bold uppercase">{celeb.role}</span>
+                      <div className="p-4 border-t-2 border-transparent group-hover:border-blue-500 transition-colors">
+                        <h3 className="font-black text-[13px] line-clamp-1 italic tracking-tight group-hover:text-blue-600 transition-colors">{celeb.name}</h3>
+                        <span className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-1 block">{celeb.role}</span>
+                      </div>
                     </Link>
                   ))}
                 </div>
               </section>
             )}
 
-            {/* Videos Results */}
+            {results.news.length > 0 && (
+              <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+                <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-8 flex items-center gap-3 italic uppercase tracking-tighter">
+                    <span className="w-2 h-8 bg-orange-500 rounded-sm"></span> Matching News
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {results.news.map(item => (
+                    <Link key={item._id} to={`/news/${item._id}`} className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline text-inherit flex flex-col">
+                      <div className="relative aspect-video overflow-hidden">
+                        <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                        <div className="absolute top-3 left-3 bg-orange-500 text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded shadow-md">
+                            {item.category}
+                        </div>
+                      </div>
+                      <div className="p-6 flex-1 flex flex-col">
+                        <h3 className="font-black text-[15px] leading-snug text-slate-900 mb-3 line-clamp-2 group-hover:text-orange-600 transition-colors italic tracking-tight">{item.title}</h3>
+                        <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-4">
+                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1.5">
+                                <i className="far fa-calendar-alt"></i> {formatDate(item.createdAt || item.date)}
+                            </span>
+                            <span className="text-orange-500 text-[10px] font-black uppercase tracking-widest group-hover:underline">Read More</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {results.videos.length > 0 && (
-              <section>
-                <h2 className="text-xl font-black text-text-dark mb-6 flex items-center gap-3 border-l-4 border-red-600 pl-4 uppercase tracking-wider">Videos</h2>
+              <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
+                <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-8 flex items-center gap-3 italic uppercase tracking-tighter">
+                    <span className="w-2 h-8 bg-slate-900 rounded-sm"></span> Matching Videos
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {results.videos.map(video => (
-                    <Link key={video._id} to={`/video/${video._id}`} className="group">
-                      <div className="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-md group-hover:shadow-xl transition-all">
-                        <img src={video.image} className="w-full h-full object-cover" alt="" />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
-                           <i className="fas fa-play text-white text-2xl animate-pulse"></i>
+                    <Link key={video._id} to={`/video/${video._id}`} className="group bg-white rounded-2xl shadow-sm border border-gray-100 p-3 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline text-inherit">
+                      <div className="relative aspect-video rounded-xl overflow-hidden mb-4 shadow-inner bg-slate-100">
+                        <img src={video.image} className="w-full h-full object-cover opacity-90 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500" alt="" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-all">
+                           <div className="w-12 h-12 bg-primary-red rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform">
+                               <i className="fas fa-play ml-1"></i>
+                           </div>
                         </div>
                       </div>
-                      <h3 className="font-bold text-xs line-clamp-1 group-hover:text-primary-red transition-all">{video.title}</h3>
+                      <h3 className="font-black text-sm line-clamp-2 group-hover:text-primary-red transition-colors italic tracking-tight px-1">{video.title}</h3>
                     </Link>
                   ))}
                 </div>
               </section>
             )}
-          </div>
-        )}
-      </div>
+
+            {/* -------------------- TRENDING FALLBACK SECTION -------------------- */}
+            
+            {(!query || !hasResults) && (
+                <>
+                    {(query && !hasResults) && (
+                        <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mb-16 opacity-50"></div>
+                    )}
+                    
+                    <div className="text-center mb-12">
+                        <span className="text-primary-red text-[10px] font-black uppercase tracking-[0.2em] bg-red-50 px-3 py-1 rounded-full border border-red-100 mb-3 inline-block">Explore</span>
+                        <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Trending Right Now</h2>
+                    </div>
+
+                    {/* Trending Movies */}
+                    <section>
+                        <h3 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-widest flex items-center justify-between border-b pb-3">
+                            <span>Hot Movies</span>
+                            <Link to="/movies" className="text-[10px] text-primary-red hover:text-slate-900 transition-colors">VIEW ALL</Link>
+                        </h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                        {trendingMovies.map(movie => (
+                            <Link key={movie._id} to={`/movie/${movie.slug || movie._id}`} className="group flex flex-col no-underline text-inherit">
+                                <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-md border-2 border-white group-hover:border-slate-900 transition-all duration-300">
+                                    <img src={movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                                </div>
+                                <h4 className="font-bold text-[11px] truncate group-hover:text-primary-red transition-colors uppercase tracking-tight">{movie.title}</h4>
+                            </Link>
+                        ))}
+                        </div>
+                    </section>
+
+                    {/* Trending Celebs */}
+                    <section>
+                        <h3 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-widest flex items-center justify-between border-b pb-3">
+                            <span>Top Celebrities</span>
+                            <Link to="/celebs" className="text-[10px] text-primary-red hover:text-slate-900 transition-colors">VIEW ALL</Link>
+                        </h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                        {trendingCelebs.map(celeb => (
+                            <Link key={celeb._id} to={`/celeb/${celeb._id}`} className="group flex flex-col text-center no-underline text-inherit bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300">
+                            <div className="relative w-full aspect-[4/5] overflow-hidden bg-slate-100">
+                                <img src={celeb.image} className="absolute inset-0 w-full h-full object-cover object-[center_top] group-hover:scale-110 transition-transform duration-700" alt="" />
+                            </div>
+                            <div className="p-3 border-t-2 border-transparent group-hover:border-slate-900 transition-colors">
+                                <h4 className="font-black text-[12px] line-clamp-1 italic tracking-tight">{celeb.name}</h4>
+                            </div>
+                            </Link>
+                        ))}
+                        </div>
+                    </section>
+                </>
+            )}
+
+        </div>
+      </main>
     </div>
   );
 };

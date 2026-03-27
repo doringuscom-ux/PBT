@@ -43,7 +43,7 @@ const CelebList = () => {
             {filteredCelebs.map((celeb) => (
               <Link to={`/celeb/${celeb.slug || celeb._id}`} key={celeb._id} className="group relative block rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 shadow-2xl shadow-black/50 hover:shadow-primary-red/20 transition-all duration-500 hover:-translate-y-2">
                 <div className="aspect-[3/4] relative">
-                  <img src={celeb.image} alt={celeb.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                  <img src={celeb.image} alt={celeb.name} className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                   
                   {/* Dark Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>

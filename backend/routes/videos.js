@@ -47,30 +47,26 @@ router.post('/', cloudinaryUpload.fields([
     { name: 'thumbnail', maxCount: 1 }
 ]), async (req, res) => {
     try {
-        const { title, videoUrl, videoType, views, time } = req.body;
+        const videoData = { ...req.body };
         
-        let finalVideoUrl = videoUrl;
-        let finalThumbnail = req.body.image; 
-
         if (req.files && req.files['video']) {
-            // Note: Cloudinary upload middleware will handle the video if it's in the fields
-            finalVideoUrl = req.files['video'][0].path;
+            videoData.videoUrl = req.files['video'][0].path;
+            videoData.videoType = 'upload';
         }
 
         if (req.files && req.files['thumbnail']) {
-            finalThumbnail = req.files['thumbnail'][0].path;
+            videoData.image = req.files['thumbnail'][0].path;
         }
 
-        const video = new Video({
-            title,
-            image: finalThumbnail,
-            videoUrl: finalVideoUrl,
-            videoType,
-            views: views || '0',
-            time: time || '0:00',
-            createdBy: req.session.user ? req.session.user.id : undefined
-        });
+        if (req.session.user) {
+            videoData.createdBy = req.session.user.id;
+        }
 
+        if (videoData.slug) {
+            videoData.slug = videoData.slug.trim().toLowerCase();
+        }
+
+        const video = new Video(videoData);
         const newVideo = await video.save();
         res.status(201).json(newVideo);
     } catch (err) {
@@ -103,6 +99,10 @@ router.put('/:id', cloudinaryUpload.fields([
         // Heal corrupted data (remove invalid string entries if passed)
         if (updateData.comments && !Array.isArray(updateData.comments)) {
             delete updateData.comments;
+        }
+
+        if (updateData.slug) {
+            updateData.slug = updateData.slug.trim().toLowerCase();
         }
 
         const updatedVideo = await Video.findByIdAndUpdate(req.params.id, updateData, { new: true })

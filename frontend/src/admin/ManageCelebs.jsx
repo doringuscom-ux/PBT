@@ -442,7 +442,13 @@ const ManageCelebs = () => {
                     </div>
                     <button 
                       type="button" 
-                      onClick={() => setFormData({...formData, milestones: [...formData.milestones, { year: '', text: '' }]})}
+                      onClick={() => {
+                        if (user?.role === 'sub-admin' && formData.milestones.length >= 10) {
+                            alert("Sub-admins can only add a maximum of 10 milestones. Please contact an Admin to add more.");
+                            return;
+                        }
+                        setFormData({...formData, milestones: [...formData.milestones, { year: '', text: '' }]});
+                      }}
                       className="bg-white border border-gray-300 text-gray-700 hover:text-primary-red hover:border-primary-red px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-sm"
                     >
                       <i className="fas fa-plus"></i> Add Milestone

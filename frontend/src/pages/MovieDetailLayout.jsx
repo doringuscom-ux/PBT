@@ -193,7 +193,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
             <main className="page-container py-12">
                 <div className="flex flex-col lg:flex-row gap-12">
                     
-                    <div className="lg:w-[70%] xl:w-[75%] space-y-12">
+                    <div className="lg:w-[65%] xl:w-[65%] space-y-12">
                         {activeTab === 'Timeline' && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-12">
                                 <section>
@@ -247,7 +247,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                         className="group flex flex-col items-center gap-3 no-underline"
                                     >
                                             <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-xl overflow-hidden transition-transform group-hover:scale-110 duration-500 relative">
-                                                <img src={actor.image || 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/default_actor.jpg'} className="w-full h-full object-cover" alt="" />
+                                                <img src={actor.image || 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/default_actor.jpg'} className="w-full h-full object-cover object-top" alt="" />
                                                 <div className="absolute inset-0 bg-primary-red/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                     <i className="fas fa-link text-white text-xl"></i>
                                                 </div>
@@ -276,10 +276,12 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                         )}
                     </div>
 
-                    <aside className="lg:w-[30%] xl:w-[25%]">
-                        <div className="space-y-12 sticky top-[200px]">
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 pb-4 border-b">Suggested For You</h3>
+                    <aside className="lg:w-[35%] xl:w-[35%] relative">
+                        <div className="sticky top-[140px] h-[calc(100vh-160px)] overflow-y-auto no-scrollbar pb-6 space-y-8 pr-2">
+                            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                                <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 pb-4 border-b flex items-center gap-2 italic">
+                                    <span className="w-2.5 h-2.5 bg-primary-red rounded-full"></span> Suggested For You
+                                </h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     {suggestedMovies.map(m => (
                                         <Link key={m._id} to={`/movie/${m.slug || m._id}`} className="group flex flex-col gap-2 no-underline">
@@ -295,16 +297,21 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                 <Link to="/movies" className="block w-full text-center mt-8 py-3 rounded-xl border-2 border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-colors">View All Movies</Link>
                             </div>
 
-                            {movie.trailerUrl && (
+                            {(movie.trailerUrl || movie.trailerVideo) && (
                                 <div className="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-2xl group cursor-pointer bg-black">
                                     <img src={movie.coverImage || movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 opacity-60" alt="" />
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <a href={movie.trailerUrl} target="_blank" rel="noopener noreferrer" className="bg-primary-red text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
+                                        <Link 
+                                            to={movie.trailerVideo ? `/video/${movie.trailerVideo.slug || movie.trailerVideo._id || movie.trailerVideo}` : movie.trailerUrl} 
+                                            target={movie.trailerVideo ? undefined : "_blank"}
+                                            className="bg-primary-red text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
+                                        >
                                             <i className="fas fa-play ml-1"></i>
-                                        </a>
+                                        </Link>
                                     </div>
                                     <div className="absolute bottom-8 left-8 right-8">
-                                        <h4 className="text-xl font-black text-white uppercase italic leading-tight mb-4">Official Trailer</h4>
+                                        <h4 className="text-xl font-black text-white uppercase italic leading-tight mb-2 tracking-tighter">Official Trailer</h4>
+                                        <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest italic">{movie.trailerVideo ? 'Watch on PBtadka' : 'Watch on YouTube'}</p>
                                     </div>
                                 </div>
                             )}

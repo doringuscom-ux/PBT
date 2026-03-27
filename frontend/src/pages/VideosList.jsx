@@ -17,10 +17,10 @@ const VideosList = () => {
                     <div className="flex items-center justify-between mb-12">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-1 bg-red-600"></div>
-                            <h1 className="text-white text-5xl font-black italic tracking-tighter uppercase">TV & Videos</h1>
+                            <h1 className="text-white text-5xl font-black italic tracking-tighter uppercase">Movie Trailers</h1>
                         </div>
                     </div>
-                    <p className="text-gray-400 mb-10 text-lg">Exclusive trailers, interviews, and behind-the-scenes from across the globe.</p>
+                    <p className="text-gray-400 mb-10 text-lg font-medium">Watch the latest exclusive movie trailers, official teasers, and first looks from the cinematic universe.</p>
                     
                     <div className="mb-16">
                         <FilterBar 

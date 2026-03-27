@@ -3,11 +3,11 @@ import { DataProvider } from './context/DataContext';
 import AnnouncementBar from './components/AnnouncementBar';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import HomeVideoMarquee from './components/HomeVideoMarquee';
 import MovieSlider from './components/MovieSlider';
 import MovieCalendar from './components/MovieCalendar';
 import NewsGrid from './components/NewsGrid';
 import CelebGrid from './components/CelebGrid';
-import VideoGrid from './components/VideoGrid';
 import Footer from './components/Footer';
 
 // Admin Imports
@@ -39,6 +39,7 @@ import ManageSports from './admin/ManageSports';
 
 import UpcomingList from './pages/UpcomingList';
 import ManageUpcoming from './admin/ManageUpcoming';
+import ContactUs from './pages/ContactUs';
 
 import WeatherWidget from './components/WeatherWidget';
 import MarketWidget from './components/MarketWidget';
@@ -68,11 +69,11 @@ const HomePage = () => (
 
       <div className="lg:w-[68%] xl:w-[70%] min-w-0">
         <Hero />
+        <HomeVideoMarquee />
         <MovieSlider />
         <MovieCalendar />
         <NewsGrid />
         <CelebGrid />
-        <VideoGrid />
       </div>
       
       {/* Desktop Sidebar - Hidden on mobile */}
@@ -105,6 +106,7 @@ function App() {
             <Route path="/video/:id" element={<VideoDetail />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/sports" element={<SportsList />} />
+            <Route path="/contact-us" element={<ContactUs />} />
             <Route path="*" element={<NotFound />} />
           </Route>
           
