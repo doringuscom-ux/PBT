@@ -156,6 +156,19 @@ body {
   animation-play-state: paused;
 }
 
+@keyframes marquee-infinite {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee-infinite {
+  animation: marquee-infinite 30s linear infinite;
+}
+
+.animate-marquee-infinite:hover {
+  animation-play-state: paused;
+}
+
 .page-container {
   @apply w-[96%] max-w-[1800px] mx-auto px-4;
 }

@@ -35,14 +35,14 @@ const MovieList = () => {
 
             <div className="relative z-10 text-center px-4 max-w-4xl animate-slide-up">
                 <div className="flex items-center justify-center gap-3 mb-3">
-                    <div className="w-8 h-[1px] bg-primary-red"></div>
-                    <span className="text-primary-red font-black text-[9px] uppercase tracking-[0.4em] italic">Cinematic Excellence</span>
-                    <div className="w-8 h-[1px] bg-primary-red"></div>
+                    <div className="w-8 h-[1px] bg-yellow-400"></div>
+                    <span className="text-yellow-400 font-black text-[15px] uppercase tracking-[0.4em] italic">Cinematic Excellence</span>
+                    <div className="w-8 h-[1px] bg-yellow-400"></div>
                 </div>
                 <h1 className="text-3xl md:text-5xl font-black text-white mb-3 tracking-tighter leading-none shadow-black drop-shadow-2xl uppercase">
-                    GLOBAL <span className="text-gradient-red">CINEMA</span>
+                    GLOBAL <span className="text-yellow-400">CINEMA</span>
                 </h1>
-                <p className="text-white/50 text-xs md:text-sm font-medium max-w-xl mx-auto leading-relaxed italic">
+                <p className="text-white text-xs md:text-sm font-medium max-w-xl mx-auto leading-relaxed italic">
                     Explore an elite collection of blockbusters and timeless classics from every corner of the world.
                 </p>
             </div>

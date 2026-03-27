@@ -32,8 +32,8 @@ const MarketWidget = () => {
             {/* Header */}
             <div className="px-3 py-2 lg:px-4 lg:py-3 border-b border-white/5 bg-white/5 flex justify-between items-center relative z-20">
                 <div className="flex items-center gap-1.5 lg:gap-2">
-                    <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
-                    <h3 className="text-white font-black text-[9px] lg:text-[10px] tracking-widest uppercase italic">Live Markets</h3>
+                    <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-yellow-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(250,204,21,0.5)]"></div>
+                    <h3 className="text-white font-black text-[9px] lg:text-[11px] tracking-widest uppercase italic">Market Status</h3>
                 </div>
                 <span className="text-[7px] lg:text-[8px] text-white/30 font-bold uppercase tracking-widest">Verified</span>
             </div>

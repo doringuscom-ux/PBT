@@ -68,8 +68,8 @@ const WeatherWidget = () => {
             {/* Header */}
             <div className="px-3 py-2 lg:px-4 lg:py-3 border-b border-white/5 bg-white/5 flex justify-between items-center relative z-20">
                 <div className="flex items-center gap-1.5 lg:gap-2">
-                    <i className="fas fa-location-dot text-primary-red text-[8px] lg:text-[9px]"></i>
-                    <h3 className="text-white font-black text-[9px] lg:text-[10px] tracking-widest uppercase italic">{locationName}</h3>
+                    <i className="fas fa-sun text-yellow-500 text-[10px] lg:text-[11px] animate-pulse"></i>
+                    <h3 className="text-white font-black text-[9px] lg:text-[11px] tracking-widest uppercase italic">Weather: {locationName}</h3>
                 </div>
                 <button 
                     onClick={handleRefresh}
@@ -88,7 +88,7 @@ const WeatherWidget = () => {
                             {data.temp}<span className="text-lg lg:text-xl font-light opacity-40 ml-0.5 lg:ml-1">°</span>
                         </div>
                         <div className="mt-1 flex flex-wrap gap-x-2">
-                            <span className="text-[8px] lg:text-[9px] font-black uppercase tracking-widest text-primary-red">{data.condition}</span>
+                            <span className="text-[8px] lg:text-[9px] font-black uppercase tracking-widest text-yellow-400">{data.condition}</span>
                             <span className="text-[8px] lg:text-[9px] font-bold text-white/40 uppercase">Feels {data.feelsLike}°</span>
                         </div>
                     </div>
@@ -118,7 +118,7 @@ const WeatherWidget = () => {
             </div>
 
             {/* Decorative Polish */}
-            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-primary-red/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none"></div>
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
         </div>
     );

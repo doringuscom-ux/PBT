@@ -16,7 +16,9 @@ const CommentSection = ({ itemId, comments = [], onAdd, onLike, onReport, onUpda
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      setShowAuthModal(true);
+      if (window.confirm('Login First to join the discussion! Would you like to sign in now?')) {
+        setShowAuthModal(true);
+      }
       return;
     }
     if (!newComment.trim()) return;
@@ -39,7 +41,9 @@ const CommentSection = ({ itemId, comments = [], onAdd, onLike, onReport, onUpda
 
   const handleLike = (commentId) => {
     if (!user) {
-      setShowAuthModal(true);
+      if (window.confirm('Login First to like this comment! Would you like to sign in now?')) {
+        setShowAuthModal(true);
+      }
       return;
     }
     onLike(itemId, commentId);
@@ -94,9 +98,9 @@ const CommentSection = ({ itemId, comments = [], onAdd, onLike, onReport, onUpda
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder={user ? "Share your thoughts..." : "Sign in to comment"}
+            placeholder="Share your thoughts..."
             className="w-full h-20 p-4 bg-transparent outline-none text-slate-700 font-semibold resize-none text-sm placeholder:text-slate-300 placeholder:italic"
-            disabled={!user || isSubmitting}
+            disabled={isSubmitting}
           />
           <div className="flex justify-between items-center p-2 border-t border-slate-100 bg-white/50 rounded-b-lg">
              <div className="flex items-center gap-2 px-2">
@@ -105,7 +109,7 @@ const CommentSection = ({ itemId, comments = [], onAdd, onLike, onReport, onUpda
              </div>
              <button
               type="submit"
-              disabled={!user || !newComment.trim() || isSubmitting}
+              disabled={!newComment.trim() || isSubmitting}
               className="bg-slate-900 text-white px-6 py-2 rounded-lg font-black uppercase tracking-widest text-[9px] hover:bg-primary-red hover:shadow-lg transition-all"
             >
               {isSubmitting ? 'Posting...' : 'Post'}

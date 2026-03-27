@@ -93,7 +93,7 @@ const Footer = () => {
           
           <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.2em]">
              <span className="text-slate-500">Designed by</span>
-             <a href="#" className="text-primary-red hover:text-white transition-colors no-underline">digital orra</a>
+             <a href="#" className="text-yellow-400 hover:text-white transition-colors no-underline">digital orra</a>
           </div>
         </div>
       </div>
@@ -102,15 +102,15 @@ const Footer = () => {
 };
 
 const SocialIcon = ({ icon }) => (
-  <a href="#" className="inline-flex items-center justify-center w-10 h-10 bg-slate-800 border border-white/5 rounded-full text-slate-400 hover:text-white hover:bg-primary-red hover:border-primary-red hover:-translate-y-1 transition-all duration-300">
+  <a href="#" className="inline-flex items-center justify-center w-10 h-10 bg-slate-800 border border-white/5 rounded-full text-slate-400 hover:text-slate-950 hover:bg-yellow-400 hover:border-yellow-400 hover:-translate-y-1 transition-all duration-300">
     <i className={icon}></i>
   </a>
 );
 
 const FooterLink = ({ text, path }) => (
   <li>
-    <Link to={path || "#"} className="text-slate-400 font-medium no-underline text-sm hover:text-primary-red hover:pl-2 transition-all flex items-center gap-2 group">
-      <i className="fas fa-chevron-right text-[8px] text-slate-600 group-hover:text-primary-red transition-colors"></i> {text}
+    <Link to={path || "#"} className="text-slate-400 font-medium no-underline text-sm hover:text-yellow-400 hover:pl-2 transition-all flex items-center gap-2 group">
+      <i className="fas fa-chevron-right text-[8px] text-slate-600 group-hover:text-yellow-400 transition-colors"></i> {text}
     </Link>
   </li>
 );

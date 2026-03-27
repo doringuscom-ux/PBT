@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import CommentSection from '../components/CommentSection';
+import ImageModal from '../components/ImageModal';
 
 const NewsDetail = () => {
     const { id } = useParams();
     const { news, addComment, likeComment, reportComment, updateComment, deleteComment } = useData();
     const article = news.find(n => n._id === id);
-
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [id]);
@@ -57,9 +58,19 @@ const NewsDetail = () => {
                             <span className="flex items-center gap-2"><i className="far fa-heart text-primary-red"></i> {article.likes || 0} Likes</span>
                         </div>
                         
-                        <div className="rounded-2xl overflow-hidden mb-10 shadow-2xl border border-gray-100">
-                            <img src={article.image} alt={article.title} className="w-full h-auto" />
+                        <div 
+                            className="rounded-2xl overflow-hidden mb-10 shadow-2xl border border-gray-100 cursor-zoom-in group"
+                            onClick={() => setIsImageModalOpen(true)}
+                        >
+                            <img src={article.image} alt={article.title} className="w-full h-auto transition-transform duration-700 group-hover:scale-105" />
                         </div>
+                        
+                        <ImageModal 
+                            isOpen={isImageModalOpen} 
+                            onClose={() => setIsImageModalOpen(false)} 
+                            imageSrc={article.image} 
+                            altText={article.title} 
+                        />
                         
                         <div className="max-w-none text-slate-800 leading-relaxed mb-12">
                             <p className="text-xl md:text-2xl font-black mb-8 italic text-slate-500 border-l-4 border-primary-red pl-6 py-2 leading-snug">

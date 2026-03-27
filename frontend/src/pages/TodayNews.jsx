@@ -1,9 +1,11 @@
 import React from 'react';
 import { useData } from '../context/DataContext';
 import { Link } from 'react-router-dom';
+import ImageModal from '../components/ImageModal';
 
 const TodayNews = () => {
   const { todayNews, news } = useData();
+  const [selectedImage, setSelectedImage] = React.useState(null);
   
   const formatDate = (dateString) => {
     if (!dateString) return 'Just Now';
@@ -59,13 +61,18 @@ const TodayNews = () => {
                      Top Story
                    </div>
                 )}
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-64 overflow-hidden cursor-zoom-in group/img" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedImage({ src: item.image, title: item.title }); }}>
                   <img 
                     src={item.image} 
                     alt={item.title} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity">
+                     <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30">
+                        <i className="fas fa-expand-alt text-lg"></i>
+                     </div>
+                  </div>
                   <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-primary-red text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
                     {item.category}
                   </span>
@@ -103,6 +110,13 @@ const TodayNews = () => {
             </div>
           </div>
         )}
+
+        <ImageModal 
+            isOpen={!!selectedImage} 
+            onClose={() => setSelectedImage(null)} 
+            imageSrc={selectedImage?.src} 
+            altText={selectedImage?.title} 
+        />
       </main>
     </div>
   );

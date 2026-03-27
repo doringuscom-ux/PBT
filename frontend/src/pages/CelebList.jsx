@@ -13,17 +13,17 @@ const CelebList = () => {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white pt-24 pb-20 relative overflow-hidden">
         {/* Subtle Background Elements */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary-red/5 rounded-full blur-[150px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-primary-red/5 rounded-full blur-[120px] pointer-events-none translate-y-1/3 -translate-x-1/3"></div>
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-yellow-400/5 rounded-full blur-[150px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-yellow-400/5 rounded-full blur-[120px] pointer-events-none translate-y-1/3 -translate-x-1/3"></div>
 
         <div className="page-container relative z-10">
           <div className="flex flex-col items-center md:items-start mb-16 space-y-4">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-1 bg-primary-red rounded-full"></div>
-                <span className="font-black text-primary-red uppercase tracking-[0.4em] text-[10px] md:text-sm">Cinema Stars</span>
+                <div className="w-12 h-1 bg-yellow-400 rounded-full"></div>
+                <span className="font-black text-yellow-400 uppercase tracking-[0.4em] text-[10px] md:text-sm">Cinema Stars</span>
               </div>
               <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl text-center md:text-left">
-                  Celeb<span className="text-primary-red">rities</span>
+                  Celeb<span className="text-yellow-400">rities</span>
               </h1>
               <p className="text-white/60 text-sm md:text-base max-w-xl font-medium text-center md:text-left">
                   Discover the profiles, milestones, and cinematic journeys of your favorite stars from the industry.

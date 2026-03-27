@@ -56,15 +56,15 @@ const MovieCard = ({ movie, isUpcoming = false }) => {
 
       {/* Content Area */}
       <div className="pt-4 flex flex-col items-start px-1 overflow-visible">
-        <h3 className="text-base font-black text-white uppercase mb-1.5 group-hover:text-primary-red transition-colors duration-300 line-clamp-1 italic pr-2">
+        <h3 className="text-base font-black text-white uppercase mb-1.5 group-hover:text-yellow-400 transition-colors duration-300 line-clamp-1 italic pr-2">
           {movie.title}
         </h3>
         <div className="flex items-center gap-3">
            <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">
              {movie.year || 'TBA'}
            </span>
-           <span className="w-1.5 h-1.5 rounded-full bg-primary-red"></span>
-           <span className="text-[10px] font-black text-primary-red uppercase tracking-tighter italic">
+           <span className="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
+           <span className="text-[10px] font-black text-yellow-400 uppercase tracking-tighter italic">
              {isUpcoming && !isReleased ? (
                new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
              ) : (

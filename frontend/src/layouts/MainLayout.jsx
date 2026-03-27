@@ -7,10 +7,10 @@ import AnnouncementBar from '../components/AnnouncementBar';
 const MainLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="sticky top-0 z-[1000] flex flex-col gap-3 md:gap-4 pb-4 bg-slate-50">
+      <div className="sticky top-0 z-[1000] flex flex-col bg-white shadow-md">
         <Header />
-        <AnnouncementBar />
       </div>
+      <AnnouncementBar />
       <main className="flex-1">
         <Outlet />
       </main>

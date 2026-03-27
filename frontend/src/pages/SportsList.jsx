@@ -47,19 +47,19 @@ const SportsList = () => {
                   </div>
                   <div className="p-10 flex-1 flex flex-col">
                     <div className="text-text-gray text-[10px] font-black mb-6 flex items-center gap-3 uppercase tracking-widest opacity-60">
-                      <i className="far fa-clock text-primary-red"></i> {formatDate(article.createdAt || article.date)}
+                      <i className="far fa-clock text-yellow-600"></i> {formatDate(article.createdAt || article.date)}
                     </div>
-                    <h2 className="text-2xl font-black text-text-dark mb-6 group-hover:text-primary-red transition-colors leading-[1.1] uppercase tracking-tighter italic">
+                    <h2 className="text-2xl font-black text-text-dark mb-6 group-hover:text-yellow-600 transition-colors leading-[1.1] uppercase tracking-tighter italic">
                       {article.title}
                     </h2>
                     <p className="text-text-gray leading-relaxed mb-8 line-clamp-3 font-medium">
                       {article.excerpt}
                     </p>
                     <div className="mt-auto pt-8 border-t border-gray-100 flex items-center justify-between">
-                      <span className="text-primary-red font-black text-xs uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
+                      <span className="text-yellow-600 font-black text-xs uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
                         VIEW STORY <i className="fas fa-arrow-right"></i>
                       </span>
-                      <i className="fas fa-share-alt text-gray-300 hover:text-primary-red cursor-pointer"></i>
+                      <i className="fas fa-share-alt text-gray-300 hover:text-yellow-600 cursor-pointer"></i>
                     </div>
                   </div>
                 </Link>

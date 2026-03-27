@@ -29,7 +29,7 @@ const VideoGrid = () => {
                 alt={video.title} 
                 className="w-full h-full object-cover transition-transform group-hover:scale-105"
               />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/70 w-[60px] h-[60px] rounded-full flex items-center justify-center text-white text-2xl transition-colors group-hover:bg-primary-red">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/70 w-[60px] h-[60px] rounded-full flex items-center justify-center text-white text-2xl transition-colors group-hover:bg-yellow-400 group-hover:text-slate-900 transition-all">
                 <i className="fas fa-play ml-1"></i>
               </div>
               <div className="absolute top-2 right-2 flex gap-1">
@@ -39,7 +39,7 @@ const VideoGrid = () => {
               </div>
             </div>
             <div className="p-4">
-              <div className="font-bold text-base mb-2 leading-tight group-hover:text-primary-red transition-colors line-clamp-2">
+              <div className="font-bold text-base mb-2 leading-tight group-hover:text-yellow-400 transition-colors line-clamp-2">
                 {video.title}
               </div>
               <div className="flex justify-between text-text-gray text-[11px]">

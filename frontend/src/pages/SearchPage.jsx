@@ -170,7 +170,7 @@ const SearchPage = () => {
                            </div>
                         </div>
                       </div>
-                      <h3 className="font-black text-sm line-clamp-2 group-hover:text-primary-red transition-colors italic tracking-tight px-1">{video.title}</h3>
+                      <h3 className="font-black text-sm line-clamp-2 group-hover:text-yellow-400 transition-colors italic tracking-tight px-1">{video.title}</h3>
                     </Link>
                   ))}
                 </div>

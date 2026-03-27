@@ -1,15 +1,31 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import CommentSection from '../components/CommentSection';
+import ImageModal from '../components/ImageModal';
+import UserAuthModal from '../components/UserAuthModal';
 
 const CelebDetail = () => {
     const { id } = useParams();
     const { celebs, news, movies, addCelebComment, likeCelebComment, updateCelebComment, deleteCelebComment, followCeleb, user } = useData();
-    const [activeSection, setActiveSection] = React.useState('All');
-    const [isBioExpanded, setIsBioExpanded] = React.useState(false);
+    const [activeSection, setActiveSection] = useState('All');
+    const [isBioExpanded, setIsBioExpanded] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
     
     const celeb = celebs.find(item => item._id === id || item.slug === id);
+ 
+    const splitText = (text) => {
+        if (!text) return { first: '', second: '' };
+        const parts = text.split(' ');
+        if (parts.length > 1) {
+            return { first: parts[0], second: text.slice(parts[0].length) };
+        }
+        const mid = Math.ceil(text.length / 2);
+        return { first: text.slice(0, mid), second: text.slice(mid) };
+    };
+ 
+    const { first: firstName, second: lastName } = splitText(celeb?.name);
 
     const formatCount = (num) => {
         if (num >= 1000000) {
@@ -62,20 +78,34 @@ const CelebDetail = () => {
                     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center lg:items-start text-center lg:text-left">
                         {/* Left: Avatar */}
                         <div className="w-64 lg:w-80 flex-shrink-0">
-                            <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 relative group">
+                            <div 
+                                className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 relative group cursor-zoom-in"
+                                onClick={() => setSelectedImage({ src: celeb.image, title: celeb.name })}
+                            >
                                 <img src={celeb.image} alt={celeb.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30">
+                                        <i className="fas fa-expand-alt text-lg"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         {/* Middle: Name & Biography */}
                         <div className="flex-1 space-y-8 py-4">
                             <div>
-                                <div className="flex flex-col lg:flex-row items-center lg:items-end gap-3 mb-4">
-                                    <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none">{celeb.name}</h1>
-                                    <i className="fas fa-check-circle text-blue-400 text-2xl lg:mb-2" title="Verified Profile"></i>
+                                <div className="flex flex-col items-center lg:items-start gap-2 mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-[3px] bg-yellow-400"></div>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-400 italic">CINEMA STARS</span>
+                                    </div>
+                                    <h1 className="text-5xl md:text-8xl font-black italic tracking-tighter leading-[0.85] flex flex-wrap justify-center lg:justify-start">
+                                        <span className="text-white">{firstName}</span>
+                                        <span className="text-yellow-400">{lastName}</span>
+                                    </h1>
                                 </div>
                                 <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-4 gap-y-2 text-sm font-bold text-slate-400 uppercase tracking-wide italic">
-                                    <span className="text-primary-red not-italic font-black border-r border-white/10 pr-4">{celeb.role}</span>
+                                    <span className="text-yellow-400 not-italic font-black border-r border-white/10 pr-4">{celeb.role}</span>
                                     <span>Official Profile</span>
                                     {celeb.industry && <span className="border-l border-white/10 pl-4">Industry: {celeb.industry}</span>}
                                 </div>
@@ -84,13 +114,13 @@ const CelebDetail = () => {
                                     <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-6 gap-y-2 text-[10px] font-black uppercase tracking-[0.15em] text-white py-1">
                                         {celeb.birthDate && (
                                             <div className="flex items-center gap-2">
-                                                <i className="fas fa-calendar-alt text-primary-red text-[11px]"></i>
+                                                <i className="fas fa-calendar-alt text-yellow-400 text-[11px]"></i>
                                                 <span>Born: <span className="text-slate-200">{celeb.birthDate}</span></span>
                                             </div>
                                         )}
                                         {celeb.birthPlace && (
                                             <div className="flex items-center gap-2 border-l border-white/20 pl-6">
-                                                <i className="fas fa-map-marker-alt text-primary-red text-[11px]"></i>
+                                                <i className="fas fa-map-marker-alt text-yellow-400 text-[11px]"></i>
                                                 <span className="text-slate-200">{celeb.birthPlace}</span>
                                             </div>
                                         )}
@@ -99,12 +129,12 @@ const CelebDetail = () => {
                             </div>
 
                             <div className="space-y-8 max-w-3xl mx-auto lg:mx-0">
-                                <p className="text-slate-300 leading-relaxed text-xl italic font-medium pl-8 border-l-4 border-primary-red py-2 relative">
+                                <p className="text-slate-300 leading-relaxed text-xl italic font-medium pl-8 border-l-4 border-yellow-400 py-2 relative">
                                     "{celeb.bio ? (celeb.bio.split(' ').length > 25 && !isBioExpanded ? celeb.bio.split(' ').slice(0, 25).join(' ') + '...' : celeb.bio) : ''}"
                                     {celeb.bio && celeb.bio.split(' ').length > 25 && (
                                         <button 
                                             onClick={() => setIsBioExpanded(!isBioExpanded)}
-                                            className="text-[10px] font-black uppercase tracking-widest text-primary-red hover:text-white transition-colors ml-2 not-italic"
+                                            className="text-[10px] font-black uppercase tracking-widest text-yellow-400 hover:text-white transition-colors ml-2 not-italic"
                                         >
                                             {isBioExpanded ? 'View Less' : 'View More'}
                                         </button>
@@ -117,10 +147,12 @@ const CelebDetail = () => {
                                             if (user) {
                                                 followCeleb(celeb._id);
                                             } else {
-                                                alert("Please log in to follow your favorite actors!");
+                                                if (window.confirm('Login First to follow your favorite actors! Would you like to sign in now?')) {
+                                                    setShowAuthModal(true);
+                                                }
                                             }
                                         }}
-                                        className={`${celeb.isFollowing ? 'bg-white/20 border-white/40' : 'bg-primary-red shadow-primary-red/40'} text-white px-8 md:px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl flex items-center justify-center gap-2 border w-full sm:w-auto shrink-0`}
+                                  className={`${celeb.isFollowing ? 'bg-white/20 border-white/40 text-white' : 'bg-yellow-400 text-slate-950 border-yellow-400 shadow-yellow-400/20'} px-8 md:px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl flex items-center justify-center gap-2 border w-full sm:w-auto shrink-0`}
                                     >
                                         <i className={`fas ${celeb.isFollowing ? 'fa-check' : 'fa-plus'}`}></i> {celeb.isFollowing ? 'Following' : 'Follow'}
                                     </button>
@@ -157,8 +189,15 @@ const CelebDetail = () => {
                             ) : celeb.photos?.filter(p => p).length > 0 ? (
                                 <div className="grid grid-cols-2 gap-4">
                                     {celeb.photos.filter(p => p).slice(0, 2).map((p, i) => (
-                                        <div key={i} className="rounded-2xl overflow-hidden aspect-[4/5] border border-white/10 shadow-xl group cursor-pointer" onClick={() => setActiveSection('Photos')}>
+                                        <div 
+                                            key={i} 
+                                            className="rounded-2xl overflow-hidden aspect-[4/5] border border-white/10 shadow-xl group cursor-zoom-in relative" 
+                                            onClick={() => setSelectedImage({ src: p, title: `${celeb.name} - Featured` })}
+                                        >
                                             <img src={p} className="w-full h-full object-cover object-[center_top] group-hover:scale-110 transition-transform duration-700" alt="" />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <i className="fas fa-search-plus text-white text-lg"></i>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -186,17 +225,17 @@ const CelebDetail = () => {
                             {/* Mini Stats Bar */}
                             <div className="grid grid-cols-3 gap-1 pt-8 mt-4 border-t border-white/10">
                                 <div className="text-center group">
-                                    <p className="text-2xl font-black text-white leading-none group-hover:text-primary-red transition-colors">
+                                    <p className="text-2xl font-black text-white leading-none group-hover:text-yellow-400 transition-colors">
                                         {formatCount((celeb.followers?.length || 0) + (celeb.bonusFollowers || 0))}
                                     </p>
                                     <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">Fans</p>
                                 </div>
                                 <div className="text-center group">
-                                    <p className="text-2xl font-black text-white leading-none group-hover:text-primary-red transition-colors">{celeb.stats?.movieCount || celebMovies.length}</p>
+                                    <p className="text-2xl font-black text-white leading-none group-hover:text-yellow-400 transition-colors">{celeb.stats?.movieCount || celebMovies.length}</p>
                                     <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">Movies</p>
                                 </div>
                                 <div className="text-center group">
-                                    <p className="text-2xl font-black text-white leading-none group-hover:text-primary-red transition-colors">{celeb.stats?.nominations || '0'}</p>
+                                    <p className="text-2xl font-black text-white leading-none group-hover:text-yellow-400 transition-colors">{celeb.stats?.nominations || '0'}</p>
                                     <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">Noms</p>
                                 </div>
                             </div>
@@ -318,14 +357,28 @@ const CelebDetail = () => {
                                 <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 mb-8 border-l-4 border-primary-red pl-4">Official Gallery</h2>
                                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                                     {(celeb.photos?.filter(p => p).length ? celeb.photos.filter(p => p) : []).map((p, idx) => (
-                                        <div key={`photo-${idx}`} className="rounded-2xl overflow-hidden aspect-[4/5] shadow-md hover:shadow-xl transition-all group">
+                                        <div 
+                                            key={`photo-${idx}`} 
+                                            className="rounded-2xl overflow-hidden aspect-[4/5] shadow-md hover:shadow-xl transition-all group cursor-zoom-in relative"
+                                            onClick={() => setSelectedImage({ src: p, title: `${celeb.name} - Official Photo ${idx + 1}` })}
+                                        >
                                             <img src={p} className="w-full h-full object-cover object-[center_top] group-hover:scale-110 transition-transform duration-700" alt="" />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <i className="fas fa-search-plus text-white text-xl"></i>
+                                            </div>
                                         </div>
                                     ))}
                                     {celebMovies.map((m, idx) => (
-                                        <div key={`movie-photo-${idx}`} className="rounded-2xl overflow-hidden aspect-[4/5] shadow-md hover:shadow-xl transition-all group relative">
+                                        <div 
+                                            key={`movie-photo-${idx}`} 
+                                            className="rounded-2xl overflow-hidden aspect-[4/5] shadow-md hover:shadow-xl transition-all group relative cursor-zoom-in"
+                                            onClick={() => setSelectedImage({ src: m.image, title: `Movie Still: ${m.title}` })}
+                                        >
                                             <img src={m.image} className="w-full h-full object-cover object-[center_top] group-hover:scale-110 transition-transform duration-700" alt="" />
-                                            <div className="absolute top-2 right-2 bg-black/60 text-white text-[8px] font-bold px-2 py-1 rounded-full uppercase tracking-widest backdrop-blur-sm">Movie Still</div>
+                                            <div className="absolute top-2 right-2 bg-black/60 text-white text-[8px] font-bold px-2 py-1 rounded-full uppercase tracking-widest backdrop-blur-sm z-10">Movie Still</div>
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <i className="fas fa-search-plus text-white text-xl"></i>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -427,6 +480,18 @@ const CelebDetail = () => {
                     </aside>
                 </div>
             </main>
+
+            <ImageModal 
+                isOpen={!!selectedImage} 
+                onClose={() => setSelectedImage(null)} 
+                imageSrc={selectedImage?.src} 
+                altText={selectedImage?.title} 
+            />
+
+            <UserAuthModal 
+                isOpen={showAuthModal} 
+                onClose={() => setShowAuthModal(false)}
+            />
         </div>
     );
 };

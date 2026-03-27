@@ -31,13 +31,21 @@ const CelebGrid = () => {
         `}
       </style>
 
-      <div className="flex justify-between items-center mb-6 pb-2.5 border-b-[3px] border-primary-red">
-        <h2 className="text-3xl font-extrabold text-text-dark flex items-center">
-          <i className="fas fa-star mr-2.5 text-primary-red"></i> Top Celebrities
-        </h2>
-        <Link to="/celebs" className="text-primary-red font-semibold no-underline text-sm hover:underline">
-          View All Celebs <i className="fas fa-arrow-right ml-1"></i>
-        </Link>
+      <div className="mb-10">
+        <div className="flex items-center justify-between items-end">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+              <span className="text-[10px] lg:text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Popular Stars</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">
+              Featured <span className="text-red-600">Celebrities</span>
+            </h2>
+          </div>
+          <Link to="/celebs" className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2">
+            View All <i className="fas fa-arrow-right text-[10px]"></i>
+          </Link>
+        </div>
       </div>
       
       <div className="celeb-marquee-container relative w-full overflow-hidden py-2">

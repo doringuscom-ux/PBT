@@ -23,10 +23,6 @@ const Hero = () => {
 
   return (
     <div className="mb-8 w-full transition-all">
-      <div className="flex items-center gap-2 mb-4 w-full">
-        <span className="w-1.5 h-1.5 bg-primary-red rounded-full animate-pulse shadow-sm shadow-primary-red/50"></span>
-        <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Featured News</h2>
-      </div>
       
       {/* Expanded Feature Slider (Full width of Hero container) */}
       <div className="relative overflow-hidden rounded-3xl bg-slate-900 aspect-[16/10] md:aspect-[21/10] lg:h-[500px] w-full group shadow-2xl">

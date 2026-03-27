@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import CountdownTimer from '../components/CountdownTimer';
 import CommentSection from '../components/CommentSection';
+import ImageModal from '../components/ImageModal';
+import UserAuthModal from '../components/UserAuthModal';
 
 const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
     const { movies, rateMovie, user, addMovieComment, likeMovieComment, updateMovieComment, deleteMovieComment } = useData();
@@ -14,9 +16,22 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
     const [vote, setVote] = useState(null); 
     const [showPlayer, setShowPlayer] = useState(false);
     const [watchScore, setWatchScore] = useState(64);
-
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
     const isUpcoming = movie.releaseDate && new Date(movie.releaseDate) > new Date();
     const tabs = ['Timeline', 'Cast & Crew', 'Photos'];
+ 
+    const splitText = (text) => {
+        if (!text) return { first: '', second: '' };
+        const parts = text.split(' ');
+        if (parts.length > 1) {
+            return { first: parts[0], second: text.slice(parts[0].length) };
+        }
+        const mid = Math.ceil(text.length / 2);
+        return { first: text.slice(0, mid), second: text.slice(mid) };
+    };
+ 
+    const { first: titleFirst, second: titleSecond } = splitText(movie.title);
 
     const handleVote = (type) => {
         if (vote === type) return;
@@ -55,7 +70,8 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
     const suggestedMovies = getSuggestions();
 
     return (
-        <div className="bg-[#f8f9fa] min-h-screen">
+        <>
+            <div className="bg-[#f8f9fa] min-h-screen">
             {/* Unified Hero Header - Expanded for Mobile */}
             <div className="relative w-full min-h-[600px] md:h-[550px] flex flex-col justify-end overflow-hidden">
                 <div 
@@ -79,9 +95,15 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
 
                         {/* Floating Poster & Interaction */}
                         <div className="flex flex-col items-center md:items-start gap-0 shrink-0">
-                            <div className="relative w-48 md:w-56 aspect-[2/3] rounded-sm overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6)] border-2 border-white/20 transform md:-translate-y-4">
-                                <img src={movie.image} alt={movie.title} className="w-full h-full object-cover" />
-                                <div className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white border border-white/20 cursor-pointer hover:bg-primary-red transition-colors">
+                            <div 
+                                className="relative w-48 md:w-56 aspect-[2/3] rounded-sm overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6)] border-2 border-white/20 transform md:-translate-y-4 cursor-zoom-in group/poster"
+                                onClick={() => setSelectedImage({ src: movie.image, title: movie.title })}
+                            >
+                                <img src={movie.image} alt={movie.title} className="w-full h-full object-cover transition-transform duration-700 group-hover/poster:scale-105" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/poster:opacity-100 transition-opacity flex items-center justify-center">
+                                    <i className="fas fa-expand-alt text-white text-xl"></i>
+                                </div>
+                                <div className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white border border-white/20 cursor-pointer hover:bg-primary-red transition-colors z-10" onClick={(e) => { e.stopPropagation(); /* Add to list logic here */ }}>
                                     <i className="fas fa-plus"></i>
                                 </div>
                             </div>
@@ -122,7 +144,9 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                                                 if (user) {
                                                                     rateMovie(movie._id, star);
                                                                 } else {
-                                                                    alert("Please log in to rate movies and join the community!");
+                                                                    if (window.confirm('Login First to rate movies! Would you like to sign in now?')) {
+                                                                        setShowAuthModal(true);
+                                                                    }
                                                                 }
                                                             }}
                                                             className="hover:scale-125 transition-transform active:scale-95"
@@ -156,12 +180,23 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
 
                         {/* Title & Info (Top on Mobile) */}
                         <div className="flex-1 w-full text-center md:text-left pb-4 md:pb-12">
-                            <h1 className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-lg tracking-tighter uppercase italic">{movie.title}</h1>
+                            <div className="flex flex-col items-center md:items-start gap-2 mb-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-[3px] bg-yellow-400"></div>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-400 italic">
+                                        {isUpcoming ? 'UPCOMING BLOCKBUSTER' : 'NOW STREAMING'}
+                                    </span>
+                                </div>
+                                <h1 className="text-4xl md:text-7xl font-black italic tracking-tighter uppercase leading-[0.85] flex flex-wrap justify-center md:justify-start">
+                                    <span className="text-white">{titleFirst}</span>
+                                    <span className="text-yellow-400">{titleSecond}</span>
+                                </h1>
+                            </div>
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-y-2 gap-x-4 text-white font-bold uppercase tracking-widest text-[9px] md:text-xs">
                                 <span className="opacity-90">Release date: {new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary-red shadow-[0_0_10px_rgba(239,68,68,0.5)]"></span>
-                                <span className="text-primary-red font-black tracking-tight">{movie.industry}</span>
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary-red shadow-[0_0_10px_rgba(239,68,68,0.5)]"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"></span>
+                                <span className="text-yellow-400 font-black tracking-tight">{movie.industry}</span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"></span>
                                 <span className="opacity-90">{movie.genre}</span>
                             </div>
                         </div>
@@ -248,13 +283,13 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                                 <div className="relative w-full h-full cursor-pointer" onClick={() => setShowPlayer(true)}>
                                                     <img src={movie.coverImage || movie.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 brightness-50" alt="" />
                                                     <div className="absolute inset-0 flex items-center justify-center">
-                                                        <div className="bg-primary-red text-white w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.4)] transition-transform hover:scale-110">
+                                                        <div className="bg-yellow-400 text-slate-950 w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(250,204,21,0.4)] transition-transform hover:scale-110">
                                                             <i className="fas fa-play text-2xl md:text-3xl ml-1"></i>
                                                         </div>
                                                     </div>
                                                     <div className="absolute bottom-0 inset-x-0 p-8 md:p-12 bg-gradient-to-t from-black via-black/40 to-transparent">
                                                         <div className="flex items-center gap-3 mb-2">
-                                                            <span className="px-2 py-0.5 bg-primary-red text-white text-[8px] font-black uppercase tracking-widest rounded">Exclusive</span>
+                                                            <span className="px-2 py-0.5 bg-yellow-400 text-slate-950 text-[8px] font-black uppercase tracking-widest rounded">Exclusive</span>
                                                             <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">{movie.title} • Official Trailer</span>
                                                         </div>
                                                         <h4 className="text-2xl md:text-4xl font-black text-white italic uppercase tracking-tighter">Click to Play Trailer</h4>
@@ -320,8 +355,15 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                     </div>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                         {(movie.photos?.length > 0 ? movie.photos : [movie.image, movie.coverImage || movie.image]).slice(0, 4).map((p, i) => (
-                                            <div key={i} className={`rounded-xl overflow-hidden aspect-[16/10] shadow-md border-2 border-white ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}>
-                                                <img src={p} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="" />
+                                            <div 
+                                                key={i} 
+                                                className={`rounded-xl overflow-hidden aspect-[16/10] shadow-md border-2 border-white cursor-zoom-in group/thumb relative ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+                                                onClick={() => setSelectedImage({ src: p, title: `${movie.title} - Photo ${i + 1}` })}
+                                            >
+                                                <img src={p} className="w-full h-full object-cover group-hover/thumb:scale-110 transition-transform duration-700" alt="" />
+                                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <i className="fas fa-search-plus text-white text-lg"></i>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -371,8 +413,15 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                 <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 mb-8">Official Movie Photos</h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                                     {(movie.photos?.length > 0 ? movie.photos : [movie.image, movie.coverImage]).filter(p => p).map((p, idx) => (
-                                        <div key={idx} className="rounded-2xl overflow-hidden shadow-xl border-4 border-white aspect-[4/3] group">
+                                        <div 
+                                            key={idx} 
+                                            className="rounded-2xl overflow-hidden shadow-xl border-4 border-white aspect-[4/3] group cursor-zoom-in relative"
+                                            onClick={() => setSelectedImage({ src: p, title: `${movie.title} - Full Gallery ${idx + 1}` })}
+                                        >
                                             <img src={p} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <i className="fas fa-expand text-white text-2xl"></i>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -405,6 +454,18 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                 </div>
             </main>
         </div>
+
+        <ImageModal 
+                isOpen={!!selectedImage} 
+                onClose={() => setSelectedImage(null)} 
+                imageSrc={selectedImage?.src} 
+                altText={selectedImage?.title} 
+        />
+        <UserAuthModal 
+                isOpen={showAuthModal} 
+                onClose={() => setShowAuthModal(false)}
+        />
+        </>
     );
 };
 

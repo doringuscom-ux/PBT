@@ -5,14 +5,21 @@ const NewsGrid = () => {
   const { news } = useData();
   return (
     <div className="mb-16">
-      <div className="flex items-center gap-3 mb-10">
-        <span className="w-12 h-1.5 bg-primary-red rounded-full"></span>
-        <h2 className="text-3xl md:text-4xl font-black text-slate-900 uppercase italic tracking-tighter">
-          World Pulse <span className="text-primary-red">Latest</span>
-        </h2>
-        <Link to="/news" className="ml-auto text-primary-red text-xs font-black uppercase hover:underline flex items-center gap-2">
+      <div className="mb-10">
+        <div className="flex items-center justify-between items-end">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+              <span className="text-[10px] lg:text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">World Pulse</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">
+              Latest <span className="text-red-600">News</span>
+            </h2>
+          </div>
+          <Link to="/news" className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2">
             View All <i className="fas fa-arrow-right text-[10px]"></i>
-        </Link>
+          </Link>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

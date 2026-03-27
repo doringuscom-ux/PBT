@@ -45,17 +45,17 @@ const VideosList = () => {
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                                     />
                                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                                        <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center text-white shadow-xl transform transition-all group-hover:scale-125 group-hover:rotate-12">
+                                        <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-slate-900 shadow-xl transform transition-all group-hover:scale-125 group-hover:rotate-12">
                                             <i className="fas fa-play text-xl ml-1"></i>
                                         </div>
                                     </div>
-                                    <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg">{video.industry}</div>
+                                    <div className="absolute top-4 left-4 bg-yellow-400 text-slate-900 px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg">{video.industry}</div>
                                     <div className="absolute top-4 right-4 bg-black/80 px-3 py-1 rounded text-xs text-white font-bold uppercase tracking-widest">{video.category}</div>
                                     <div className="absolute bottom-4 right-4 bg-black/80 px-3 py-1 rounded text-xs text-white font-bold">{video.time}</div>
                                 </div>
-                                <h3 className="text-white text-xl font-bold mb-3 group-hover:text-red-500 transition-colors">{video.title}</h3>
+                                <h3 className="text-white text-xl font-bold mb-3 group-hover:text-yellow-400 transition-colors uppercase italic tracking-tight">{video.title}</h3>
                                 <div className="flex items-center gap-4 text-gray-500 text-sm">
-                                    <span><i className="fas fa-eye mr-2"></i> {video.views} views</span>
+                                    <span><i className="fas fa-eye mr-2 text-yellow-600"></i> {video.views} views</span>
                                     <span>•</span>
                                     <span>Added Recently</span>
                                 </div>
