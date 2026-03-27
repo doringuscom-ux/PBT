@@ -107,7 +107,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
             updateData.slug = updateData.slug.trim().toLowerCase();
         }
 
-        const updatedCeleb = await Celebrity.findByIdAndUpdate(req.params.id, updateData, { new: true })
+        const updatedCeleb = await Celebrity.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' })
             .populate('createdBy', 'username employeeId fullName');
 
         if (!updatedCeleb) return res.status(404).json({ message: 'Celebrity not found' });

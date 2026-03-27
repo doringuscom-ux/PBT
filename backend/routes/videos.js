@@ -105,7 +105,7 @@ router.put('/:id', cloudinaryUpload.fields([
             updateData.slug = updateData.slug.trim().toLowerCase();
         }
 
-        const updatedVideo = await Video.findByIdAndUpdate(req.params.id, updateData, { new: true })
+        const updatedVideo = await Video.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' })
             .populate('createdBy', 'username employeeId fullName');
 
         if (!updatedVideo) return res.status(404).json({ message: 'Video not found' });

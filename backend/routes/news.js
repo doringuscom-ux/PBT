@@ -122,7 +122,7 @@ router.put('/:id', (req, res, next) => {
             delete updateData.comments;
         }
 
-        const updatedNews = await News.findByIdAndUpdate(req.params.id, updateData, { new: true })
+        const updatedNews = await News.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' })
             .populate('createdBy', 'username employeeId fullName');
 
         if (!updatedNews) return res.status(404).json({ message: 'Article not found' });

@@ -12,6 +12,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
 
     const [activeTab, setActiveTab] = useState('Timeline');
     const [vote, setVote] = useState(null); 
+    const [showPlayer, setShowPlayer] = useState(false);
     const [watchScore, setWatchScore] = useState(64);
 
     const isUpcoming = movie.releaseDate && new Date(movie.releaseDate) > new Date();
@@ -197,17 +198,120 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                         {activeTab === 'Timeline' && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-12">
                                 <section>
-                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 mb-6 flex items-center gap-3">
-                                        {movie.title} Movie
-                                    </h2>
-                                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 italic font-medium text-slate-600 leading-relaxed">
-                                        <h3 className="text-sm font-black text-primary-red uppercase tracking-widest mb-4 not-italic">Synopsis</h3>
-                                        <p>{movie.overview}</p>
-                                        {movie.fullStory && (
-                                            <div className="mt-8 pt-8 border-t border-gray-100 rich-text-content not-italic text-sm text-slate-700" dangerouslySetInnerHTML={{ __html: movie.fullStory }} />
-                                        )}
+                                    <div className="flex items-center gap-4 mb-8">
+                                        <div className="h-10 w-1.5 bg-primary-red rounded-full"></div>
+                                        <h2 className="text-3xl font-black italic uppercase tracking-tighter text-slate-900 leading-none">
+                                            The Story <span className="text-primary-red">Behind</span> {movie.title}
+                                        </h2>
+                                    </div>
+
+                                    <div className="bg-white p-10 rounded-[2.5rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden relative">
+                                        <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+                                            <i className="fas fa-quote-right text-9xl"></i>
+                                        </div>
+
+                                        <div className="relative z-10">
+                                            <h3 className="text-[10px] font-black text-primary-red uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                                                <span className="w-8 h-[2px] bg-primary-red/20"></span> Synopsis
+                                            </h3>
+                                            
+                                            <div className="text-lg md:text-xl font-medium text-slate-700 leading-relaxed font-serif italic mb-10 border-l-4 border-slate-100 pl-8 py-2 whitespace-pre-wrap">
+                                                {movie.overview}
+                                            </div>
+
+                                            {movie.fullStory && (
+                                                <div className="mt-12 pt-12 border-t border-dashed border-gray-200 rich-text-content prose prose-slate max-w-none text-slate-600 font-medium" 
+                                                     style={{ fontFamily: "'Montserrat', sans-serif" }}
+                                                     dangerouslySetInnerHTML={{ __html: movie.fullStory }} 
+                                                />
+                                            )}
+                                        </div>
                                     </div>
                                 </section>
+
+                                {(movie.trailerUrl || movie.trailerVideo) && (
+                                    <section id="official-trailer">
+                                        <div className="flex justify-between items-center mb-6">
+                                            <h3 className="text-xl font-black uppercase italic text-slate-900">Official Trailer</h3>
+                                            {showPlayer && (
+                                                <button 
+                                                    onClick={() => setShowPlayer(false)}
+                                                    className="text-primary-red font-black uppercase text-[10px] tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity"
+                                                >
+                                                    <i className="fas fa-times"></i> Close Player
+                                                </button>
+                                            )}
+                                        </div>
+                                        
+                                        <div className="relative group aspect-video rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white bg-black">
+                                            {!showPlayer ? (
+                                                <div className="relative w-full h-full cursor-pointer" onClick={() => setShowPlayer(true)}>
+                                                    <img src={movie.coverImage || movie.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 brightness-50" alt="" />
+                                                    <div className="absolute inset-0 flex items-center justify-center">
+                                                        <div className="bg-primary-red text-white w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.4)] transition-transform hover:scale-110">
+                                                            <i className="fas fa-play text-2xl md:text-3xl ml-1"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div className="absolute bottom-0 inset-x-0 p-8 md:p-12 bg-gradient-to-t from-black via-black/40 to-transparent">
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            <span className="px-2 py-0.5 bg-primary-red text-white text-[8px] font-black uppercase tracking-widest rounded">Exclusive</span>
+                                                            <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">{movie.title} • Official Trailer</span>
+                                                        </div>
+                                                        <h4 className="text-2xl md:text-4xl font-black text-white italic uppercase tracking-tighter">Click to Play Trailer</h4>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="w-full h-full">
+                                                    {(() => {
+                                                        const url = movie.trailerVideo?.videoUrl || movie.trailerUrl;
+                                                        if (url?.includes('youtube.com') || url?.includes('youtu.be')) {
+                                                            const vid = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
+                                                            return (
+                                                                <iframe 
+                                                                    src={`https://www.youtube.com/embed/${vid}?autoplay=1`} 
+                                                                    className="w-full h-full" 
+                                                                    allowFullScreen 
+                                                                    allow="autoplay; encrypted-media"
+                                                                ></iframe>
+                                                            );
+                                                        }
+                                                        return (
+                                                            <video 
+                                                                src={url} 
+                                                                controls 
+                                                                autoPlay 
+                                                                className="w-full h-full object-contain"
+                                                            ></video>
+                                                        );
+                                                    })()}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </section>
+                                )}
+
+                                {movie.cast?.length > 0 && (
+                                    <section id="main-cast">
+                                        <div className="flex justify-between items-center mb-6">
+                                            <h3 className="text-xl font-black uppercase italic text-slate-900">Main Cast</h3>
+                                            <button onClick={() => setActiveTab('Cast & Crew')} className="text-primary-red font-black uppercase text-[10px] tracking-widest group">Full Cast <i className="fas fa-chevron-right ml-1 transition-transform group-hover:translate-x-1"></i></button>
+                                        </div>
+                                        <div className="flex gap-6 overflow-x-auto no-scrollbar pb-4 pt-2 -mt-2">
+                                            {movie.cast.slice(0, 8).map((actor, idx) => (
+                                                <Link 
+                                                    key={idx} 
+                                                    to={actor.celebrity ? `/celeb/${actor.celebrity.slug || actor.celebrity._id || actor.celebrity}` : `/actor/${encodeURIComponent(actor.name)}`} 
+                                                    className="group flex flex-col items-center gap-2 shrink-0 no-underline"
+                                                >
+                                                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-white shadow-lg overflow-hidden transition-all group-hover:scale-110 duration-500 relative ring-2 ring-transparent group-hover:ring-primary-red/20">
+                                                        <img src={actor.image || 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/default_actor.jpg'} className="w-full h-full object-cover object-top" alt="" />
+                                                    </div>
+                                                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-tight text-center max-w-[80px] truncate group-hover:text-primary-red transition-colors">{actor.name}</span>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </section>
+                                )}
 
                                 <section id="photos">
                                     <div className="flex justify-between items-center mb-6">
@@ -296,25 +400,6 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                 </div>
                                 <Link to="/movies" className="block w-full text-center mt-8 py-3 rounded-xl border-2 border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-colors">View All Movies</Link>
                             </div>
-
-                            {(movie.trailerUrl || movie.trailerVideo) && (
-                                <div className="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-2xl group cursor-pointer bg-black">
-                                    <img src={movie.coverImage || movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 opacity-60" alt="" />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <Link 
-                                            to={movie.trailerVideo ? `/video/${movie.trailerVideo.slug || movie.trailerVideo._id || movie.trailerVideo}` : movie.trailerUrl} 
-                                            target={movie.trailerVideo ? undefined : "_blank"}
-                                            className="bg-primary-red text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
-                                        >
-                                            <i className="fas fa-play ml-1"></i>
-                                        </Link>
-                                    </div>
-                                    <div className="absolute bottom-8 left-8 right-8">
-                                        <h4 className="text-xl font-black text-white uppercase italic leading-tight mb-2 tracking-tighter">Official Trailer</h4>
-                                        <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest italic">{movie.trailerVideo ? 'Watch on PBtadka' : 'Watch on YouTube'}</p>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </aside>
                 </div>

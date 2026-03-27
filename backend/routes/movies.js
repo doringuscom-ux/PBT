@@ -66,6 +66,13 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
         try { movieData.photos = JSON.parse(movieData.photos); } catch (e) { console.error("Photos parse error:", e); }
     }
 
+    // Sanitize all stringified nulls/undefineds from FormData
+    Object.keys(movieData).forEach(key => {
+        if (movieData[key] === 'null' || movieData[key] === 'undefined' || movieData[key] === '') {
+            movieData[key] = null;
+        }
+    });
+
     try {
         const movie = new Movie(movieData);
         await movie.save();
@@ -104,12 +111,14 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trail
             try { updateData.photos = JSON.parse(updateData.photos); } catch (e) { console.error("Photos parse error:", e); }
         }
 
-        // Heal corrupted data (remove invalid string entries if passed)
-        if (updateData.comments && !Array.isArray(updateData.comments)) {
-            delete updateData.comments;
-        }
+        // Sanitize all stringified nulls/undefineds from FormData
+        Object.keys(updateData).forEach(key => {
+            if (updateData[key] === 'null' || updateData[key] === 'undefined' || updateData[key] === '') {
+                updateData[key] = null;
+            }
+        });
 
-        const updatedMovie = await Movie.findByIdAndUpdate(req.params.id, updateData, { new: true })
+        const updatedMovie = await Movie.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' })
             .populate('createdBy', 'username employeeId fullName')
             .populate('cast.celebrity')
             .populate('trailerVideo');
