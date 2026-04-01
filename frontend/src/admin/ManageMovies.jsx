@@ -23,7 +23,9 @@ const ManageMovies = () => {
   const [formData, setFormData] = useState({ 
     title: '', image: '', coverImage: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
     overview: '', director: '', runtime: '', certification: '', 
-    performance: { day1: '', weekend: '', status: 'Blockbuster' }, industry: 'Bollywood',
+    performance: { 
+        budget: '', day1: '', weekend: '', week1: '', indiaNet: '', indiaGross: '', overseas: '', worldwide: '', verdict: '', screens: '', status: 'Blockbuster' 
+    }, industry: 'Bollywood',
     fullStory: '', trailerUrl: '', trailerVideo: null, likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
   });
 
@@ -99,7 +101,7 @@ const ManageMovies = () => {
     setFormData({ 
       title: '', image: '', coverImage: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
       overview: '', director: '', runtime: '', certification: '', 
-      performance: { day1: '', weekend: '', status: 'Blockbuster' }, industry: 'Bollywood',
+      performance: { budget: '', day1: '', weekend: '', week1: '', indiaNet: '', indiaGross: '', overseas: '', worldwide: '', verdict: '', screens: '', status: 'Blockbuster' }, industry: 'Bollywood',
       fullStory: '', trailerUrl: '', trailerVideo: null, likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
     });
     setSelectedFile(null);
@@ -117,7 +119,7 @@ const ManageMovies = () => {
     setEditingIndex(relIdx);
     setFormData({
       ...movie,
-      performance: movie.performance || { day1: '', weekend: '', status: 'Blockbuster' },
+      performance: movie.performance || { budget: '', day1: '', weekend: '', week1: '', indiaNet: '', indiaGross: '', overseas: '', worldwide: '', verdict: '', screens: '', status: 'Blockbuster' },
       cast: movie.cast || [],
       photos: Array.isArray(movie.photos) ? movie.photos : (typeof movie.photos === 'string' ? JSON.parse(movie.photos) : []),
       coverImage: movie.coverImage || '',
@@ -354,10 +356,61 @@ const ManageMovies = () => {
 
           {activeFormTab === 'Stats' && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <input placeholder="Day 1" className="p-3 border rounded-xl" value={formData.performance?.day1} onChange={e => setFormData({...formData, performance: {...formData.performance, day1: e.target.value}})} />
-                    <input placeholder="Weekend" className="p-3 border rounded-xl" value={formData.performance?.weekend} onChange={e => setFormData({...formData, performance: {...formData.performance, weekend: e.target.value}})} />
-                    <input placeholder="Status" className="p-3 border rounded-xl" value={formData.performance?.status} onChange={e => setFormData({...formData, performance: {...formData.performance, status: e.target.value}})} />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Budget (in Cr/Lakhs)</label>
+                        <input type="number" placeholder="Budget" className="p-3 border rounded-xl outline-none" value={formData.performance?.budget} onChange={e => setFormData({...formData, performance: {...formData.performance, budget: e.target.value}})} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Day 1 Collection</label>
+                        <input type="number" placeholder="Day 1" className="p-3 border rounded-xl" value={formData.performance?.day1} onChange={e => setFormData({...formData, performance: {...formData.performance, day1: e.target.value}})} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Opening Weekend</label>
+                        <input type="number" placeholder="Weekend" className="p-3 border rounded-xl" value={formData.performance?.weekend} onChange={e => setFormData({...formData, performance: {...formData.performance, weekend: e.target.value}})} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">First Week</label>
+                        <input type="number" placeholder="First Week" className="p-3 border rounded-xl" value={formData.performance?.week1} onChange={e => setFormData({...formData, performance: {...formData.performance, week1: e.target.value}})} />
+                    </div>
+                    
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">India Net</label>
+                        <input type="number" placeholder="India Net" className="p-3 border rounded-xl" value={formData.performance?.indiaNet} onChange={e => setFormData({...formData, performance: {...formData.performance, indiaNet: e.target.value}})} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">India Gross</label>
+                        <input type="number" placeholder="India Gross" className="p-3 border rounded-xl" value={formData.performance?.indiaGross} onChange={e => setFormData({...formData, performance: {...formData.performance, indiaGross: e.target.value}})} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Overseas</label>
+                        <input type="number" placeholder="Overseas" className="p-3 border rounded-xl" value={formData.performance?.overseas} onChange={e => setFormData({...formData, performance: {...formData.performance, overseas: e.target.value}})} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1 flex justify-between">Worldwide <button type="button" onClick={() => {
+                            const gross = parseFloat(formData.performance?.indiaGross || 0);
+                            const overseas = parseFloat(formData.performance?.overseas || 0);
+                            setFormData({...formData, performance: {...formData.performance, worldwide: (gross + overseas).toString()}});
+                        }} className="text-primary-red hover:text-red-700">Auto Sum</button></label>
+                        <input type="number" placeholder="Worldwide" className="p-3 border rounded-xl ring-2 ring-primary-red/10" value={formData.performance?.worldwide} onChange={e => setFormData({...formData, performance: {...formData.performance, worldwide: e.target.value}})} />
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Final Verdict</label>
+                        <select className="p-3 border rounded-xl outline-none text-sm font-bold" value={formData.performance?.verdict} onChange={e => setFormData({...formData, performance: {...formData.performance, verdict: e.target.value}})}>
+                            <option value="">Select Verdict</option>
+                            <option value="Blockbuster">Blockbuster</option>
+                            <option value="Super Hit">Super Hit</option>
+                            <option value="Hit">Hit</option>
+                            <option value="Average">Average</option>
+                            <option value="Flop">Flop</option>
+                            <option value="Disaster">Disaster</option>
+                        </select>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Screens Count</label>
+                        <input type="number" placeholder="Screens" className="p-3 border rounded-xl" value={formData.performance?.screens} onChange={e => setFormData({...formData, performance: {...formData.performance, screens: e.target.value}})} />
+                    </div>
                 </div>
                 <div className="flex flex-col gap-1">
                     <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Release Date</label>

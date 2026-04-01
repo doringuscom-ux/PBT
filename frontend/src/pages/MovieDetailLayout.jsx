@@ -19,7 +19,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const isUpcoming = movie.releaseDate && new Date(movie.releaseDate) > new Date();
-    const tabs = ['Timeline', 'Cast & Crew', 'Photos'];
+    const tabs = ['Timeline', 'Cast & Crew', 'Box Office', 'Photos'];
  
     const splitText = (text) => {
         if (!text) return { first: '', second: '' };
@@ -406,6 +406,121 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                             </div>
                                         </Link>
                                     ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'Box Office' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
+                                <div className="flex items-center gap-4 mb-2">
+                                    <div className="h-10 w-1.5 bg-yellow-500 rounded-full"></div>
+                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 leading-none">
+                                        Box Office <span className="text-yellow-500">Report</span>
+                                    </h2>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Financial Summary Card */}
+                                    <div className="bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden shadow-2xl">
+                                        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                                            <i className="fas fa-chart-line text-8xl"></i>
+                                        </div>
+                                        <div className="relative z-10 space-y-6">
+                                            <div>
+                                                <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-1">Worldwide Collection</p>
+                                                <h3 className="text-4xl md:text-5xl font-black text-yellow-400 italic tracking-tighter">
+                                                    {movie.performance?.worldwide ? `₹${movie.performance.worldwide} Cr` : 'N/A'}
+                                                </h3>
+                                            </div>
+                                            <div className="flex items-center gap-8 border-t border-white/10 pt-6">
+                                                <div>
+                                                    <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">Budget</p>
+                                                    <p className="text-lg font-black italic">₹{movie.performance?.budget || '0'} Cr</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">Verdict</p>
+                                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                                                        movie.performance?.verdict === 'Blockbuster' ? 'bg-green-500 text-white' : 
+                                                        movie.performance?.verdict === 'Hit' ? 'bg-blue-500 text-white' : 
+                                                        movie.performance?.verdict === 'Flop' ? 'bg-red-500 text-white' : 'bg-slate-700 text-white'
+                                                    }`}>
+                                                        {movie.performance?.verdict || 'Running'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Profit/Loss Badge */}
+                                            {movie.performance?.worldwide && movie.performance?.budget && (
+                                                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest shadow-lg ${
+                                                    parseFloat(movie.performance.worldwide) > parseFloat(movie.performance.budget) 
+                                                    ? 'border-green-500/50 text-green-400 bg-green-500/10' 
+                                                    : 'border-red-500/50 text-red-400 bg-red-500/10'
+                                                }`}>
+                                                    <i className={`fas ${parseFloat(movie.performance.worldwide) > parseFloat(movie.performance.budget) ? 'fa-arrow-up' : 'fa-arrow-down'}`}></i>
+                                                    ROI: {Math.abs(((parseFloat(movie.performance.worldwide) - parseFloat(movie.performance.budget)) / parseFloat(movie.performance.budget)) * 100).toFixed(1)}%
+                                                    {parseFloat(movie.performance.worldwide) > parseFloat(movie.performance.budget) ? ' Profit' : ' Recovery'}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Screens & Release Data */}
+                                    <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm flex flex-col justify-center gap-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-2xl bg-primary-red/5 flex items-center justify-center text-primary-red">
+                                                <i className="fas fa-desktop text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Screens Count</p>
+                                                <h4 className="text-xl font-black italic uppercase text-slate-900">{movie.performance?.screens || 'N/A'} <span className="text-[10px] text-slate-400 lowercase italic ml-1">Worldwide</span></h4>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-2xl bg-blue-500/5 flex items-center justify-center text-blue-500">
+                                                <i className="fas fa-calendar-alt text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Release Date</p>
+                                                <h4 className="text-xl font-black italic uppercase text-slate-900">{new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Collection Breakdown Table */}
+                                <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-[0_10px_40px_rgba(0,0,0,0.03)] overflow-hidden">
+                                    <div className="bg-slate-50 px-8 py-5 border-b border-gray-100">
+                                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                            <i className="fas fa-table text-primary-red"></i> Collection Breakdown
+                                        </h3>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left">
+                                            <tbody className="divide-y divide-gray-50">
+                                                {[
+                                                    { label: 'Opening Day (Day 1)', value: movie.performance?.day1, highlight: true },
+                                                    { label: 'Opening Weekend', value: movie.performance?.weekend },
+                                                    { label: 'First Week', value: movie.performance?.week1 },
+                                                    { label: 'India Net Collection', value: movie.performance?.indiaNet, highlight: true },
+                                                    { label: 'India Gross Collection', value: movie.performance?.indiaGross },
+                                                    { label: 'Overseas Collection', value: movie.performance?.overseas },
+                                                ].map((row, idx) => (
+                                                    <tr key={idx} className={`${row.highlight ? 'bg-yellow-50/30' : 'hover:bg-slate-50'} transition-colors`}>
+                                                        <td className="px-8 py-5 text-sm font-black text-slate-600 uppercase tracking-tight">{row.label}</td>
+                                                        <td className="px-8 py-5 text-right font-black text-slate-900 italic">
+                                                            {row.value ? `₹${row.value} Cr` : '-'}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                <tr className="bg-slate-900 text-white">
+                                                    <td className="px-8 py-6 text-sm font-black uppercase tracking-[0.2em]">Total Worldwide</td>
+                                                    <td className="px-8 py-6 text-right text-2xl font-black italic text-yellow-400">
+                                                        {movie.performance?.worldwide ? `₹${movie.performance.worldwide} Cr` : '-'}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         )}

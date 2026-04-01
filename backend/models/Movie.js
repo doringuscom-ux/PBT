@@ -12,8 +12,16 @@ const MovieSchema = new mongoose.Schema({
     runtime: { type: String },
     certification: { type: String },
     performance: {
-        day1: { type: String },
-        weekend: { type: String },
+        budget: { type: Number },
+        day1: { type: Number },
+        weekend: { type: Number },
+        week1: { type: Number },
+        indiaNet: { type: Number },
+        indiaGross: { type: Number },
+        overseas: { type: Number },
+        worldwide: { type: Number },
+        verdict: { type: String },
+        screens: { type: Number },
         status: { type: String }
     },
     industry: { type: String, default: 'Pollywood' },
