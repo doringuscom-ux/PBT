@@ -100,11 +100,13 @@ const CelebDetail = () => {
                                 <div className="flex flex-col items-center lg:items-start gap-2 mb-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-[3px] bg-yellow-400"></div>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-400 italic">CINEMA STARS</span>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-yellow-400 italic">
+                                            {celeb.industry === 'Sports' ? 'SPORTS STAR' : celeb.industry === 'Business' ? 'BUSINESS LEADER' : 'CINEMA STAR'}
+                                        </span>
                                     </div>
-                                    <h1 className="text-5xl md:text-8xl font-black italic tracking-tighter leading-[0.85] flex flex-wrap justify-center lg:justify-start">
-                                        <span className="text-white">{firstName}</span>
-                                        <span className="text-yellow-400">{lastName}</span>
+                                    <h1 className="text-4xl md:text-6xl font-black italic tracking-[0.15em] leading-[0.9] flex flex-wrap justify-center lg:justify-start gap-4">
+                                        <span className="text-white uppercase">{firstName}</span>
+                                        <span className="text-yellow-400 uppercase">{lastName}</span>
                                     </h1>
                                 </div>
                                 <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-4 gap-y-2 text-sm font-bold text-slate-400 uppercase tracking-wide italic">
@@ -215,12 +217,16 @@ const CelebDetail = () => {
                                     <div className="w-px h-10 bg-white/10"></div>
                                     <div className="flex-1">
                                         <p className="text-3xl font-black text-white italic tracking-tighter leading-none mb-2">{celeb.stats?.movieCount || celebMovies.length}</p>
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Movies</p>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">
+                                            {celeb.industry === 'Sports' ? 'Matches' : celeb.industry === 'Business' ? 'Enterprises' : 'Movies'}
+                                        </p>
                                     </div>
                                     <div className="w-px h-10 bg-white/10"></div>
                                     <div className="flex-1">
                                         <p className="text-3xl font-black text-white italic tracking-tighter leading-none mb-2">{celeb.stats?.nominations || '0'}</p>
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Noms</p>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">
+                                            {celeb.industry === 'Sports' ? 'Trophies' : celeb.industry === 'Business' ? 'Awards' : 'Noms'}
+                                        </p>
                                     </div>
                                 </div>
                             )}
@@ -235,11 +241,15 @@ const CelebDetail = () => {
                                 </div>
                                 <div className="text-center group">
                                     <p className="text-2xl font-black text-white leading-none group-hover:text-yellow-400 transition-colors">{celeb.stats?.movieCount || celebMovies.length}</p>
-                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">Movies</p>
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">
+                                        {celeb.industry === 'Sports' ? 'Matches' : celeb.industry === 'Business' ? 'Enterprises' : 'Movies'}
+                                    </p>
                                 </div>
                                 <div className="text-center group">
                                     <p className="text-2xl font-black text-white leading-none group-hover:text-yellow-400 transition-colors">{celeb.stats?.nominations || '0'}</p>
-                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">Noms</p>
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">
+                                        {celeb.industry === 'Sports' ? 'Trophies' : celeb.industry === 'Business' ? 'Awards' : 'Noms'}
+                                    </p>
                                 </div>
                             </div>
                         </div>

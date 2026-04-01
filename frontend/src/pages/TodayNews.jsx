@@ -61,7 +61,7 @@ const TodayNews = () => {
                      Top Story
                    </div>
                 )}
-                <div className="relative h-[160px] overflow-hidden cursor-zoom-in group/img" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedImage({ src: item.image, title: item.title }); }}>
+                <div className="relative h-[200px] overflow-hidden cursor-zoom-in group/img" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedImage({ src: item.image, title: item.title }); }}>
                   <img 
                     src={item.image} 
                     alt={item.title} 
@@ -81,17 +81,17 @@ const TodayNews = () => {
                   <div className="text-text-gray text-[8px] font-black mb-1 flex items-center gap-2 uppercase tracking-widest opacity-60">
                     <i className="far fa-clock text-yellow-600"></i> {formatDate(item.createdAt)}
                   </div>
-                  <h3 className="text-[16px] font-black text-text-dark mb-1 group-hover:text-yellow-600 transition-colors line-clamp-1 leading-[1.2] uppercase tracking-tighter italic">
+                  <h3 className="text-[16px] font-black text-text-dark mb-1 group-hover:text-primary-red transition-colors line-clamp-1 leading-[1.2] uppercase tracking-wide italic">
                     {item.title}
                   </h3>
-                  <p className="text-gray-500 text-[10px] mb-2 line-clamp-2 leading-relaxed flex-1 font-medium">
+                  <p className="text-slate-600 text-[11px] mb-4 line-clamp-2 leading-relaxed flex-1 font-medium">
                     {item.excerpt}
                   </p>
                   <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                     <div className="flex flex-col">
-                      <span className="text-[8px] font-black uppercase tracking-widest text-gray-400">{item.author || 'Editor Team'}</span>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{item.author || 'Pbtadka Team'}</span>
                     </div>
-                    <span className="text-primary-red font-black text-[8px] uppercase tracking-widest group-hover:translate-x-1 transition-transform flex items-center gap-2">
+                    <span className="text-primary-red font-black text-[9px] uppercase tracking-wide group-hover:translate-x-2 transition-all flex items-center gap-2 underline decoration-red-500/30 underline-offset-4">
                       READ DETAILS <i className="fas fa-arrow-right"></i>
                     </span>
                   </div>
