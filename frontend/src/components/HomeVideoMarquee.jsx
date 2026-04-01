@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import VideoPlayer from './VideoPlayer';
@@ -22,28 +22,53 @@ const HomeVideoMarquee = () => {
         return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0`;
     };
 
+    const sliderRef = useRef(null);
+
+    useEffect(() => {
+        const slider = sliderRef.current;
+        if (!slider || latestVideos.length === 0 || playingInlineId) return;
+
+        let intervalId = null;
+        const scrollStep = 1;
+        const scrollSpeed = 30;
+
+        const startScrolling = () => {
+            if (intervalId) clearInterval(intervalId);
+            intervalId = setInterval(() => {
+                if (!slider) return;
+                slider.scrollLeft += scrollStep;
+                
+                if (slider.scrollLeft >= slider.scrollWidth - slider.clientWidth - 1) {
+                    slider.scrollLeft = 0;
+                }
+            }, scrollSpeed);
+        };
+
+        startScrolling();
+
+        const handleMouseEnter = () => {
+            if (intervalId) clearInterval(intervalId);
+        };
+        const handleMouseLeave = () => startScrolling();
+
+        slider.addEventListener('mouseenter', handleMouseEnter);
+        slider.addEventListener('mouseleave', handleMouseLeave);
+        slider.addEventListener('touchstart', handleMouseEnter, { passive: true });
+        slider.addEventListener('touchend', handleMouseLeave, { passive: true });
+
+        return () => {
+            if (intervalId) clearInterval(intervalId);
+            slider.removeEventListener('mouseenter', handleMouseEnter);
+            slider.removeEventListener('mouseleave', handleMouseLeave);
+            slider.removeEventListener('touchstart', handleMouseEnter);
+            slider.removeEventListener('touchend', handleMouseLeave);
+        };
+    }, [latestVideos, playingInlineId]);
+
     if (latestVideos.length === 0) return null;
 
     return (
         <div className="mb-12 overflow-hidden relative">
-            <style>
-                {`
-                @keyframes marqueeScroll {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(calc(-280px * ${latestVideos.length} - 1rem * ${latestVideos.length})); }
-                }
-                .animate-marquee {
-                    animation: marqueeScroll ${latestVideos.length * 4}s linear infinite;
-                    display: flex;
-                    width: max-content;
-                }
-                .marquee-container:hover .animate-marquee,
-                .marquee-paused .animate-marquee {
-                    animation-play-state: paused;
-                }
-                `}
-            </style>
-
             <div className="mb-10">
                 <div className="flex items-center justify-between items-end">
                   <div className="space-y-1">
@@ -66,7 +91,12 @@ const HomeVideoMarquee = () => {
                 <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#f8f9fa] to-transparent z-10 pointer-events-none hidden md:block"></div>
                 <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#f8f9fa] to-transparent z-10 pointer-events-none hidden md:block"></div>
                 
-                <div className="animate-marquee gap-4">
+                <div 
+                    ref={sliderRef}
+                    className="flex overflow-x-auto gap-4 py-2 no-scrollbar scroll-smooth"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                    <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
                     {[...latestVideos, ...latestVideos].map((video, idx) => {
                         const isPlaying = playingInlineId === `${video._id}-${idx}`;
                         const isYoutube = video.videoType === 'youtube' || video.videoUrl?.includes('youtube.com') || video.videoUrl?.includes('youtu.be');

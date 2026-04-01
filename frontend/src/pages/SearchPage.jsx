@@ -139,9 +139,9 @@ const SearchPage = () => {
                             {item.category}
                         </div>
                       </div>
-                      <div className="p-6 flex-1 flex flex-col">
-                        <h3 className="font-black text-[15px] leading-snug text-slate-900 mb-3 line-clamp-2 group-hover:text-orange-600 transition-colors italic tracking-tight">{item.title}</h3>
-                        <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-4">
+                      <div className="px-5 py-4 flex-1 flex flex-col">
+                        <h3 className="font-black text-[15px] leading-snug text-slate-900 mb-2 line-clamp-1 group-hover:text-orange-600 transition-colors italic tracking-tight">{item.title}</h3>
+                        <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-3">
                             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1.5">
                                 <i className="far fa-calendar-alt"></i> {formatDate(item.createdAt || item.date)}
                             </span>

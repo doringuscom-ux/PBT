@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 
@@ -12,24 +13,51 @@ const CelebGrid = () => {
 
   const displayedCelebs = sortedCelebs.slice(0, 10);
 
+  const sliderRef = useRef(null);
+
+  useEffect(() => {
+    const slider = sliderRef.current;
+    if (!slider || displayedCelebs.length === 0) return;
+
+    let intervalId = null;
+    const scrollStep = 1;
+    const scrollSpeed = 30;
+
+    const startScrolling = () => {
+      if (intervalId) clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        if (!slider) return;
+        slider.scrollLeft += scrollStep;
+        
+        if (slider.scrollLeft >= slider.scrollWidth - slider.clientWidth - 1) {
+          slider.scrollLeft = 0;
+        }
+      }, scrollSpeed);
+    };
+
+    startScrolling();
+
+    const handleMouseEnter = () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+    const handleMouseLeave = () => startScrolling();
+
+    slider.addEventListener('mouseenter', handleMouseEnter);
+    slider.addEventListener('mouseleave', handleMouseLeave);
+    slider.addEventListener('touchstart', handleMouseEnter, { passive: true });
+    slider.addEventListener('touchend', handleMouseLeave, { passive: true });
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      slider.removeEventListener('mouseenter', handleMouseEnter);
+      slider.removeEventListener('mouseleave', handleMouseLeave);
+      slider.removeEventListener('touchstart', handleMouseEnter);
+      slider.removeEventListener('touchend', handleMouseLeave);
+    };
+  }, [displayedCelebs]);
+
   return (
     <div className="mb-12 overflow-hidden relative">
-      <style>
-        {`
-        @keyframes celebMarquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-200px * ${displayedCelebs.length} - 1rem * ${displayedCelebs.length})); }
-        }
-        .animate-celeb-marquee {
-            animation: celebMarquee ${displayedCelebs.length * 3.5}s linear infinite;
-            display: flex;
-            width: max-content;
-        }
-        .celeb-marquee-container:hover .animate-celeb-marquee {
-            animation-play-state: paused;
-        }
-        `}
-      </style>
 
       <div className="mb-10">
         <div className="flex items-center justify-between items-end">
@@ -53,7 +81,12 @@ const CelebGrid = () => {
         <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#f8f9fa] to-transparent z-10 pointer-events-none hidden lg:block"></div>
         <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#f8f9fa] to-transparent z-10 pointer-events-none hidden lg:block"></div>
         
-        <div className="animate-celeb-marquee gap-4 px-2">
+        <div 
+          ref={sliderRef}
+          className="flex overflow-x-auto gap-4 px-2 no-scrollbar"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
           {[...displayedCelebs, ...displayedCelebs].map((celeb, idx) => (
             <Link to={`/celeb/${celeb._id}`} key={`${celeb._id}-${idx}`} className="w-[200px] shrink-0 bg-white rounded-xl shadow-md text-center hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 group no-underline text-inherit block overflow-hidden">
               <div className="relative w-full pt-[125%] overflow-hidden bg-slate-100">

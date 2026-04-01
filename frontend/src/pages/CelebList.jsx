@@ -11,35 +11,46 @@ const CelebList = () => {
   const filteredCelebs = filter === 'ALL' ? celebs : celebs.filter(c => c.industry === filter);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white pt-24 pb-20 relative overflow-hidden">
-        {/* Subtle Background Elements */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-yellow-400/5 rounded-full blur-[150px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-yellow-400/5 rounded-full blur-[120px] pointer-events-none translate-y-1/3 -translate-x-1/3"></div>
+    <div className="bg-[#050505] min-h-screen">
+        {/* Dynamic Hero Section */}
+        <div className="relative h-auto py-3 md:py-5 flex items-center justify-center overflow-hidden">
+            {/* Background Image with Blur */}
+            <div className="absolute inset-0 z-0">
+                <img 
+                    src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+                    alt="Cinema Stars" 
+                    className="w-full h-full object-cover blur-sm brightness-[0.2] scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050505]"></div>
+            </div>
 
-        <div className="page-container relative z-10">
-          <div className="flex flex-col items-center md:items-start mb-16 space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-1 bg-yellow-400 rounded-full"></div>
-                <span className="font-black text-yellow-400 uppercase tracking-[0.4em] text-[10px] md:text-sm">Cinema Stars</span>
-              </div>
-              <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl text-center md:text-left">
-                  Celeb<span className="text-yellow-400">rities</span>
-              </h1>
-              <p className="text-white/60 text-sm md:text-base max-w-xl font-medium text-center md:text-left">
-                  Discover the profiles, milestones, and cinematic journeys of your favorite stars from the industry.
-              </p>
-          </div>
+            <div className="relative z-10 text-center px-4 max-w-5xl animate-slide-up">
+                <h1 className="text-4xl md:text-6xl font-black text-white mb-[5px] tracking-tighter leading-none uppercase drop-shadow-[0_20px_20px_rgba(0,0,0,0.8)] flex items-center justify-center gap-4 md:gap-8">
+                    <div className="hidden sm:block w-12 md:w-20 h-[2px] bg-gradient-to-r from-transparent to-yellow-500"></div>
+                    <span>GLOBAL <span className="text-yellow-400 text-shadow-premium">STARS</span></span>
+                    <div className="hidden sm:block w-12 md:w-20 h-[2px] bg-gradient-to-l from-transparent to-yellow-500"></div>
+                </h1>
+                
+                <div className="relative inline-block">
+                    <p className="text-white/80 text-[10px] md:text-[12px] font-bold mx-auto leading-relaxed italic whitespace-nowrap tracking-[0.1em] px-8 py-2 border-y border-white/10 uppercase">
+                        Discover the profiles, milestones, and cinematic journeys of your favorite stars
+                    </p>
+                </div>
+            </div>
+        </div>
 
-          <div className="mb-12 bg-white/5 border border-white/10 p-4 md:p-6 rounded-3xl backdrop-blur-md shadow-2xl">
-              <FilterBar 
-                options={industries} 
-                activeFilter={filter} 
-                onFilterChange={setFilter} 
-                label="Explore Industry" 
-              />
-          </div>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
+        <div className="page-container -mt-4 relative z-20 pb-24">
+            {/* Filter Controls - Removed glass-panel bg/rounded */}
+            <div className="p-4 md:p-[18px] mb-4 border-b border-white/10">
+                <FilterBar 
+                    options={industries} 
+                    activeFilter={filter} 
+                    onFilterChange={setFilter} 
+                    label="Industry" 
+                />
+            </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
             {filteredCelebs.map((celeb) => (
               <Link to={`/celeb/${celeb.slug || celeb._id}`} key={celeb._id} className="group relative block rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 shadow-2xl shadow-black/50 hover:shadow-primary-red/20 transition-all duration-500 hover:-translate-y-2">
                 <div className="aspect-[3/4] relative">

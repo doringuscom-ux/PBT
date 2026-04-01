@@ -7,7 +7,7 @@ import Modal from '../components/Modal';
 const INDUSTRIES = ["Bollywood", "Hollywood", "Tollywood", "Kollywood", "Mollywood", "Sandalwood", "South Indian", "Haryanvi", "Bhojpuri", "Pollywood"];
 
 const ManageUpcoming = () => {
-  const { user, movies, addMovie, updateMovie, deleteMovie, deleteMovieComment, updateMovieComment } = useData();
+  const { user, movies, celebs, addMovie, updateMovie, deleteMovie, deleteMovieComment, updateMovieComment } = useData();
 
   const quillModules = {
     toolbar: [
@@ -109,6 +109,9 @@ const ManageUpcoming = () => {
     setShowForm(true);
     setActiveFormTab('Info');
   };
+
+  const [castCelebSearch, setCastCelebSearch] = useState('');
+  const [activeCelebSearchIdx, setActiveCelebSearchIdx] = useState(null);
 
   return (
     <div className="space-y-6 relative">
@@ -349,31 +352,102 @@ const ManageUpcoming = () => {
                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
                     <div className="flex justify-between items-center mb-6">
                         <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Cast & Crew Members</h4>
-                        <button 
-                            type="button" 
-                            onClick={() => setFormData({...formData, cast: [...formData.cast, { name: '', role: 'Actor', image: '' }]})}
-                            className="bg-primary-red text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform"
-                        >
-                            <i className="fas fa-plus mr-1"></i> Add Member
-                        </button>
+                        <button type="button" onClick={() => setFormData({...formData, cast: [...formData.cast, { name: '', role: 'Actor', image: '' }]})} className="bg-primary-red text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase hover:scale-105 transition-transform"><i className="fas fa-plus"></i></button>
                     </div>
-                    <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="space-y-4 max-h-[460px] overflow-y-auto pr-2 custom-scrollbar border-t pt-4">
                         {formData.cast?.map((member, cIdx) => (
-                            <div key={cIdx} className="bg-white p-4 rounded-xl border shadow-sm grid grid-cols-1 md:grid-cols-3 gap-3 relative group">
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-[8px] font-black text-gray-400 uppercase">Actor Name</label>
-                                    <input className="p-2 border rounded-lg text-xs" value={member.name} onChange={e => { const nC = [...formData.cast]; nC[cIdx].name = e.target.value; setFormData({...formData, cast: nC}); }} />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-[8px] font-black text-gray-400 uppercase">Role</label>
-                                    <input className="p-2 border rounded-lg text-xs" value={member.role} onChange={e => { const nC = [...formData.cast]; nC[cIdx].role = e.target.value; setFormData({...formData, cast: nC}); }} />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-[8px] font-black text-gray-400 uppercase">Photo URL</label>
-                                    <div className="flex gap-1">
-                                        <input className="flex-1 p-2 border rounded-lg text-xs" value={member.image} onChange={e => { const nC = [...formData.cast]; nC[cIdx].image = e.target.value; setFormData({...formData, cast: nC}); }} />
-                                        <button type="button" onClick={() => setFormData({...formData, cast: formData.cast.filter((_, i) => i !== cIdx)})} className="text-red-500 p-2"><i className="fas fa-times"></i></button>
+                            <div key={cIdx} className="bg-white p-4 rounded-xl border space-y-3 relative">
+                                {/* Searchable Celebrity Selector */}
+                                <div className="flex flex-col gap-1 relative">
+                                    <label className="text-[9px] font-black uppercase text-slate-400">Search & Link Celebrity</label>
+                                    <div className="relative group">
+                                        <input 
+                                            type="text"
+                                            className={`w-full p-3 border rounded-xl text-xs font-bold outline-none transition-all pr-10 
+                                                ${activeCelebSearchIdx === cIdx ? 'ring-2 ring-primary-red/20 border-primary-red shadow-lg' : 'bg-slate-50 border-gray-200'}`}
+                                            placeholder="Type to search celebrities..."
+                                            autoComplete="off"
+                                            value={activeCelebSearchIdx === cIdx ? castCelebSearch : (member.name || '')}
+                                            onFocus={() => { setActiveCelebSearchIdx(cIdx); setCastCelebSearch(''); }}
+                                            onChange={e => setCastCelebSearch(e.target.value)}
+                                        />
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300">
+                                            <i className={`fas ${member.celebrity ? 'fa-link text-primary-red' : 'fa-search'}`}></i>
+                                        </div>
+
+                                        {activeCelebSearchIdx === cIdx && (
+                                            <>
+                                                <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setActiveCelebSearchIdx(null)}></div>
+                                                <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] max-h-64 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200 custom-scrollbar">
+                                                    <button 
+                                                        type="button" 
+                                                        className="w-full text-left p-3 hover:bg-slate-50 text-[9px] font-black uppercase text-slate-400 border-b border-dashed tracking-widest flex items-center gap-2"
+                                                        onClick={() => {
+                                                            const nC = [...formData.cast];
+                                                            nC[cIdx].celebrity = null;
+                                                            setFormData({...formData, cast: nC});
+                                                            setActiveCelebSearchIdx(null);
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-times-circle"></i> Use Manual Entry Only
+                                                    </button>
+                                                    {celebs
+                                                        .filter(c => c.name.toLowerCase().includes(castCelebSearch.toLowerCase()))
+                                                        .sort((a,b) => a.name.localeCompare(b.name))
+                                                        .map(c => (
+                                                            <button 
+                                                                key={c._id}
+                                                                type="button"
+                                                                className="w-full text-left p-2.5 hover:bg-primary-red/5 flex items-center gap-3 border-b border-gray-50 last:border-0 transition-all group/opt"
+                                                                onClick={() => {
+                                                                    const nC = [...formData.cast];
+                                                                    nC[cIdx] = { 
+                                                                        ...nC[cIdx], 
+                                                                        celebrity: c._id, 
+                                                                        name: c.name, 
+                                                                        image: c.image 
+                                                                    };
+                                                                    setFormData({...formData, cast: nC});
+                                                                    setActiveCelebSearchIdx(null);
+                                                                }}
+                                                            >
+                                                                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm shrink-0">
+                                                                    <img src={c.image} className="w-full h-full object-cover" alt="" />
+                                                                </div>
+                                                                <div className="min-w-0 flex-1">
+                                                                    <p className="text-[11px] font-black text-slate-900 leading-none mb-1 truncate group-hover/opt:text-primary-red">{c.name}</p>
+                                                                    <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest truncate">{c.role}</p>
+                                                                </div>
+                                                                <i className="fas fa-plus text-slate-200 text-[10px] mr-2 transition-colors group-hover/opt:text-primary-red"></i>
+                                                            </button>
+                                                        ))
+                                                    }
+                                                    {celebs.filter(c => c.name.toLowerCase().includes(castCelebSearch.toLowerCase())).length === 0 && (
+                                                        <div className="p-8 text-center">
+                                                            <p className="text-[9px] font-black uppercase text-slate-300 tracking-[0.2em]">No results found</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[8px] font-black uppercase text-slate-300 ml-1">Display Name</label>
+                                        <input placeholder="Name" className="p-2 border rounded-lg text-xs font-bold" value={member.name} onChange={e => { const nC = [...formData.cast]; nC[cIdx].name = e.target.value; setFormData({...formData, cast: nC}); }} />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[8px] font-black uppercase text-slate-300 ml-1">Character Role</label>
+                                        <input placeholder="Role" className="p-2 border rounded-lg text-xs" value={member.role} onChange={e => { const nC = [...formData.cast]; nC[cIdx].role = e.target.value; setFormData({...formData, cast: nC}); }} />
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="flex-1 flex flex-col gap-1">
+                                        <label className="text-[8px] font-black uppercase text-slate-300 ml-1">Photo URL</label>
+                                        <input placeholder="Photo URL" className="p-2 border rounded-lg text-xs" value={member.image} onChange={e => { const nC = [...formData.cast]; nC[cIdx].image = e.target.value; setFormData({...formData, cast: nC}); }} />
+                                    </div>
+                                    <button type="button" onClick={() => setFormData({...formData, cast: formData.cast.filter((_, i) => i !== cIdx)})} className="self-end text-red-500 p-2 hover:bg-red-50 rounded-lg transition-colors"><i className="fas fa-trash-alt"></i></button>
                                 </div>
                             </div>
                         ))}

@@ -42,7 +42,7 @@ const NewsGrid = () => {
                     {String(index + 1).padStart(2, '0')}
                 </span>
                 <div className="p-4 rounded-3xl group-hover:bg-white transition-all">
-                    <h3 className="text-xl font-black mb-3 leading-[1.2] text-slate-900 group-hover:text-primary-red transition-colors italic tracking-tighter uppercase line-clamp-3">
+                    <h3 className="text-xl font-black mb-3 leading-[1.2] text-slate-900 group-hover:text-primary-red transition-colors italic tracking-tighter uppercase line-clamp-1">
                         {item.title}
                     </h3>
                     <div className="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">

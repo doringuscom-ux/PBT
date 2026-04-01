@@ -49,19 +49,19 @@ const TodayNews = () => {
         </div>
 
         {(todayNews.length > 0 ? todayNews : fallbackNews).length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {(todayNews.length > 0 ? todayNews : fallbackNews).map((item) => (
               <Link 
                 key={item._id} 
                 to={`/news/${item._id}`}
-                className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full relative"
+                className="group bg-white rounded-[16px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full relative"
               >
                 {todayNews.length === 0 && (
-                   <div className="absolute top-4 right-4 z-20 bg-slate-900/80 backdrop-blur-md text-white text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-white/10">
+                   <div className="absolute top-3 right-3 z-20 bg-slate-900/80 backdrop-blur-md text-white text-[7px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest border border-white/10">
                      Top Story
                    </div>
                 )}
-                <div className="relative h-64 overflow-hidden cursor-zoom-in group/img" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedImage({ src: item.image, title: item.title }); }}>
+                <div className="relative h-[160px] overflow-hidden cursor-zoom-in group/img" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedImage({ src: item.image, title: item.title }); }}>
                   <img 
                     src={item.image} 
                     alt={item.title} 
@@ -69,28 +69,30 @@ const TodayNews = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity">
-                     <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30">
-                        <i className="fas fa-expand-alt text-lg"></i>
+                     <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30">
+                        <i className="fas fa-expand-alt text-base"></i>
                      </div>
                   </div>
-                  <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-primary-red text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
+                  <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-primary-red text-[8px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest shadow-lg">
                     {item.category}
                   </span>
                 </div>
-                <div className="p-8 flex flex-col flex-1">
-                  <h3 className="text-xl font-bold mb-4 text-text-dark group-hover:text-primary-red transition-colors line-clamp-2 leading-tight">
+                <div className="px-5 py-4 flex flex-col flex-1">
+                  <div className="text-text-gray text-[8px] font-black mb-1 flex items-center gap-2 uppercase tracking-widest opacity-60">
+                    <i className="far fa-clock text-yellow-600"></i> {formatDate(item.createdAt)}
+                  </div>
+                  <h3 className="text-[16px] font-black text-text-dark mb-1 group-hover:text-yellow-600 transition-colors line-clamp-1 leading-[1.2] uppercase tracking-tighter italic">
                     {item.title}
                   </h3>
-                  <p className="text-gray-500 text-sm mb-6 line-clamp-3 leading-relaxed flex-1">
+                  <p className="text-gray-500 text-[10px] mb-2 line-clamp-2 leading-relaxed flex-1 font-medium">
                     {item.excerpt}
                   </p>
-                  <div className="flex items-center justify-between pt-6 border-t border-gray-50">
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{item.author || 'Editor Team'}</span>
-                      <span className="text-[9px] text-gray-400 font-bold uppercase tracking-tighter mt-1">{formatDate(item.createdAt)}</span>
+                      <span className="text-[8px] font-black uppercase tracking-widest text-gray-400">{item.author || 'Editor Team'}</span>
                     </div>
-                    <span className="text-primary-red font-black text-[10px] uppercase tracking-widest group-hover:translate-x-1 transition-transform flex items-center gap-2">
-                      Read Details <i className="fas fa-arrow-right"></i>
+                    <span className="text-primary-red font-black text-[8px] uppercase tracking-widest group-hover:translate-x-1 transition-transform flex items-center gap-2">
+                      READ DETAILS <i className="fas fa-arrow-right"></i>
                     </span>
                   </div>
                 </div>

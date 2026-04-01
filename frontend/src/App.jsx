@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { DataProvider } from './context/DataContext';
-import AnnouncementBar from './components/AnnouncementBar';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import HomeVideoMarquee from './components/HomeVideoMarquee';
@@ -41,6 +40,7 @@ import ManageSports from './admin/ManageSports';
 import UpcomingList from './pages/UpcomingList';
 import ManageUpcoming from './admin/ManageUpcoming';
 import ContactUs from './pages/ContactUs';
+import BoxOffice from './pages/BoxOffice';
 
 import WeatherWidget from './components/WeatherWidget';
 import MarketWidget from './components/MarketWidget';
@@ -114,6 +114,7 @@ function App() {
             <Route path="/search" element={<SearchPage />} />
             <Route path="/sports" element={<SportsList />} />
             <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/box-office" element={<BoxOffice />} />
             <Route path="*" element={<NotFound />} />
           </Route>
           

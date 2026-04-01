@@ -48,7 +48,7 @@ const NewsDetail = () => {
                             <span className="text-slate-900">{article.category}</span>
                         </nav>
                         
-                        <h1 className="text-3xl md:text-5xl font-black mb-6 leading-[1.1] text-slate-900 italic tracking-tighter uppercase">
+                        <h1 className="text-2xl md:text-4xl font-headline font-black mb-6 leading-tight text-slate-950 tracking-tight">
                             {article.title}
                         </h1>
                         
@@ -73,13 +73,14 @@ const NewsDetail = () => {
                         />
                         
                         <div className="max-w-none text-slate-800 leading-relaxed mb-12">
-                            <p className="text-xl md:text-2xl font-black mb-8 italic text-slate-500 border-l-4 border-primary-red pl-6 py-2 leading-snug">
+                            <p className="text-xl md:text-2xl font-black mb-8 italic text-slate-500 border-l-4 border-primary-red pl-6 py-2 leading-snug rich-text-content">
                                 {article.excerpt}
                             </p>
                             <div 
-                                className="space-y-6 font-medium text-lg text-slate-700"
-                                style={{ wordBreak: 'normal', overflowWrap: 'break-word' }}
-                                dangerouslySetInnerHTML={{ __html: article.fullStory || article.content }}
+                                className="rich-text-content space-y-6 font-medium text-lg text-slate-700"
+                                dangerouslySetInnerHTML={{ 
+                                    __html: (article.fullStory || article.content || '').replace(/&nbsp;|\u00a0/g, ' ') 
+                                }}
                             />
                         </div>
 
@@ -110,11 +111,11 @@ const NewsDetail = () => {
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                             </div>
                                             <div className="flex flex-col justify-center">
-                                                <h4 className="text-xs lg:text-[13px] font-black text-slate-900 leading-[1.3] line-clamp-3 group-hover:text-primary-red transition-colors uppercase tracking-tight italic">
+                                                <h4 className="text-xs lg:text-[13px] font-black text-slate-900 leading-[1.3] line-clamp-1 group-hover:text-primary-red transition-colors uppercase tracking-tight italic">
                                                     {item.title}
                                                 </h4>
-                                                <div className="mt-2 text-[9px] text-gray-400 font-black uppercase tracking-widest italic flex items-center gap-1.5">
-                                                    <span className="w-1.5 h-1.5 bg-primary-red rounded-full"></span> Cinema Update
+                                                <div className="mt-2 text-[9px] text-gray-400 font-black uppercase tracking-widest italic flex items-center gap-1.5 line-clamp-1">
+                                                    <span className="w-1.5 h-1.5 bg-primary-red rounded-full"></span> {item.category || 'Cinema Update'}
                                                 </div>
                                             </div>
                                         </Link>

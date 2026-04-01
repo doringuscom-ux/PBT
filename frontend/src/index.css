@@ -44,13 +44,13 @@ body {
   overflow-wrap: break-word !important;
   word-wrap: break-word !important;
   word-break: normal !important;
-  word-break: keep-all !important; /* Extremely strict non-breaking */
   hyphens: none !important;
   -webkit-hyphens: none !important;
   -moz-hyphens: none !important;
   -ms-hyphens: none !important;
   text-align: left !important;
   white-space: normal !important;
+  line-height: 1.7 !important;
 }
 
 .rich-text-content img {

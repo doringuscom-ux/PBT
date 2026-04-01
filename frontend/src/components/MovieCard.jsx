@@ -41,17 +41,19 @@ const MovieCard = ({ movie, isUpcoming = false }) => {
           )}
         </div>
 
-        {/* Hover Info (Bottom) */}
-        <div className="absolute bottom-0 inset-x-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-out flex flex-col gap-2">
-           <div className="flex gap-2">
-              <span className="bg-white/20 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded border border-white/20 uppercase">
-                {movie.genre}
-              </span>
-           </div>
-           <p className="text-white/80 text-[10px] font-medium italic line-clamp-2 leading-relaxed">
-             {movie.overview}
-           </p>
-        </div>
+         <div className="absolute bottom-0 inset-x-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-out flex flex-col gap-2">
+            <div className="flex gap-2">
+               <span className="bg-white/20 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded border border-white/20 uppercase">
+                 {movie.genre}
+               </span>
+            </div>
+            <p className="text-white/80 text-[10px] font-medium italic line-clamp-2 leading-relaxed">
+              {movie.overview}
+            </p>
+         </div>
+
+         {/* Decorative Shine - Moved inside overflow-hidden container */}
+         <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/10 to-transparent -rotate-45 pointer-events-none group-hover:animate-shine duration-1000 ease-in-out opacity-0 group-hover:opacity-100"></div>
       </Link>
 
       {/* Content Area */}
@@ -73,9 +75,6 @@ const MovieCard = ({ movie, isUpcoming = false }) => {
            </span>
         </div>
       </div>
-      
-      {/* Decorative Shine */}
-      <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/10 to-transparent -rotate-45 pointer-events-none group-hover:animate-shine duration-1000 ease-in-out opacity-0 group-hover:opacity-100"></div>
     </div>
   );
 };

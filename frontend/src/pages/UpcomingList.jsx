@@ -8,7 +8,7 @@ const UpcomingList = () => {
   const { movies } = useData();
   const [filter, setFilter] = useState('ALL');
 
-  const industries = ['ALL', ...new Set(movies.map(m => m.industry))];
+  const industries = ['ALL', ...new Set(movies.filter(m => m.industry).map(m => m.industry.trim().toUpperCase()))];
   
   const upcomingMovies = movies.filter(m => {
     if (!m.releaseDate) return false;
@@ -17,12 +17,12 @@ const UpcomingList = () => {
 
   const filteredMovies = filter === 'ALL' 
     ? upcomingMovies 
-    : upcomingMovies.filter(m => m.industry === filter);
+    : upcomingMovies.filter(m => m.industry?.trim().toUpperCase() === filter);
 
   return (
     <div className="bg-[#050505] min-h-screen">
         {/* Dynamic Hero Section */}
-        <div className="relative h-auto py-12 md:py-20 flex items-center justify-center overflow-hidden">
+        <div className="relative h-auto py-3 md:py-5 flex items-center justify-center overflow-hidden">
             {/* Background Image with Blur */}
             <div className="absolute inset-0 z-0">
                 <img 
@@ -33,24 +33,24 @@ const UpcomingList = () => {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050505]"></div>
             </div>
 
-            <div className="relative z-10 text-center px-4 max-w-4xl animate-slide-up">
-                <div className="flex items-center justify-center gap-3 mb-3">
-                    <div className="w-8 h-[1px] bg-yellow-400"></div>
-                    <span className="text-yellow-400 font-black text-[15px] uppercase tracking-[0.4em] italic">Awaited Blockbusters</span>
-                    <div className="w-8 h-[1px] bg-yellow-400"></div>
-                </div>
-                <h1 className="text-3xl md:text-5xl font-black text-white mb-3 tracking-tighter leading-none shadow-black drop-shadow-2xl uppercase">
-                    UPCOMING <span className="text-yellow-400">RELEASES</span>
+            <div className="relative z-10 text-center px-4 max-w-5xl animate-slide-up">
+                <h1 className="text-4xl md:text-6xl font-black text-white mb-[5px] tracking-tighter leading-none uppercase drop-shadow-[0_20px_20px_rgba(0,0,0,0.8)] flex items-center justify-center gap-4 md:gap-8">
+                    <div className="hidden sm:block w-12 md:w-20 h-[2px] bg-gradient-to-r from-transparent to-yellow-500"></div>
+                    <span>UPCOMING <span className="text-yellow-400 text-shadow-premium">RELEASES</span></span>
+                    <div className="hidden sm:block w-12 md:w-20 h-[2px] bg-gradient-to-l from-transparent to-yellow-500"></div>
                 </h1>
-                <p className="text-white text-xs md:text-sm font-medium max-w-xl mx-auto leading-relaxed italic">
-                    Get ready for the most awaited cinematic experiences hitting the global screens soon.
-                </p>
+                
+                <div className="relative inline-block">
+                    <p className="text-white/80 text-[10px] md:text-[12px] font-bold mx-auto leading-relaxed italic whitespace-nowrap tracking-[0.1em] px-8 py-2 border-y border-white/10 uppercase">
+                        Get ready for the most awaited cinematic experiences hitting the global screens soon
+                    </p>
+                </div>
             </div>
         </div>
 
-        <div className="page-container -mt-10 relative z-20 pb-24">
-            {/* Filter Controls */}
-            <div className="glass-panel p-4 md:p-6 rounded-[2rem] mb-8">
+        <div className="page-container -mt-4 relative z-20 pb-24">
+            {/* Filter Controls - Removed glass-panel bg/rounded */}
+            <div className="p-4 md:p-[18px] mb-4 border-b border-white/10">
                 <FilterBar 
                     options={industries} 
                     activeFilter={filter} 
@@ -60,13 +60,6 @@ const UpcomingList = () => {
             </div>
             
             {/* Movie Grid */}
-            <div className="flex items-center justify-between mb-8 px-2">
-                <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase flex items-center gap-3">
-                    <span className="w-8 h-1 bg-primary-red"></span>
-                    {filter === 'ALL' ? 'Coming Soon' : `${filter} Upcoming`}
-                </h2>
-                <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">{filteredMovies.length} Awaited Titles</span>
-            </div>
 
             {filteredMovies.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 md:gap-10">

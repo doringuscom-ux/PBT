@@ -257,7 +257,9 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                             {movie.fullStory && (
                                                 <div className="mt-12 pt-12 border-t border-dashed border-gray-200 rich-text-content prose prose-slate max-w-none text-slate-600 font-medium" 
                                                      style={{ fontFamily: "'Montserrat', sans-serif" }}
-                                                     dangerouslySetInnerHTML={{ __html: movie.fullStory }} 
+                                                     dangerouslySetInnerHTML={{ 
+                                                         __html: (movie.fullStory || '').replace(/&nbsp;|\u00a0/g, ' ') 
+                                                     }} 
                                                 />
                                             )}
                                         </div>

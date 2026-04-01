@@ -274,10 +274,12 @@ const CelebDetail = () => {
                                         <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900">Celebrity Biography</h2>
                                     </div>
                                     <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                                        <div 
-                                            className="rich-text-content text-slate-700 leading-relaxed text-lg font-medium space-y-4"
-                                            dangerouslySetInnerHTML={{ __html: celeb.fullBio || `<p>${celeb.bio} ... Career details coming soon.</p>` }} 
-                                        />
+                                            <div 
+                                                className="rich-text-content text-slate-700 leading-relaxed text-lg font-medium space-y-4"
+                                                dangerouslySetInnerHTML={{ 
+                                                    __html: (celeb.fullBio || `<p>${celeb.bio} ... Career details coming soon.</p>`).replace(/&nbsp;|\u00a0/g, ' ') 
+                                                }} 
+                                            />
                                     </div>
                                 </section>
 
