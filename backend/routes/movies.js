@@ -11,8 +11,10 @@ const enrich = (items, sessionUser) => {
         if (userId && itemObj.userRatings) {
             const userRating = itemObj.userRatings.find(r => r.user?.toString() === userId);
             itemObj.myRating = userRating ? userRating.rating : null;
+            itemObj.myReview = userRating ? userRating.review : null;
         } else {
             itemObj.myRating = null;
+            itemObj.myReview = null;
         }
 
         if (itemObj.comments) {
@@ -35,7 +37,7 @@ router.get('/', async (req, res) => {
             query = query.populate('createdBy', 'username employeeId fullName');
         }
         
-        const movies = await query.populate('cast.celebrity').populate('trailerVideo').sort({ createdAt: -1 });
+        const movies = await query.populate('cast.celebrity').populate('trailerVideo').populate('userRatings.user', 'username fullName').sort({ createdAt: -1 });
         res.json(enrich(movies, req.session.user));
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -243,28 +245,34 @@ router.post('/:id/rate', async (req, res) => {
         const movie = await Movie.findById(req.params.id);
         if (!movie) return res.status(404).json({ message: 'Movie not found' });
  
-        if (!req.session.user) return res.status(401).json({ message: 'Login required' });
-        const { rating } = req.body;
-        const userId = req.session.user.id;
- 
+        const { rating, review } = req.body;
+        const user = req.session.user;
+
         if (!rating || rating < 1 || rating > 5) {
             return res.status(400).json({ message: 'Invalid rating. Must be between 1 and 5.' });
         }
- 
-        if (!movie.userRatings) movie.userRatings = [];
- 
-        const existingRatingIndex = movie.userRatings.findIndex(r => r.user?.toString() === userId);
-        if (existingRatingIndex > -1) {
-            movie.userRatings[existingRatingIndex].rating = rating;
+
+        if (user) {
+            // Logged in: Updatable unique rating
+            const existingRatingIndex = movie.userRatings.findIndex(r => r.user?.toString() === user.id);
+            if (existingRatingIndex > -1) {
+                movie.userRatings[existingRatingIndex].rating = rating;
+                movie.userRatings[existingRatingIndex].review = review; // Save review only for users
+                movie.userRatings[existingRatingIndex].createdAt = Date.now();
+            } else {
+                movie.userRatings.push({ user: user.id, rating, review });
+            }
         } else {
-            movie.userRatings.push({ user: userId, rating });
+            // Anonymous: Cumulative ratings
+            movie.userRatings.push({ rating, isAnonymous: true });
+            // Note: Review ignored for anonymous per requirement
         }
- 
+
         // Recalculate average
         movie.totalRatings = movie.userRatings.length;
-        const sum = movie.userRatings.reduce((acc, r) => acc + r.rating, 0);
+        const sum = movie.userRatings.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
         movie.averageRating = sum / movie.totalRatings;
- 
+
         await movie.save();
         res.json(enrich([movie], req.session.user)[0]);
     } catch (err) { res.status(500).json({ message: err.message }); }

@@ -5,7 +5,7 @@ import { useData } from '../context/DataContext';
 import Modal from '../components/Modal';
 
 const ManageNews = () => {
-  const { user, news, addNews, updateNews, deleteNews, deleteComment, updateComment } = useData();
+  const { user, celebs, movies, news, addNews, updateNews, deleteNews, deleteComment, updateComment } = useData();
 
   const quillModules = {
     toolbar: [
@@ -18,7 +18,7 @@ const ManageNews = () => {
   };
 
   const [editingIndex, setEditingIndex] = useState(null);
-  const [formData, setFormData] = useState({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0, slug: '' });
+  const [formData, setFormData] = useState({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0, slug: '', relatedMovie: '', relatedCelebrities: [] });
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
   const [selectedFile, setSelectedFile] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -26,6 +26,10 @@ const ManageNews = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [showComments, setShowComments] = useState(false);
   const [selectedArticleId, setSelectedArticleId] = useState(null);
+  const [movieSearchTerm, setMovieSearchTerm] = useState('');
+  const [showMovieResults, setShowMovieResults] = useState(false);
+  const [celebSearchTerm, setCelebSearchTerm] = useState('');
+  const [showCelebResults, setShowCelebResults] = useState(false);
   const selectedArticle = news.find(n => n._id === selectedArticleId);
 
   const filteredNews = news
@@ -64,16 +68,28 @@ const ManageNews = () => {
     } else {
       await addNews(data);
     }
-    setFormData({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0, slug: '' });
+    setFormData({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0, slug: '', relatedMovie: '', relatedCelebrities: [] });
     setSelectedFile(null);
     setImageSource('url');
     setShowForm(false);
+    setMovieSearchTerm('');
+    setCelebSearchTerm('');
   };
 
   const handleEdit = (article) => {
     setEditingIndex(article._id);
-    setFormData(article);
+    const sanitizedArticle = {
+        ...article,
+        relatedCelebrities: article.relatedCelebrities?.map(c => c._id || c) || []
+    };
+    setFormData(sanitizedArticle);
     setShowForm(true);
+    if (article.relatedMovie) {
+        const movie = movies.find(m => m._id === (article.relatedMovie._id || article.relatedMovie));
+        if (movie) setMovieSearchTerm(movie.title);
+    } else {
+        setMovieSearchTerm('');
+    }
   };
 
   return (
@@ -108,7 +124,7 @@ const ManageNews = () => {
                 <option value="title">Title (A-Z)</option>
               </select>
               <button 
-                onClick={() => { setShowForm(true); setEditingIndex(null); setFormData({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0, slug: '' }); }}
+                onClick={() => { setShowForm(true); setEditingIndex(null); setFormData({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0, slug: '', relatedMovie: '', relatedCelebrities: [] }); setMovieSearchTerm(''); setCelebSearchTerm(''); }}
                 className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-primary-red/20"
               >
                 <i className="fas fa-plus"></i> <span className="hidden sm:inline">Add News</span>
@@ -196,6 +212,121 @@ const ManageNews = () => {
               placeholder="Likes" className="p-2 border rounded bg-slate-50 font-bold"
               value={formData.likes} onChange={e => setFormData({...formData, likes: parseInt(e.target.value) || 0})}
             />
+          </div>
+          <div className="flex flex-col gap-1 relative">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Related Movie (Search & Link)</label>
+            <div className="relative">
+                <input 
+                    type="text"
+                    placeholder="Search movie name..."
+                    className="w-full p-2 border rounded bg-white font-semibold"
+                    value={movieSearchTerm}
+                    onChange={(e) => {
+                        setMovieSearchTerm(e.target.value);
+                        setShowMovieResults(true);
+                    }}
+                    onFocus={() => setShowMovieResults(true)}
+                />
+                {showMovieResults && (
+                    <div className="absolute z-50 left-0 right-0 mt-1 bg-white border rounded-xl shadow-xl max-h-48 overflow-y-auto no-scrollbar border-primary-red/20 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div 
+                            className="p-2 text-xs font-bold text-gray-400 hover:bg-gray-50 cursor-pointer border-b border-gray-50 italic"
+                            onClick={() => {
+                                setFormData({...formData, relatedMovie: ''});
+                                setMovieSearchTerm('');
+                                setShowMovieResults(false);
+                            }}
+                        >
+                            None / General News
+                        </div>
+                        {movies
+                            .filter(m => m.title.toLowerCase().includes(movieSearchTerm.toLowerCase()))
+                            .sort((a,b) => a.title.localeCompare(b.title))
+                            .map(m => (
+                                <div 
+                                    key={m._id}
+                                    className="p-3 text-sm font-bold text-slate-700 hover:bg-primary-red hover:text-white cursor-pointer transition-colors flex items-center justify-between"
+                                    onClick={() => {
+                                        setFormData({...formData, relatedMovie: m._id});
+                                        setMovieSearchTerm(m.title);
+                                        setShowMovieResults(false);
+                                    }}
+                                >
+                                    <span>{m.title}</span>
+                                    <span className="text-[9px] opacity-60 italic">{m.industry}</span>
+                                </div>
+                            ))
+                        }
+                        {movies.filter(m => m.title.toLowerCase().includes(movieSearchTerm.toLowerCase())).length === 0 && (
+                            <div className="p-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">No movies found</div>
+                        )}
+                    </div>
+                )}
+            </div>
+            {formData.relatedMovie && (
+                <p className="text-[9px] font-black text-green-600 uppercase tracking-widest mt-1">
+                    <i className="fas fa-link mr-1"></i> Linked to Movie ID: {formData.relatedMovie?._id || formData.relatedMovie}
+                </p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1 relative">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Related Celebrities (Multi-Select)</label>
+            <div className="relative">
+                <input 
+                    type="text"
+                    placeholder="Search celebrity name..."
+                    className="w-full p-2 border rounded bg-white font-semibold"
+                    value={celebSearchTerm}
+                    onChange={(e) => {
+                        setCelebSearchTerm(e.target.value);
+                        setShowCelebResults(true);
+                    }}
+                    onFocus={() => setShowCelebResults(true)}
+                />
+                {showCelebResults && (
+                    <div className="absolute z-50 left-0 right-0 mt-1 bg-white border rounded-xl shadow-xl max-h-48 overflow-y-auto no-scrollbar border-yellow-400/20 animate-in fade-in slide-in-from-top-2 duration-200">
+                        {celebs
+                            .filter(c => c.name.toLowerCase().includes(celebSearchTerm.toLowerCase()))
+                            .sort((a,b) => a.name.localeCompare(b.name))
+                            .map(c => (
+                                <div 
+                                    key={c._id}
+                                    className={`p-3 text-sm font-bold flex items-center justify-between cursor-pointer transition-colors ${formData.relatedCelebrities?.includes(c._id) ? 'bg-yellow-50 text-yellow-700' : 'text-slate-700 hover:bg-yellow-400 hover:text-white'}`}
+                                    onClick={() => {
+                                        const current = formData.relatedCelebrities || [];
+                                        if (current.includes(c._id)) {
+                                            setFormData({...formData, relatedCelebrities: current.filter(id => id !== c._id)});
+                                        } else {
+                                            setFormData({...formData, relatedCelebrities: [...current, c._id]});
+                                        }
+                                        setShowCelebResults(false);
+                                    }}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <img src={c.image} className="w-6 h-6 rounded-full object-cover" alt="" />
+                                        <span>{c.name}</span>
+                                    </div>
+                                    <span className="text-[9px] opacity-60 italic">{c.industry}</span>
+                                </div>
+                            ))
+                        }
+                    </div>
+                )}
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+                {formData.relatedCelebrities?.map(id => {
+                    const celeb = celebs.find(c => c._id === id);
+                    return celeb ? (
+                        <div key={id} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-lg text-[9px] font-black uppercase flex items-center gap-2">
+                            {celeb.name}
+                            <button type="button" onClick={() => setFormData({...formData, relatedCelebrities: formData.relatedCelebrities.filter(cid => cid !== id)})} className="hover:text-red-500">
+                                <i className="fas fa-times"></i>
+                            </button>
+                        </div>
+                    ) : null;
+                })}
+            </div>
           </div>
           <textarea 
             placeholder="Short Excerpt" className="p-2 border rounded md:col-span-2 h-20" required

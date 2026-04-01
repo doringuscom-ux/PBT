@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const CountdownTimer = ({ targetDate }) => {
+const CountdownTimer = ({ targetDate, onComplete }) => {
   const calculateTimeLeft = () => {
     const difference = +new Date(targetDate) - +new Date();
     let timeLeft = {};
@@ -21,7 +21,11 @@ const CountdownTimer = ({ targetDate }) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft());
+      const remaining = calculateTimeLeft();
+      setTimeLeft(remaining);
+      if (Object.keys(remaining).length === 0 && onComplete) {
+        onComplete();
+      }
     }, 1000);
 
     return () => clearTimeout(timer);

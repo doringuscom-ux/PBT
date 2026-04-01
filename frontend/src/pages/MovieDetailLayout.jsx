@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import CountdownTimer from '../components/CountdownTimer';
 import CommentSection from '../components/CommentSection';
@@ -7,19 +7,48 @@ import ImageModal from '../components/ImageModal';
 import UserAuthModal from '../components/UserAuthModal';
 
 const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
-    const { movies, rateMovie, user, addMovieComment, likeMovieComment, updateMovieComment, deleteMovieComment } = useData();
+    const { movies, news, rateMovie, user, addMovieComment, likeMovieComment, updateMovieComment, deleteMovieComment } = useData();
     
     // Always use the latest movie data from context to ensure real-time rating updates show immediately
     const movie = movies.find(m => m._id === propMovie._id) || propMovie;
 
-    const [activeTab, setActiveTab] = useState('Timeline');
+    const location = useLocation();
+    const [activeTab, setActiveTab] = useState(location.state?.scrollToTab || 'Timeline');
+    const [reviewText, setReviewText] = useState(movie.myReview || '');
+    const [tempRating, setTempRating] = useState(movie.myRating || 0);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [, forceUpdate] = React.useState({});
+
+    // Sync review text if movie updates
+    React.useEffect(() => {
+        if (movie.myReview) setReviewText(movie.myReview);
+        if (movie.myRating) setTempRating(movie.myRating);
+    }, [movie.myReview, movie.myRating]);
+
+    // Smooth scroll to content if navigating from Box Office
+    React.useEffect(() => {
+        if (location.state?.scrollToTab) {
+            const tabsElement = document.getElementById('movie-tabs-nav');
+            if (tabsElement) {
+                tabsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    }, [location.state]);
+
     const [vote, setVote] = useState(null); 
     const [showPlayer, setShowPlayer] = useState(false);
     const [watchScore, setWatchScore] = useState(64);
     const [selectedImage, setSelectedImage] = useState(null);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const isUpcoming = movie.releaseDate && new Date(movie.releaseDate) > new Date();
-    const tabs = ['Timeline', 'Cast & Crew', 'Box Office', 'Photos'];
+    const tabs = ['Timeline', 'Cast & Crew', 'Photos', 'Articles'];
+    if (!isUpcoming) {
+        tabs.splice(2, 0, 'Box Office', 'Movie Review');
+    }
+
+    const movieArticles = news.filter(article => 
+        (article.relatedMovie?._id === movie._id) || (article.relatedMovie === movie._id)
+    );
  
     const splitText = (text) => {
         if (!text) return { first: '', second: '' };
@@ -88,7 +117,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                         {isUpcoming && (
                             <div className="flex md:hidden justify-center w-full my-6">
                                 <div className="scale-90 md:scale-100 origin-center drop-shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-                                    <CountdownTimer targetDate={movie.releaseDate} />
+                                    <CountdownTimer targetDate={movie.releaseDate} onComplete={() => forceUpdate({})} />
                                 </div>
                             </div>
                         )}
@@ -141,36 +170,37 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                                             key={star}
                                                             onClick={(e) => {
                                                                 e.preventDefault();
-                                                                if (user) {
+                                                                setTempRating(star);
+                                                                if (!user) {
                                                                     rateMovie(movie._id, star);
-                                                                } else {
-                                                                    if (window.confirm('Login First to rate movies! Would you like to sign in now?')) {
-                                                                        setShowAuthModal(true);
-                                                                    }
+                                                                    // Optional: show a small toast or message
                                                                 }
                                                             }}
                                                             className="hover:scale-125 transition-transform active:scale-95"
-                                                            disabled={!user}
                                                         >
-                                                            <i className={`fas fa-star ${star <= (movie.myRating || 0) ? 'text-yellow-400' : 'text-slate-200'}`}></i>
+                                                            <i className={`fas fa-star ${star <= tempRating ? 'text-yellow-400' : 'text-slate-200'}`}></i>
                                                         </button>
                                                     ))}
                                                 </div>
                                             </div>
-                                            <div className="w-full flex items-center justify-between bg-slate-900 px-4 py-3 rounded-xl border border-white/10 shadow-xl overflow-hidden relative group">
-                                                {/* Background Glow */}
-                                                <div className="absolute inset-0 bg-primary-red/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                                
-                                                <div className="relative z-10 flex flex-col">
-                                                    <span className="text-[8px] font-black text-white/40 uppercase tracking-widest leading-none mb-1 text-left">Community</span>
-                                                    <span className="text-[8px] font-black text-white uppercase tracking-widest leading-none text-left">
-                                                        {movie.totalRatings || 0} Ratings
-                                                    </span>
-                                                </div>
-                                                <div className="relative z-10 flex items-center gap-2">
-                                                    <i className="fas fa-star text-yellow-500 text-xs"></i>
-                                                    <span className="text-2xl font-black text-white italic tracking-tighter leading-none">{(movie.averageRating || 0).toFixed(1)}</span>
-                                                </div>
+
+                                            {!user && tempRating > 0 && (
+                                                <p className="text-[8px] font-black text-green-500 uppercase tracking-widest animate-pulse">Anonymous Rating Saved!</p>
+                                            )}
+                                        </div>
+                                        <div className="w-full flex items-center justify-between bg-slate-900 px-4 py-3 rounded-xl border border-white/10 shadow-xl overflow-hidden relative group mt-3">
+                                            {/* Background Glow */}
+                                            <div className="absolute inset-0 bg-primary-red/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            
+                                            <div className="relative z-10 flex flex-col">
+                                                <span className="text-[8px] font-black text-white/40 uppercase tracking-widest leading-none mb-1 text-left">Community</span>
+                                                <span className="text-[8px] font-black text-white uppercase tracking-widest leading-none text-left">
+                                                    {movie.totalRatings || 0} Ratings
+                                                </span>
+                                            </div>
+                                            <div className="relative z-10 flex items-center gap-2">
+                                                <i className="fas fa-star text-yellow-500 text-xs"></i>
+                                                <span className="text-2xl font-black text-white italic tracking-tighter leading-none">{(movie.averageRating || 0).toFixed(1)}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -212,7 +242,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
             </div>
 
             {/* Tab Navigation */}
-            <div className="bg-white border-b sticky top-[64px] md:top-[74px] z-20 shadow-sm overflow-x-auto no-scrollbar">
+            <div id="movie-tabs-nav" className="bg-white border-b sticky top-[64px] md:top-[74px] z-20 shadow-sm overflow-x-auto no-scrollbar">
                 <div className="page-container flex">
                     {tabs.map(tab => (
                         <button 
@@ -525,23 +555,172 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                             </div>
                         )}
 
-                        {activeTab === 'Photos' && (
-                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 mb-8">Official Movie Photos</h2>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                                    {(movie.photos?.length > 0 ? movie.photos : [movie.image, movie.coverImage]).filter(p => p).map((p, idx) => (
-                                        <div 
-                                            key={idx} 
-                                            className="rounded-2xl overflow-hidden shadow-xl border-4 border-white aspect-[4/3] group cursor-zoom-in relative"
-                                            onClick={() => setSelectedImage({ src: p, title: `${movie.title} - Full Gallery ${idx + 1}` })}
+                        {activeTab === 'Movie Review' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-4">
+                                        <div className="h-10 w-1.5 bg-yellow-500 rounded-full"></div>
+                                        <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 leading-none">
+                                            Movie <span className="text-yellow-500">Reviews</span>
+                                        </h2>
+                                    </div>
+                                    {user && (
+                                        <button 
+                                            onClick={() => {
+                                                const formElement = document.getElementById('review-form-section');
+                                                if (formElement) formElement.scrollIntoView({ behavior: 'smooth' });
+                                            }}
+                                            className="px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition shadow-lg"
                                         >
-                                            <img src={p} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
-                                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <i className="fas fa-expand text-white text-2xl"></i>
+                                            {movie.myReview ? 'Edit Your Review' : 'Write a Review'}
+                                        </button>
+                                    )}
+                                </div>
+
+                                {user && (
+                                    <div id="review-form-section" className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 shadow-inner mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
+                                        <div className="flex flex-col md:flex-row gap-8 items-start">
+                                            <div className="shrink-0 space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Your Rating</p>
+                                                <div className="flex gap-2 text-2xl">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <button 
+                                                            key={star}
+                                                            onClick={() => setTempRating(star)}
+                                                            className="hover:scale-125 transition-transform"
+                                                        >
+                                                            <i className={`fas fa-star ${star <= tempRating ? 'text-yellow-500' : 'text-slate-200'}`}></i>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div className="flex-1 w-full space-y-4">
+                                                <textarea 
+                                                    placeholder="What did you think of this movie?"
+                                                    className="w-full p-5 border rounded-2xl text-sm outline-none focus:ring-4 focus:ring-yellow-400/20 resize-none h-32 font-medium"
+                                                    value={reviewText}
+                                                    onChange={(e) => setReviewText(e.target.value)}
+                                                />
+                                                <div className="flex justify-end">
+                                                    <button 
+                                                        onClick={async () => {
+                                                            if (tempRating === 0) return alert('Please select a rating!');
+                                                            setIsSubmitting(true);
+                                                            await rateMovie(movie._id, tempRating, reviewText);
+                                                            setIsSubmitting(false);
+                                                        }}
+                                                        disabled={isSubmitting}
+                                                        className="px-8 py-3 bg-yellow-400 text-slate-900 font-black uppercase text-[11px] tracking-[0.2em] rounded-xl hover:bg-yellow-500 transition shadow-xl shadow-yellow-400/20 disabled:opacity-50"
+                                                    >
+                                                        {isSubmitting ? 'Processing...' : (movie.myRating ? 'Update Feedback' : 'Post My Review')}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    ))}
+                                    </div>
+                                )}
+                                
+                                {movie.userRatings?.filter(r => r.review)?.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
+                                        {movie.userRatings
+                                            .filter(r => r.review)
+                                            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                                            .map((r, idx) => (
+                                            <div key={idx} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
+                                                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform">
+                                                    <i className="fas fa-quote-right text-6xl"></i>
+                                                </div>
+                                                <div className="relative z-10 space-y-6">
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-white text-xs font-black italic border-4 border-white shadow-md overflow-hidden">
+                                                                {r.user?.username?.charAt(0).toUpperCase() || 'A'}
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-900">{r.user?.fullName || r.user?.username || 'Anonymous'}</p>
+                                                                <div className="flex gap-1 mt-1">
+                                                                    {[1,2,3,4,5].map(star => (
+                                                                        <i key={star} className={`fas fa-star text-[8px] ${star <= r.rating ? 'text-yellow-500' : 'text-slate-200'}`}></i>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(r.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                                    </div>
+                                                    <p className="text-base font-medium text-slate-600 leading-relaxed italic">
+                                                        "{r.review}"
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="bg-slate-50 rounded-[3rem] p-20 text-center border-2 border-dashed border-slate-200">
+                                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                            <i className="fas fa-comment-slash text-slate-300 text-3xl"></i>
+                                        </div>
+                                        <h3 className="text-xl font-black uppercase italic text-slate-400">No Reviews Yet</h3>
+                                        <p className="text-slate-400 text-sm mt-2">Be the first to share your thoughts on this movie!</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {activeTab === 'Articles' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
+                                <div className="flex items-center gap-4 mb-2">
+                                    <div className="h-10 w-1.5 bg-primary-red rounded-full"></div>
+                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 leading-none">
+                                        Related <span className="text-primary-red">Articles</span>
+                                    </h2>
                                 </div>
+                                
+                                {movieArticles.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-20">
+                                        {movieArticles.map((article) => (
+                                            <Link 
+                                                key={article._id} 
+                                                to={`/news/${article.slug || article._id}`}
+                                                className="group relative bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 flex flex-col h-full no-underline"
+                                            >
+                                                <div className="aspect-video overflow-hidden relative">
+                                                    <img src={article.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />
+                                                    <div className="absolute top-4 left-4">
+                                                        <span className="bg-primary-red text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
+                                                            {article.category}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="p-8 flex flex-col flex-1 justify-between gap-4">
+                                                    <div>
+                                                        <div className="flex items-center gap-3 mb-3">
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(article.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                                            <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{article.author || 'Editor Team'}</span>
+                                                        </div>
+                                                        <h3 className="text-xl font-black text-slate-900 group-hover:text-primary-red transition-colors leading-tight line-clamp-2">
+                                                            {article.title}
+                                                        </h3>
+                                                        <p className="mt-4 text-sm text-slate-500 line-clamp-3 font-medium leading-relaxed">
+                                                            {article.excerpt}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary-red group-hover:gap-4 transition-all">
+                                                        Read Full Article <i className="fas fa-arrow-right"></i>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="bg-slate-50 rounded-[3rem] p-20 text-center border-2 border-dashed border-slate-200">
+                                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                            <i className="fas fa-newspaper text-slate-200 text-3xl"></i>
+                                        </div>
+                                        <h3 className="text-xl font-black uppercase italic text-slate-400">No Articles Yet</h3>
+                                        <p className="text-slate-400 text-sm mt-2">Check back later for interviews, news, and exclusive updates about {movie.title}.</p>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

@@ -128,9 +128,9 @@ export const DataProvider = ({ children }) => {
     } catch (err) { console.error(err); }
   };
 
-  const rateMovie = async (id, rating) => {
+  const rateMovie = async (id, rating, review) => {
     try {
-      const res = await api.rateMovie(id, rating);
+      const res = await api.rateMovie(id, rating, review);
       setMovies(movies.map(m => m._id === id ? res.data : m));
       return { success: true };
     } catch (err) { 

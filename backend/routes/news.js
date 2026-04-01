@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
             query = query.populate('createdBy', 'username employeeId fullName');
         }
         
-        const news = await query.sort({ createdAt: -1 });
+        const news = await query.populate('relatedMovie', 'title slug').populate('relatedCelebrities', 'name image role industry slug').sort({ createdAt: -1 });
         res.json(enrichNews(news, req.session.user));
     } catch (err) {
         console.error("News GET Error:", err);
@@ -60,7 +60,7 @@ router.get('/today', async (req, res) => {
             query = query.populate('createdBy', 'username employeeId fullName');
         }
 
-        const news = await query.sort({ createdAt: -1 }); 
+        const news = await query.populate('relatedMovie', 'title slug').populate('relatedCelebrities', 'name image role industry slug').sort({ createdAt: -1 }); 
         res.json(enrichNews(news, req.session.user));
     } catch (err) {
         console.error("News Today GET Error:", err);

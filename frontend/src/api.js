@@ -19,7 +19,7 @@ export const addMovieComment = (id, data) => api.post(`/movies/${id}/comments`, 
 export const deleteMovieComment = (id, commentId) => api.delete(`/movies/${id}/comments/${commentId}`);
 export const likeMovieComment = (id, commentId) => api.post(`/movies/${id}/comments/${commentId}/like`);
 export const updateMovieComment = (id, commentId, data) => api.put(`/movies/${id}/comments/${commentId}`, data);
-export const rateMovie = (id, rating) => api.post(`/movies/${id}/rate`, { rating });
+export const rateMovie = (id, rating, review) => api.post(`/movies/${id}/rate`, { rating, review });
 
 export const getNews = () => api.get('/news');
 export const getTodayNews = () => api.get('/news/today');

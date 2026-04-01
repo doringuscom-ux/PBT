@@ -18,6 +18,8 @@ const NewsSchema = new mongoose.Schema({
     }],
     likes: { type: Number, default: 0 },
     slug: { type: String, unique: true, sparse: true },
+    relatedMovie: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie', required: false },
+    relatedCelebrities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Celebrity' }],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 

@@ -50,10 +50,13 @@ const CelebDetail = () => {
             a.name.toLowerCase() === celeb.name.toLowerCase()
         )
     );
-    const celebArticles = news.filter(n => 
-        n.title.toLowerCase().includes(celeb.name.toLowerCase()) || 
-        n.excerpt?.toLowerCase().includes(celeb.name.toLowerCase())
-    );
+    const celebArticles = news
+        .filter(n => 
+            n.relatedCelebrities?.some(c => c._id === celeb._id || c === celeb._id) ||
+            n.title.toLowerCase().includes(celeb.name.toLowerCase()) || 
+            n.excerpt?.toLowerCase().includes(celeb.name.toLowerCase())
+        )
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     const tabs = [
         { id: 'All', label: 'All', count: null },

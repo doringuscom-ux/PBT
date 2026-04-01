@@ -153,15 +153,63 @@ const ManageCelebs = () => {
                   birthPlace: '',
                   photos: [''],
                   videos: [''],
-                  industry: 'Bollywood',
+                  industry: 'Business',
+                  category: 'Entrepreneur',
+                  slug: '',
+                  bonusFollowers: 0
+                }); 
+              }}
+              className="bg-slate-100 text-blue-700 px-4 py-2 rounded-lg font-bold hover:bg-slate-200 transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-black/5 text-xs border border-blue-400/30"
+            >
+              <i className="fas fa-briefcase"></i> <span className="hidden sm:inline">Add Business Leader</span>
+            </button>
+            <button 
+              onClick={() => { 
+                setShowForm(true); 
+                setActiveTab('basic');
+                setEditingIndex(null); 
+                setFormData({ 
+                  name: '', image: '', role: '', bio: '', 
+                  fullBio: '', 
+                  milestones: [{ year: '', text: '' }],
+                  stats: { fanBase: '', movieCount: '', nominations: '' },
+                  birthDate: '',
+                  birthPlace: '',
+                  photos: [''],
+                  videos: [''],
+                  industry: 'Sports',
+                  category: 'Athlete',
+                  slug: '',
+                  bonusFollowers: 0
+                }); 
+              }}
+              className="bg-slate-900 text-yellow-400 px-4 py-2 rounded-lg font-bold hover:bg-slate-800 transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-black/20 text-xs border border-yellow-400/30"
+            >
+              <i className="fas fa-running"></i> <span className="hidden sm:inline">Add Sports Star</span>
+            </button>
+            <button 
+              onClick={() => { 
+                setShowForm(true); 
+                setActiveTab('basic');
+                setEditingIndex(null); 
+                setFormData({ 
+                  name: '', image: '', role: '', bio: '', 
+                  fullBio: '', 
+                  milestones: [{ year: '', text: '' }],
+                  stats: { fanBase: '', movieCount: '', nominations: '' },
+                  birthDate: '',
+                  birthPlace: '',
+                  photos: [''],
+                  videos: [''],
+                  industry: 'Pollywood',
                   category: 'Actor',
                   slug: '',
                   bonusFollowers: 0
                 }); 
               }}
-              className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-primary-red/20"
+              className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-primary-red/20 text-xs"
             >
-              <i className="fas fa-plus"></i> <span className="hidden sm:inline">Add Celebrity</span>
+              <i className="fas fa-plus"></i> <span className="hidden sm:inline">Add Cinema Star</span>
             </button>
           </div>
         </div>
@@ -192,9 +240,11 @@ const ManageCelebs = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Role <span className="text-red-500">*</span></label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+                    {formData.industry === 'Sports' ? 'Position / Sport' : formData.industry === 'Business' ? 'Designation / Company' : 'Role'} <span className="text-red-500">*</span>
+                  </label>
                   <input 
-                    placeholder="e.g. Singer, Actor" className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none transition-all" 
+                    placeholder={formData.industry === 'Sports' ? 'e.g. Cricketer, Kabaddi Player' : formData.industry === 'Business' ? 'e.g. CEO, Founder' : 'e.g. Singer, Actor'} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none transition-all" 
                     value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}
                   />
                 </div>
@@ -401,21 +451,25 @@ const ManageCelebs = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Total Movies</label>
+                      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+                        {formData.industry === 'Sports' ? 'Total Matches' : formData.industry === 'Business' ? 'Companies / Ventures' : 'Total Movies'}
+                      </label>
                       <div className="relative">
-                        <i className="fas fa-film absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <i className={`fas ${formData.industry === 'Sports' ? 'fa-running' : formData.industry === 'Business' ? 'fa-building' : 'fa-film'} absolute left-3 top-1/2 -translate-y-1/2 text-gray-400`}></i>
                         <input 
-                          placeholder="e.g. 42" className="w-full pl-9 pr-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none transition-all text-sm font-bold"
+                          placeholder={formData.industry === 'Sports' ? 'e.g. 150 Matches' : formData.industry === 'Business' ? 'e.g. 12 Ventures' : 'e.g. 42'} className="w-full pl-9 pr-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none transition-all text-sm font-bold"
                           value={formData.stats?.movieCount || ''} onChange={e => setFormData({...formData, stats: {...formData.stats, movieCount: e.target.value}})}
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nominations/Awards</label>
+                      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+                        {formData.industry === 'Sports' ? 'Trophies / Awards' : formData.industry === 'Business' ? 'Awards / Recognitions' : 'Nominations / Awards'}
+                      </label>
                       <div className="relative">
-                        <i className="fas fa-award absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <i className={`fas ${formData.industry === 'Sports' ? 'fa-trophy' : formData.industry === 'Business' ? 'fa-crown' : 'fa-award'} absolute left-3 top-1/2 -translate-y-1/2 text-gray-400`}></i>
                         <input 
-                          placeholder="e.g. 98" className="w-full pl-9 pr-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none transition-all text-sm font-bold"
+                          placeholder={formData.industry === 'Sports' ? 'e.g. 2 World Cups' : formData.industry === 'Business' ? 'e.g. Forbes 30u30' : 'e.g. 98'} className="w-full pl-9 pr-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none transition-all text-sm font-bold"
                           value={formData.stats?.nominations || ''} onChange={e => setFormData({...formData, stats: {...formData.stats, nominations: e.target.value}})}
                         />
                       </div>

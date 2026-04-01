@@ -6,7 +6,6 @@ import FilterBar from '../components/FilterBar';
 const BoxOffice = () => {
     const { movies } = useData();
     const [filter, setFilter] = useState('ALL');
-    const [sortBy, setSortBy] = useState('rating');
 
     // Only released movies
     const releasedMovies = useMemo(() => movies.filter(m => {
@@ -19,16 +18,11 @@ const BoxOffice = () => {
     const filteredMovies = useMemo(() => {
         let list = filter === 'ALL' ? releasedMovies : releasedMovies.filter(m => m.industry?.trim().toUpperCase() === filter);
 
-        if (sortBy === 'rating') {
-            list = [...list].sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
-        } else if (sortBy === 'newest') {
-            list = [...list].sort((a, b) => new Date(b.releaseDate || b.createdAt) - new Date(a.releaseDate || a.createdAt));
-        } else if (sortBy === 'popularity') {
-            list = [...list].sort((a, b) => (b.totalRatings || 0) - (a.totalRatings || 0));
-        }
+        // Default Sort by Rating
+        list = [...list].sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
 
         return list;
-    }, [releasedMovies, filter, sortBy]);
+    }, [releasedMovies, filter]);
 
     const topMovies = filteredMovies.slice(0, 5);
     const restMovies = filteredMovies.slice(5);
@@ -88,30 +82,13 @@ const BoxOffice = () => {
             <div className="page-container -mt-4 relative z-20 pb-24">
 
                 {/* Filter + Sort Bar */}
-                <div className="p-4 md:p-[18px] mb-8 border-b border-white/10 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+                <div className="p-4 md:p-[18px] mb-8 border-b border-white/10 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-center">
                     <FilterBar
                         options={industries}
                         activeFilter={filter}
                         onFilterChange={setFilter}
                         label="Industry"
                     />
-
-                    {/* Sort Tabs */}
-                    <div className="flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/10">
-                        {[
-                            { key: 'rating', label: 'Top Rated', icon: 'fa-star' },
-                            { key: 'popularity', label: 'Most Voted', icon: 'fa-users' },
-                            { key: 'newest', label: 'Latest', icon: 'fa-calendar' },
-                        ].map(s => (
-                            <button
-                                key={s.key}
-                                onClick={() => setSortBy(s.key)}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${sortBy === s.key ? 'bg-yellow-400 text-slate-900' : 'text-white/50 hover:text-white'}`}
-                            >
-                                <i className={`fas ${s.icon}`}></i> {s.label}
-                            </button>
-                        ))}
-                    </div>
                 </div>
 
                 {/* Top 3 Podium */}
@@ -128,6 +105,7 @@ const BoxOffice = () => {
                                     <Link
                                         key={movie._id}
                                         to={`/movie/${movie.slug || movie._id}`}
+                                        state={{ scrollToTab: 'Box Office' }}
                                         className={`group relative rounded-xl overflow-hidden border transition-all duration-500 hover:-translate-y-1 no-underline block ${rank === 1 ? 'border-yellow-400/30 shadow-[0_0_20px_rgba(250,204,21,0.1)]' : 'border-white/5'}`}
                                     >
                                         <div className="relative aspect-[2/3] overflow-hidden">
@@ -178,6 +156,7 @@ const BoxOffice = () => {
                                     <Link
                                         key={movie._id}
                                         to={`/movie/${movie.slug || movie._id}`}
+                                        state={{ scrollToTab: 'Box Office' }}
                                         className="group flex items-center gap-4 bg-white/3 hover:bg-white/8 border border-white/5 hover:border-yellow-400/20 rounded-2xl px-4 py-3 transition-all duration-300 no-underline"
                                     >
                                         {/* Rank */}
