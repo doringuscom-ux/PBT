@@ -170,7 +170,7 @@ router.post('/auto-generate', async (req, res) => {
                     description: (item.description || '').substring(0, 160).trim(),
                     isAuto: true
                 });
-                createdCount++;
+            }
         }
 
         res.json({ success: true, message: `Successfully generated ${createdCount} new SEO records.`, createdCount });
