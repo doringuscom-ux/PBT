@@ -27,13 +27,16 @@ router.get('/stats', async (req, res) => {
             SEO.countDocuments()
         ]);
 
-        const staticPagesCount = 10; // Approx static pages
-        const totalPages = news + movies + celebs + videos + staticPagesCount;
+        const staticPagesCount = 9; // Home, News, Movies, Celebs, Videos, Upcoming, Sports, Contact, Box Office
+        const systemPages = news + movies + celebs + videos + staticPagesCount;
         
+        // Final Total includes system pages + any extra custom URLs added manually
+        const totalPages = Math.max(systemPages, seoCount);
+
         res.json({
             totalPages,
             seoCompleted: seoCount,
-            seoMissing: Math.max(0, totalPages - seoCount)
+            seoMissing: Math.max(0, systemPages - seoCount)
         });
     } catch (err) {
         res.status(500).json({ message: err.message });
