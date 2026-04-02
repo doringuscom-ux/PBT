@@ -5,7 +5,6 @@ import ImageModal from '../components/ImageModal';
 
 const TodayNews = () => {
   const { todayNews, news } = useData();
-  const [selectedImage, setSelectedImage] = React.useState(null);
   
   const formatDate = (dateString) => {
     if (!dateString) return 'Just Now';
@@ -54,32 +53,27 @@ const TodayNews = () => {
               <Link 
                 key={item._id} 
                 to={`/news/${item.slug || item._id}`}
-                className="group bg-white rounded-[16px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full relative"
+                className="group flex flex-col bg-white rounded-[16px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full relative"
               >
                 {todayNews.length === 0 && (
                    <div className="absolute top-3 right-3 z-20 bg-slate-900/80 backdrop-blur-md text-white text-[7px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest border border-white/10">
                      Top Story
                    </div>
                 )}
-                <div className="relative h-[200px] overflow-hidden cursor-zoom-in group/img" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedImage({ src: item.image, title: item.title }); }}>
+                <div className="relative h-[200px] overflow-hidden">
                   <img 
                     src={item.image} 
                     alt={item.title} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity">
-                     <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30">
-                        <i className="fas fa-expand-alt text-base"></i>
-                     </div>
-                  </div>
-                  <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-primary-red text-[8px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest shadow-lg">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <span className="absolute top-3 left-3 bg-slate-900 text-white px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-xl border border-white/10">
                     {item.category}
                   </span>
                 </div>
                 <div className="px-5 py-4 flex flex-col flex-1">
                   <div className="text-text-gray text-[8px] font-black mb-1 flex items-center gap-2 uppercase tracking-widest opacity-60">
-                    <i className="far fa-clock text-yellow-600"></i> {formatDate(item.createdAt)}
+                    <i className="far fa-clock text-primary-red"></i> {formatDate(item.createdAt)}
                   </div>
                   <h3 className="text-[16px] font-black text-text-dark mb-1 group-hover:text-primary-red transition-colors line-clamp-1 leading-[1.2] uppercase tracking-wide italic">
                     {item.title}
@@ -88,12 +82,10 @@ const TodayNews = () => {
                     {item.excerpt}
                   </p>
                   <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                    <div className="flex flex-col">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{item.author || 'Pbtadka Team'}</span>
-                    </div>
-                    <span className="text-primary-red font-black text-[9px] uppercase tracking-wide group-hover:translate-x-2 transition-all flex items-center gap-2 underline decoration-red-500/30 underline-offset-4">
-                      READ DETAILS <i className="fas fa-arrow-right"></i>
+                    <span className="text-primary-red font-black text-[9px] uppercase tracking-wide group-hover:translate-x-2 transition-all underline decoration-red-500/30 underline-offset-4">
+                      VIEW STORY <i className="fas fa-arrow-right"></i>
                     </span>
+                    <i className="fas fa-share-alt text-gray-300 hover:text-primary-red cursor-pointer" onClick={(e) => { e.preventDefault(); e.stopPropagation(); /* Add share logic if needed */ }}></i>
                   </div>
                 </div>
               </Link>
@@ -112,13 +104,6 @@ const TodayNews = () => {
             </div>
           </div>
         )}
-
-        <ImageModal 
-            isOpen={!!selectedImage} 
-            onClose={() => setSelectedImage(null)} 
-            imageSrc={selectedImage?.src} 
-            altText={selectedImage?.title} 
-        />
       </main>
     </div>
   );

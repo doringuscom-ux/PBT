@@ -51,6 +51,7 @@ const startServer = async () => {
         app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
         app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+        app.use('/sitemap.xml', require('./routes/sitemap'));
 
         // Define Routes
         app.use('/api/auth', require('./routes/auth'));
@@ -60,6 +61,7 @@ const startServer = async () => {
         app.use('/api/videos', require('./routes/videos'));
         app.use('/api/users', require('./routes/users'));
         app.use('/api/widgets', require('./routes/widgets'));
+        app.use('/api/seo', require('./routes/seo'));
 
         const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

@@ -36,6 +36,7 @@ import TodayNews from './pages/TodayNews';
 import SearchPage from './pages/SearchPage';
 import SportsList from './pages/SportsList';
 import ManageSports from './admin/ManageSports';
+import SEOManager from './admin/SEOManager';
 
 import UpcomingList from './pages/UpcomingList';
 import ManageUpcoming from './admin/ManageUpcoming';
@@ -138,6 +139,7 @@ function App() {
             <Route path="videos" element={<ManageVideos />} />
             <Route path="comments" element={<ManageComments />} />
             <Route path="users" element={<ManageUsers />} />
+            <Route path="seo" element={<SEOManager />} />
           </Route>
 
           <Route path="/admin/login" element={<AdminLogin />} />
