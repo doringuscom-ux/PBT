@@ -22,21 +22,21 @@ const MovieCard = ({ movie, isUpcoming = false }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
         
         {/* Industry Badge (Top Left) */}
-        <div className="absolute top-4 left-4 z-10 transition-transform duration-500 group-hover:scale-110">
-          <span className="bg-primary-red/90 backdrop-blur-md text-white text-[9px] font-black px-3 py-1.5 rounded-full shadow-xl border border-white/20 uppercase tracking-widest">
+        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 transition-transform duration-500 group-hover:scale-110">
+          <span className="bg-primary-red/90 backdrop-blur-md text-white text-[8px] sm:text-[9px] px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-xl border border-white/20 uppercase tracking-widest font-black">
             {movie.industry}
           </span>
         </div>
 
         {/* Dynamic Badge (Top Right) */}
-        <div className="absolute top-4 right-4 z-10 transition-transform duration-500 group-hover:scale-110">
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 transition-transform duration-500 group-hover:scale-110">
           {isUpcoming && !isReleased ? (
-            <span className="bg-black/60 backdrop-blur-xl text-white text-[8px] font-black px-3 py-1.5 rounded-full border border-white/10 uppercase tracking-[0.2em] shadow-2xl">
+            <span className="bg-black/60 backdrop-blur-xl text-white text-[7px] sm:text-[8px] px-2 py-1 sm:px-3 sm:py-1.5 rounded-full border border-white/10 uppercase tracking-[0.2em] shadow-2xl font-black">
               UPCOMING
             </span>
           ) : (
-             <span className="bg-yellow-400/90 backdrop-blur-sm text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-lg shadow-xl flex items-center gap-1.5 border border-white/30 transform rotate-3">
-               <i className="fas fa-star text-[8px]"></i> {movie.rating || 'N/A'}
+             <span className="bg-yellow-400/90 backdrop-blur-sm text-slate-900 text-[9px] sm:text-[10px] font-black px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg shadow-xl flex items-center gap-1.5 border border-white/30 transform rotate-3">
+               <i className="fas fa-star text-[7px] sm:text-[8px]"></i> {movie.rating || 'N/A'}
              </span>
           )}
         </div>

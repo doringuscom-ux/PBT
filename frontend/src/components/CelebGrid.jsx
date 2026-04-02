@@ -97,8 +97,12 @@ const CelebGrid = () => {
                 />
               </div>
               <div className="p-3 border-t-2 border-transparent group-hover:border-primary-red transition-colors">
-                <div className="font-black text-[13px] mb-0.5 group-hover:text-primary-red transition-colors line-clamp-1 italic tracking-tight">{celeb.name}</div>
-                <div className="text-primary-red text-[9px] font-black uppercase tracking-widest">{celeb.role}</div>
+                <div className="font-black text-[13px] mb-1 group-hover:text-primary-red transition-colors line-clamp-1 italic tracking-tight">{celeb.name}</div>
+                <div className="flex justify-center">
+                    <span className="bg-primary-red text-white text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider inline-block shadow-sm border border-white/10">
+                        {celeb.role?.replace(/,/g, '').split(' ').slice(0, 2).join(' ')}
+                    </span>
+                </div>
               </div>
             </Link>
           ))}

@@ -172,3 +172,12 @@ body {
 .page-container {
   @apply w-[96%] max-w-[1800px] mx-auto px-4;
 }
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

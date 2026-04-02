@@ -29,8 +29,8 @@ const VideosList = () => {
                         <span>CINEMA <span className="text-yellow-400 text-shadow-premium">VIDEOS</span></span>
                         <div className="hidden sm:block w-12 md:w-20 h-[2px] bg-gradient-to-l from-transparent to-yellow-500"></div>
                     </h1>
-                    <div className="relative inline-block">
-                        <p className="text-white/80 text-[10px] md:text-[12px] font-bold mx-auto leading-relaxed italic whitespace-nowrap tracking-[0.1em] px-8 py-2 border-y border-white/10 uppercase">
+                    <div className="relative inline-block w-full max-w-2xl">
+                        <p className="text-white/90 text-xs md:text-sm font-bold mx-auto leading-relaxed italic tracking-[0.05em] px-4 md:px-8 py-3 border-y border-white/10 uppercase drop-shadow-md">
                             Watch exclusive trailers, teasers & first looks from the cinematic universe
                         </p>
                     </div>
@@ -50,7 +50,7 @@ const VideosList = () => {
 
                 {/* Video Grid */}
                 {filteredVideos.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 md:gap-10">
                         {filteredVideos.map((video) => (
                             <Link
                                 key={video._id}

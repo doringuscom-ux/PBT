@@ -39,7 +39,7 @@ const VideoGrid = () => {
               </div>
             </div>
             <div className="p-4">
-              <div className="font-bold text-base mb-2 leading-tight group-hover:text-yellow-400 transition-colors line-clamp-2">
+              <div className="font-bold text-base mb-2 leading-tight group-hover:text-yellow-400 transition-colors line-clamp-1">
                 {video.title}
               </div>
               <div className="flex justify-between text-text-gray text-[11px]">

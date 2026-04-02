@@ -31,8 +31,8 @@ const CelebList = () => {
                     <div className="hidden sm:block w-12 md:w-20 h-[2px] bg-gradient-to-l from-transparent to-yellow-500"></div>
                 </h1>
                 
-                <div className="relative inline-block">
-                    <p className="text-white/80 text-[10px] md:text-[12px] font-bold mx-auto leading-relaxed italic whitespace-nowrap tracking-[0.1em] px-8 py-2 border-y border-white/10 uppercase">
+                <div className="relative inline-block w-full max-w-2xl">
+                    <p className="text-white/90 text-xs md:text-sm font-bold mx-auto leading-relaxed italic tracking-[0.05em] px-4 md:px-8 py-3 border-y border-white/10 uppercase drop-shadow-md">
                         Discover the profiles, milestones, and cinematic journeys of your favorite stars
                     </p>
                 </div>
@@ -61,7 +61,9 @@ const CelebList = () => {
                   
                   {/* Content Container */}
                   <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-primary-red font-black text-[9px] md:text-[10px] uppercase tracking-widest mb-1.5 drop-shadow-md">{celeb.role}</p>
+                    <span className="bg-primary-red text-white text-[8px] md:text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider mb-2.5 inline-block shadow-lg border border-white/10">
+                        {celeb.role?.replace(/,/g, '').split(' ').slice(0, 2).join(' ')}
+                    </span>
                     <h3 className="text-lg md:text-2xl font-black text-white group-hover:text-primary-red transition-colors duration-300 drop-shadow-lg leading-tight">{celeb.name}</h3>
                   </div>
 

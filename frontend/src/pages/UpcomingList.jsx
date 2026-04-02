@@ -40,8 +40,8 @@ const UpcomingList = () => {
                     <div className="hidden sm:block w-12 md:w-20 h-[2px] bg-gradient-to-l from-transparent to-yellow-500"></div>
                 </h1>
                 
-                <div className="relative inline-block">
-                    <p className="text-white/80 text-[10px] md:text-[12px] font-bold mx-auto leading-relaxed italic whitespace-nowrap tracking-[0.1em] px-8 py-2 border-y border-white/10 uppercase">
+                <div className="relative inline-block w-full max-w-2xl">
+                    <p className="text-white/90 text-xs md:text-sm font-bold mx-auto leading-relaxed italic tracking-[0.05em] px-4 md:px-8 py-3 border-y border-white/10 uppercase drop-shadow-md">
                         Get ready for the most awaited cinematic experiences hitting the global screens soon
                     </p>
                 </div>

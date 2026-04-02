@@ -25,7 +25,7 @@ const Hero = () => {
     <div className="mb-8 w-full transition-all">
       
       {/* Expanded Feature Slider (Full width of Hero container) */}
-      <div className="relative overflow-hidden rounded-3xl bg-slate-900 aspect-[16/10] md:aspect-[21/10] lg:h-[500px] w-full group shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl bg-slate-900 aspect-[4/5] sm:aspect-[16/10] md:aspect-[21/10] lg:h-[500px] w-full group shadow-2xl">
         {sliderStories.map((story, index) => (
           <Link 
             key={story._id}
@@ -39,25 +39,25 @@ const Hero = () => {
               className={`w-full h-full object-cover opacity-60 transition-transform duration-[5s] ease-linear
                 ${index === currentIndex ? 'scale-110' : 'scale-100'}`}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent"></div>
             
-            <div className="absolute inset-x-0 bottom-0 p-6 md:p-12 text-left">
-                <div className={`flex items-center gap-3 mb-4 ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '200ms' }}>
+            <div className="absolute inset-x-0 bottom-0 p-8 md:p-12 text-left">
+                <div className={`flex items-center gap-3 mb-5 ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '200ms' }}>
                     <span className="bg-primary-red text-white py-1 px-3 rounded-md text-[10px] font-black uppercase tracking-widest italic shadow-xl shadow-primary-red/20">
                         {story.category}
                     </span>
-                    <span className="text-white/40 text-[9px] font-black uppercase tracking-widest">Global Top Story</span>
+                    <span className="text-white/50 text-[10px] font-black uppercase tracking-widest">Global Top Story</span>
                 </div>
-                <h2 className={`text-lg md:text-2xl lg:text-3xl font-black text-white text-shadow-premium group-hover:text-accent-gold transition-colors duration-300 leading-[1.1] mb-4 italic tracking-tighter uppercase ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '400ms' }}>
+                <h2 className={`text-xl md:text-3xl lg:text-4xl font-black text-white text-shadow-premium group-hover:text-accent-gold transition-colors duration-300 leading-[1.2] mb-4 italic tracking-tighter uppercase line-clamp-1 ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '400ms' }}>
                     {story.title}
                 </h2>
-                <p className={`text-xs md:text-base line-clamp-1 max-w-3xl font-medium italic text-white text-shadow-premium ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '600ms' }}>
+                <p className={`text-sm md:text-base line-clamp-1 md:line-clamp-2 max-w-3xl font-medium italic text-white/90 text-shadow-premium ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '600ms' }}>
                     {story.excerpt}
                 </p>
                 <div className={`mt-8 flex items-center gap-4 ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '800ms' }}>
-                    <div className="flex items-center gap-2 bg-white/10 hover:bg-accent-gold group/btn px-4 py-2 rounded-full backdrop-blur-md transition-all cursor-pointer shadow-lg hover:shadow-accent-gold/20">
+                    <div className="flex items-center gap-3 bg-white/10 hover:bg-accent-gold group/btn px-6 py-3 rounded-full backdrop-blur-md transition-all cursor-pointer shadow-lg hover:shadow-accent-gold/20 border border-white/10">
                         <i className="fas fa-play text-[10px] text-white group-hover/btn:text-slate-900"></i>
-                        <span className="text-white group-hover/btn:text-slate-900 text-[10px] font-black uppercase tracking-widest">Read full story</span>
+                        <span className="text-white group-hover/btn:text-slate-900 text-[11px] font-black uppercase tracking-widest">Read full story</span>
                     </div>
                 </div>
             </div>
@@ -73,7 +73,7 @@ const Hero = () => {
                         e.preventDefault();
                         setCurrentIndex(i);
                     }}
-                    className={`h-1.5 transition-all duration-300 rounded-full ${i === currentIndex ? 'w-8 bg-primary-red' : 'w-2 bg-white/30 hover:bg-white/50'}`}
+                    className={`h-1.5 transition-all duration-300 rounded-full ${i === currentIndex ? 'w-10 bg-primary-red' : 'w-2.5 bg-white/30 hover:bg-white/50'}`}
                 />
             ))}
         </div>

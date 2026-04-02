@@ -168,7 +168,7 @@ const HomeVideoMarquee = () => {
                                     )}
                                 </div>
                                 <div className="p-3 bg-white border-t-2 border-red-600/10 group-hover:border-red-600 transition-colors">
-                                    <h4 className="text-[11px] font-black uppercase italic tracking-tight text-slate-800 line-clamp-2 leading-snug group-hover:text-red-600 transition-colors">
+                                    <h4 className="text-[11px] font-black uppercase italic tracking-tight text-slate-800 line-clamp-1 leading-snug group-hover:text-red-600 transition-colors">
                                         {video.title}
                                     </h4>
                                 </div>
