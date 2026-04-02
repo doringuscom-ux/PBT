@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const News = require('../models/News');
-const { upload } = require('../config/cloudinary');
+const { upload, uploadFromUrl } = require('../config/cloudinary');
 
 // Helper to enrich news with isLiked status for comments
 const enrichNews = (articles, sessionUser) => {
@@ -81,6 +81,9 @@ router.post('/', (req, res, next) => {
         const newsData = { ...req.body };
         if (req.file) {
             newsData.image = req.file.path;
+        } else if (newsData.image) {
+            // Auto-upload remote link to Cloudinary
+            newsData.image = await uploadFromUrl(newsData.image);
         }
         if (req.session.user) {
             newsData.createdBy = req.session.user.id;
@@ -112,6 +115,9 @@ router.put('/:id', (req, res, next) => {
         const updateData = { ...req.body };
         if (req.file) {
             updateData.image = req.file.path;
+        } else if (updateData.image) {
+            // Auto-upload remote link to Cloudinary
+            updateData.image = await uploadFromUrl(updateData.image);
         }
         if (req.session.user) {
             updateData.createdBy = req.session.user.id;

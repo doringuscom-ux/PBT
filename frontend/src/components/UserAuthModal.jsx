@@ -123,7 +123,13 @@ const UserAuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       <Modal isOpen={isOpen} onClose={onClose} title="Reset Your Security">
         <div className="flex flex-col md:flex-row h-full -m-6 min-h-[500px]">
           <div className="hidden md:flex md:w-2/5 bg-slate-900 relative overflow-hidden items-center justify-center p-12 text-center">
-            <img src={bannerUrl} className="absolute inset-0 w-full h-full object-cover opacity-40" alt="Banner" />
+            <img 
+              src={bannerUrl} 
+              className="absolute inset-0 w-full h-full object-cover opacity-40" 
+              alt="Banner" 
+              width="400" 
+              height="600"
+            />
             <div className="relative z-10 space-y-4">
               <div className="w-16 h-16 bg-primary-red/20 rounded-2xl flex items-center justify-center mx-auto backdrop-blur-xl border border-white/10">
                 <i className="fas fa-shield-alt text-2xl text-primary-red"></i>
@@ -145,10 +151,11 @@ const UserAuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
               {!message.includes('OTP sent') ? (
                 <form onSubmit={handleForgotPassword} className="space-y-4">
                   <div className="group transition-all">
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-focus-within:text-primary-red">Email Address</label>
+                    <label htmlFor="auth-email-reset" className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-focus-within:text-primary-red">Email Address</label>
                     <div className="relative">
                       <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-red transition-colors text-xs"></i>
                       <input 
+                        id="auth-email-reset"
                         className="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-primary-red/5 focus:bg-white focus:border-primary-red transition-all text-sm font-bold text-slate-900 placeholder:text-slate-300"
                         type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required 
                       />
@@ -268,11 +275,12 @@ const UserAuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
                     </div>
                   </div>
 
-                  <div className="group">
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-focus-within:text-primary-red">Secret Passphrase</label>
+                   <div className="group">
+                    <label htmlFor="auth-password" className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-focus-within:text-primary-red">Secret Passphrase</label>
                     <div className="relative">
                       <i className="fas fa-fingerprint absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-red text-xs"></i>
                       <input 
+                        id="auth-password"
                         className="w-full pl-11 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-primary-red/5 focus:bg-white focus:border-primary-red transition-all text-sm font-bold text-slate-900"
                         type={showPassword ? "text" : "password"}
                         placeholder="••••••••"

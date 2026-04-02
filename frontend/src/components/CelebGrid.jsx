@@ -93,6 +93,7 @@ const CelebGrid = () => {
                 <img 
                   src={celeb.image} 
                   alt={celeb.name} 
+                  loading="lazy"
                   className="absolute top-0 left-0 w-full h-full object-cover object-[center_top] transition-transform duration-700 group-hover:scale-110"
                 />
               </div>

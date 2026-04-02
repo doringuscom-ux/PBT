@@ -26,10 +26,10 @@ const Footer = () => {
               Your premier destination for cinema news, reviews, trailers, and celebrity interviews. Experience the magic of the cinematic universe in premium quality.
             </p>
             <div className="flex gap-3">
-              <SocialIcon icon="fab fa-facebook-f" />
-              <SocialIcon icon="fab fa-twitter" />
-              <SocialIcon icon="fab fa-instagram" />
-              <SocialIcon icon="fab fa-youtube" />
+              <SocialIcon icon="fab fa-facebook-f" label="Follow us on Facebook" />
+              <SocialIcon icon="fab fa-twitter" label="Follow us on Twitter" />
+              <SocialIcon icon="fab fa-instagram" label="Follow us on Instagram" />
+              <SocialIcon icon="fab fa-youtube" label="Subscribe to our YouTube channel" />
             </div>
           </div>
           
@@ -101,8 +101,8 @@ const Footer = () => {
   );
 };
 
-const SocialIcon = ({ icon }) => (
-  <a href="#" className="inline-flex items-center justify-center w-10 h-10 bg-slate-800 border border-white/5 rounded-full text-slate-400 hover:text-slate-950 hover:bg-yellow-400 hover:border-yellow-400 hover:-translate-y-1 transition-all duration-300">
+const SocialIcon = ({ icon, label }) => (
+  <a href="#" className="inline-flex items-center justify-center w-10 h-10 bg-slate-800 border border-white/5 rounded-full text-slate-400 hover:text-slate-950 hover:bg-yellow-400 hover:border-yellow-400 hover:-translate-y-1 transition-all duration-300" aria-label={label}>
     <i className={icon}></i>
   </a>
 );

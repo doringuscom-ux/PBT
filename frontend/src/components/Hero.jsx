@@ -19,7 +19,29 @@ const Hero = () => {
     return () => clearInterval(timer);
   }, [sliderStories.length]);
 
-  if (!news || news.length === 0) return null;
+  // Helper function to optimize image URLs
+  const optimizeImage = (url, width = 800) => {
+    if (!url) return '';
+    // If it's a Cloudinary URL, add optimization parameters
+    if (url.includes('cloudinary.com')) {
+      return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width},c_fill/`);
+    }
+    return url;
+  };
+
+  if (!news || news.length === 0) {
+    return (
+      <div className="mb-4 w-full">
+        <div className="relative overflow-hidden rounded-3xl skeleton aspect-[4/5] sm:aspect-[16/10] md:aspect-[21/10] lg:h-[500px] w-full shadow-2xl">
+          <div className="absolute inset-x-0 bottom-0 p-8 md:p-12 space-y-4">
+            <div className="w-24 h-6 rounded bg-white/10 animate-pulse"></div>
+            <div className="w-3/4 h-10 md:h-14 rounded bg-white/10 animate-pulse"></div>
+            <div className="w-1/2 h-4 rounded bg-white/10 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-4 w-full transition-all">
@@ -34,8 +56,10 @@ const Hero = () => {
               ${index === currentIndex ? 'opacity-100 visible z-10' : 'opacity-0 invisible z-0'}`}
           >
             <img 
-              src={story.image} 
+              src={optimizeImage(story.image)} 
               alt={story.title}
+              fetchpriority={index === 0 ? "high" : "auto"}
+              decoding="async"
               className={`w-full h-full object-cover opacity-60 transition-transform duration-[5s] ease-linear
                 ${index === currentIndex ? 'scale-110' : 'scale-100'}`}
             />

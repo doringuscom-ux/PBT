@@ -24,7 +24,14 @@ const MarketWidget = () => {
         return () => clearInterval(interval);
     }, []);
 
-    if (loading) return null;
+    if (loading) return (
+        <div className="relative overflow-hidden rounded-2xl skeleton min-h-[140px] lg:min-h-[180px] w-full border border-white/5 shadow-2xl">
+            <div className="p-4 space-y-4">
+                <div className="w-full h-12 bg-white/5 rounded-xl animate-pulse"></div>
+                <div className="w-full h-12 bg-white/5 rounded-xl animate-pulse"></div>
+            </div>
+        </div>
+    );
     if (!data) return null;
 
     return (

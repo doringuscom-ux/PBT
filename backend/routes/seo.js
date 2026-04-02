@@ -5,6 +5,7 @@ const News = require('../models/News');
 const Movie = require('../models/Movie');
 const Celebrity = require('../models/Celebrity');
 const Video = require('../models/Video');
+const { uploadFromUrl } = require('../config/cloudinary');
 
 // Get all SEO records
 router.get('/', async (req, res) => {
@@ -170,11 +171,76 @@ router.post('/auto-generate', async (req, res) => {
                     isAuto: true
                 });
                 createdCount++;
-            }
         }
 
         res.json({ success: true, message: `Successfully generated ${createdCount} new SEO records.`, createdCount });
     } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+// Bulk Image Sync (Google Links -> Cloudinary)
+router.post('/sync-images', async (req, res) => {
+    try {
+        const [news, movies, celebs, videos] = await Promise.all([
+            News.find({ image: { $not: /cloudinary\.com/ } }),
+            Movie.find({ image: { $not: /cloudinary\.com/ } }),
+            Celebrity.find({ image: { $not: /cloudinary\.com/ } }),
+            Video.find({ image: { $not: /cloudinary\.com/ } })
+        ]);
+
+        let syncedCount = 0;
+
+        // Sync News
+        for (const item of news) {
+            if (item.image && item.image.startsWith('http')) {
+                const newUrl = await uploadFromUrl(item.image);
+                if (newUrl !== item.image) {
+                    item.image = newUrl;
+                    await item.save();
+                    syncedCount++;
+                }
+            }
+        }
+
+        // Sync Movies
+        for (const item of movies) {
+            if (item.image && item.image.startsWith('http')) {
+                const newUrl = await uploadFromUrl(item.image);
+                if (newUrl !== item.image) {
+                    item.image = newUrl;
+                    await item.save();
+                    syncedCount++;
+                }
+            }
+        }
+
+        // Sync Celebrities
+        for (const item of celebs) {
+            if (item.image && item.image.startsWith('http')) {
+                const newUrl = await uploadFromUrl(item.image);
+                if (newUrl !== item.image) {
+                    item.image = newUrl;
+                    await item.save();
+                    syncedCount++;
+                }
+            }
+        }
+
+        // Sync Videos
+        for (const item of videos) {
+            if (item.image && item.image.startsWith('http')) {
+                const newUrl = await uploadFromUrl(item.image);
+                if (newUrl !== item.image) {
+                    item.image = newUrl;
+                    await item.save();
+                    syncedCount++;
+                }
+            }
+        }
+
+        res.json({ success: true, message: `Successfully synchronized ${syncedCount} images to Cloudinary.`, syncedCount });
+    } catch (err) {
+        console.error("Bulk Sync Error:", err);
         res.status(500).json({ message: err.message });
     }
 });

@@ -11,6 +11,7 @@ const SEOManager = () => {
     const [showModal, setShowModal] = useState(false);
     const [editingEntry, setEditingEntry] = useState(null);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
 
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -25,6 +26,19 @@ const SEOManager = () => {
             alert('Automation failed: ' + (err.response?.data?.message || err.message));
         } finally {
             setIsGenerating(false);
+        }
+    };
+
+    const handleSyncImages = async () => {
+        if (!window.confirm('This will move all external images (Google links) to Cloudinary. It may take a minute. Continue?')) return;
+        setIsSyncing(true);
+        try {
+            const res = await axios.post(`${apiUrl}/seo/sync-images`);
+            alert(res.data.message);
+        } catch (err) {
+            alert('Sync failed: ' + (err.response?.data?.message || err.message));
+        } finally {
+            setIsSyncing(false);
         }
     };
 
@@ -95,6 +109,14 @@ const SEOManager = () => {
                         disabled={isGenerating}
                     >
                          <i className={`fas ${isGenerating ? 'fa-spinner fa-spin' : 'fa-magic'}`}></i> {isGenerating ? 'Generating...' : 'Auto SEO Services'}
+                    </button>
+                    <button 
+                        className={`bg-amber-500 text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-amber-200 flex items-center gap-2 hover:bg-amber-600 transition-all ${isSyncing ? 'opacity-50 cursor-not-allowed animate-pulse' : ''}`}
+                        onClick={handleSyncImages}
+                        disabled={isSyncing}
+                        title="Move all external image links to Cloudinary for better performance"
+                    >
+                         <i className={`fas ${isSyncing ? 'fa-spinner fa-spin' : 'fa-sync-alt'}`}></i> {isSyncing ? 'Syncing...' : 'Sync All Media'}
                     </button>
                     <button 
                         className="bg-cyan-500 text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-cyan-200 flex items-center gap-2 hover:bg-cyan-600 transition-all"

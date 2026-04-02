@@ -51,7 +51,14 @@ const WeatherWidget = () => {
         handleRefresh();
     }, []);
 
-    if (loading) return null;
+    if (loading) return (
+        <div className="relative overflow-hidden rounded-2xl skeleton min-h-[140px] lg:min-h-[180px] w-full border border-white/5 shadow-2xl">
+            <div className="absolute inset-x-0 bottom-0 p-4 space-y-2">
+                <div className="w-1/2 h-8 bg-white/5 rounded-lg animate-pulse"></div>
+                <div className="w-3/4 h-4 bg-white/5 rounded-lg animate-pulse"></div>
+            </div>
+        </div>
+    );
     if (!data) return null;
 
     const getIcon = (condition) => {

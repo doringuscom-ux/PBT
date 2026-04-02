@@ -28,7 +28,34 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
+/**
+ * Helper to upload image from remote URL directly to Cloudinary
+ * @param {string} url - The remote image URL
+ * @returns {Promise<string>} - The optimized Cloudinary secure URL
+ */
+const uploadFromUrl = async (url) => {
+    try {
+        if (!url || typeof url !== 'string') return url;
+        // Check if it's already a Cloudinary URL or local path
+        if (url.includes('cloudinary.com') || url.startsWith('/uploads/')) return url;
+        // Skip YouTube links (already optimized)
+        if (url.includes('youtube.com') || url.includes('youtu.be') || url.includes('ytimg.com')) return url;
+        // Check if it's a valid remote URL
+        if (!url.startsWith('http')) return url;
+
+        const result = await cloudinary.uploader.upload(url, {
+            folder: 'punjabi_film_news',
+            resource_type: 'auto'
+        });
+        return result.secure_url;
+    } catch (err) {
+        console.error("Auto-Cloudinary Upload Failed:", err);
+        return url; // Fallback to original URL on failure
+    }
+};
+
 module.exports = {
   cloudinary,
-  upload
+  upload,
+  uploadFromUrl
 };

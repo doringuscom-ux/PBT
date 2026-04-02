@@ -25,7 +25,13 @@ const AnnouncementBar = () => {
     return () => clearInterval(timer);
   }, [announcements, isHovered, currentIndex]);
 
-  if (announcements.length === 0) return null;
+  if (announcements.length === 0) return (
+    <div className="w-full h-12 lg:h-16 bg-slate-900 border-y border-slate-700/50 skeleton">
+        <div className="w-full max-w-[1800px] mx-auto flex items-center h-full px-12">
+            <div className="w-48 h-4 bg-white/5 rounded-full animate-pulse"></div>
+        </div>
+    </div>
+  );
 
   return (
     <div 

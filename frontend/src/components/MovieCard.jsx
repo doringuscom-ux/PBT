@@ -15,6 +15,7 @@ const MovieCard = ({ movie, isUpcoming = false }) => {
         <img 
           src={movie.image} 
           alt={movie.title} 
+          loading="lazy"
           className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 ease-out"
         />
         

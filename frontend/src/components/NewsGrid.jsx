@@ -3,6 +3,16 @@ import { useData } from '../context/DataContext';
 
 const NewsGrid = () => {
   const { news } = useData();
+  if (news.length === 0) return (
+    <div className="mb-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {[1,2,3].map(i => (
+          <div key={i} className="h-[300px] rounded-3xl skeleton opacity-20"></div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="mb-16">
       <div className="mb-10">
@@ -29,6 +39,7 @@ const NewsGrid = () => {
               <img 
                 src={item.image} 
                 alt={item.title} 
+                loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md text-primary-red py-1 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-xl">

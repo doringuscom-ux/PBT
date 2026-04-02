@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Video = require('../models/Video');
-const { upload: cloudinaryUpload } = require('../config/cloudinary');
+const { upload: cloudinaryUpload, uploadFromUrl } = require('../config/cloudinary');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -56,6 +56,9 @@ router.post('/', cloudinaryUpload.fields([
 
         if (req.files && req.files['thumbnail']) {
             videoData.image = req.files['thumbnail'][0].path;
+        } else if (videoData.image) {
+            // Auto-upload remote link to Cloudinary
+            videoData.image = await uploadFromUrl(videoData.image);
         }
 
         if (req.session.user) {
@@ -88,8 +91,10 @@ router.put('/:id', cloudinaryUpload.fields([
         }
         if (req.files && req.files['thumbnail']) {
             updateData.image = req.files['thumbnail'][0].path;
-        } else if (req.body.image) { 
-            updateData.image = req.body.image;
+        } else if (updateData.image || req.body.image) { 
+            // Auto-upload remote link to Cloudinary
+            const imgToUpload = updateData.image || req.body.image;
+            updateData.image = await uploadFromUrl(imgToUpload);
         }
 
         if (req.session.user) {

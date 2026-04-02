@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Celebrity = require('../models/Celebrity');
-const { upload } = require('../config/cloudinary');
+const { upload, uploadFromUrl } = require('../config/cloudinary');
 
 // Helper to enrich with isLiked status for comments
 const enrich = (items, sessionUser) => {
@@ -39,6 +39,8 @@ router.post('/', upload.single('image'), async (req, res) => {
     const celebData = { ...req.body };
     if (req.file) {
         celebData.image = req.file.path;
+    } else if (celebData.image) {
+        celebData.image = await uploadFromUrl(celebData.image);
     }
     if (req.session.user) {
         celebData.createdBy = req.session.user.id;
@@ -72,6 +74,8 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         const updateData = { ...req.body };
         if (req.file) {
             updateData.image = req.file.path;
+        } else if (updateData.image) {
+            updateData.image = await uploadFromUrl(updateData.image);
         }
         if (req.session.user) {
             updateData.createdBy = req.session.user.id;

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Movie = require('../models/Movie');
-const { upload } = require('../config/cloudinary');
+const { upload, uploadFromUrl } = require('../config/cloudinary');
 
 // Helper to enrich with isLiked status for comments
 const enrich = (items, sessionUser) => {
@@ -49,6 +49,8 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
     const movieData = { ...req.body };
     if (req.files && req.files['image']) {
         movieData.image = req.files['image'][0].path;
+    } else if (movieData.image) {
+        movieData.image = await uploadFromUrl(movieData.image);
     }
     if (req.files && req.files['trailer']) {
         movieData.trailerUrl = req.files['trailer'][0].path;
@@ -94,6 +96,8 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trail
         const updateData = { ...req.body };
         if (req.files && req.files['image']) {
             updateData.image = req.files['image'][0].path;
+        } else if (updateData.image) {
+            updateData.image = await uploadFromUrl(updateData.image);
         }
         if (req.files && req.files['trailer']) {
             updateData.trailerUrl = req.files['trailer'][0].path;

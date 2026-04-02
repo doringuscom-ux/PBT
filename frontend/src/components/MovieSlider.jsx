@@ -14,7 +14,9 @@ const MovieSlider = () => {
 
   useEffect(() => {
     const slider = sliderRef.current;
-    if (!slider || releasedMovies.length === 0) return;
+    if (!slider || releasedMovies.length === 0) return (
+      <div className="mb-12 w-full h-[350px] skeleton rounded-3xl opacity-30"></div>
+    );
 
     let intervalId = null;
     const scrollStep = 1;

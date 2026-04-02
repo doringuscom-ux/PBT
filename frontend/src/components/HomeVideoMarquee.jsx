@@ -65,7 +65,9 @@ const HomeVideoMarquee = () => {
         };
     }, [latestVideos, playingInlineId]);
 
-    if (latestVideos.length === 0) return null;
+    if (latestVideos.length === 0) return (
+        <div className="mb-12 w-full h-[300px] skeleton rounded-3xl opacity-50"></div>
+    );
 
     return (
         <div className="mb-12 overflow-hidden relative">
