@@ -406,7 +406,7 @@ export const DataProvider = ({ children }) => {
     ];
 
     // if (combinedAnnouncements.length === 0) {
-    //   combinedAnnouncements.push({ text: "Stay tuned for the latest Punjabi film updates!", link: null });
+    //   combinedAnnouncements.push({ text: "Stay tuned for the latest film updates!", link: null });
     // }
 
     if (isLoading) return <Loading />;

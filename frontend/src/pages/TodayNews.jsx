@@ -42,7 +42,7 @@ const TodayNews = () => {
           </div>
           <p className="text-gray-500 font-medium max-w-md md:text-right">
             {todayNews.length > 0 
-              ? "Stay ahead with the most recent developments in the Punjabi film industry, updated in real-time."
+              ? "Stay ahead with the most recent developments in the film industry, updated in real-time."
               : "No new headlines in the last 72 hours, but here's what everyone is talking about from our archive."}
           </p>
         </div>

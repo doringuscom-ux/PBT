@@ -58,8 +58,8 @@ const SEOHead = () => {
         };
     }, [location.pathname, metadata, h1Title]);
 
-    const displayTitle = metadata?.title || (h1Title ? `${h1Title} | Pbtadka` : 'Pbtadka | Punjabi Film News & Updates');
-    const displayDescription = metadata?.description || 'Latest Punjabi film news, movie reviews, celebrity updates, and more at Pbtadka.';
+    const displayTitle = metadata?.title || (h1Title ? `${h1Title} | Pbtadka` : 'Pbtadka | Film News & Updates');
+    const displayDescription = metadata?.description || 'Latest film news, movie reviews, celebrity updates, and more at Pbtadka.';
 
     return (
         <Helmet>

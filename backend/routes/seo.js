@@ -90,15 +90,15 @@ router.post('/auto-generate', async (req, res) => {
 
         let createdCount = 0;
         const staticPages = [
-            { url: '/', title: 'Pbtadka | Latest Punjabi News, Movies & Celebrity Updates', description: 'Your premier destination for Punjabi cinema news, reviews, trailers, and celebrity interviews.' },
-            { url: '/news', title: 'Latest Punjabi News & Headlines | Pbtadka', description: 'Stay updated with the latest breaking news from the Punjabi film industry.' },
-            { url: '/movies', title: 'Punjabi Movies Vault | Reviews & Releases | Pbtadka', description: 'Explore our complete database of Punjabi movies, reviews, and release dates.' },
-            { url: '/celebs', title: 'Punjabi Celebrities Profiles & Interviews | Pbtadka', description: 'Detailed profiles and exclusive interviews with your favorite Punjabi stars.' },
-            { url: '/videos', title: 'Latest Punjabi Movie Trailers & Videos | Pbtadka', description: 'Watch the latest trailers, teasers, and exclusive video content from Pollywood.' },
-            { url: '/upcoming', title: 'Upcoming Punjabi Movies & Releases | Pbtadka', description: 'Plan your cinema visits with our list of upcoming Punjabi movie releases.' },
-            { url: '/sports', title: 'Punjabi Sports News & Updates | Pbtadka', description: 'Latest updates and actions from the world of Punjabi sports.' },
+            { url: '/', title: 'Pbtadka | Latest News, Movies & Celebrity Updates', description: 'Your premier destination for cinema news, reviews, trailers, and celebrity interviews.' },
+            { url: '/news', title: 'Latest News & Headlines | Pbtadka', description: 'Stay updated with the latest breaking news from the film industry.' },
+            { url: '/movies', title: 'Movies Vault | Reviews & Releases | Pbtadka', description: 'Explore our complete database of movies, reviews, and release dates.' },
+            { url: '/celebs', title: 'Celebrities Profiles & Interviews | Pbtadka', description: 'Detailed profiles and exclusive interviews with your favorite stars.' },
+            { url: '/videos', title: 'Latest Movie Trailers & Videos | Pbtadka', description: 'Watch the latest trailers, teasers, and exclusive video content.' },
+            { url: '/upcoming', title: 'Upcoming Movies & Releases | Pbtadka', description: 'Plan your cinema visits with our list of upcoming movie releases.' },
+            { url: '/sports', title: 'Sports News & Updates | Pbtadka', description: 'Latest updates and actions from the world of sports.' },
             { url: '/contact-us', title: 'Contact Us | Pbtadka', description: 'Get in touch with the Pbtadka team for inquiries and feedback.' },
-            { url: '/box-office', title: 'Punjabi Box Office Collections & Reports | Pbtadka', description: 'Track the latest box office performance of Punjabi movies.' }
+            { url: '/box-office', title: 'Box Office Collections & Reports | Pbtadka', description: 'Track the latest box office performance of movies.' }
         ];
 
         // Process Static Pages
@@ -117,7 +117,7 @@ router.post('/auto-generate', async (req, res) => {
             if (!exists) {
                 await SEO.create({
                     url,
-                    title: `${item.title} | Punjabi News | Pbtadka`,
+                    title: `${item.title} | News | Pbtadka`,
                     description: (item.excerpt || item.fullStory || '').substring(0, 160).trim(),
                     isAuto: true
                 });
