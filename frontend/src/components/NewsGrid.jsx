@@ -6,7 +6,7 @@ const NewsGrid = () => {
   return (
     <div className="mb-16">
       <div className="mb-10">
-        <div className="flex items-center justify-between items-end">
+        <div className="flex items-center justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>

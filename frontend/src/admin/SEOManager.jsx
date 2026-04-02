@@ -10,8 +10,23 @@ const SEOManager = () => {
     const [filter, setFilter] = useState('ALL'); // ALL, DONE, MISSING
     const [showModal, setShowModal] = useState(false);
     const [editingEntry, setEditingEntry] = useState(null);
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+    const handleAutoGenerate = async () => {
+        setIsGenerating(true);
+        try {
+            const res = await axios.post(`${apiUrl}/seo/auto-generate`);
+            alert(res.data.message);
+            fetchEntries();
+            fetchStats();
+        } catch (err) {
+            alert('Automation failed: ' + (err.response?.data?.message || err.message));
+        } finally {
+            setIsGenerating(false);
+        }
+    };
 
     const fetchStats = async () => {
         try {
@@ -75,10 +90,11 @@ const SEOManager = () => {
                 </div>
                 <div className="flex gap-3">
                      <button 
-                        className="bg-purple-600 text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-purple-200 flex items-center gap-2 hover:bg-purple-700 transition-all"
-                        onClick={() => alert('Auto SEO Services - Coming Soon!')}
+                        className={`bg-purple-600 text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-purple-200 flex items-center gap-2 hover:bg-purple-700 transition-all ${isGenerating ? 'opacity-50 cursor-not-allowed animate-pulse' : ''}`}
+                        onClick={handleAutoGenerate}
+                        disabled={isGenerating}
                     >
-                         <i className="fas fa-magic"></i> Auto SEO Services
+                         <i className={`fas ${isGenerating ? 'fa-spinner fa-spin' : 'fa-magic'}`}></i> {isGenerating ? 'Generating...' : 'Auto SEO Services'}
                     </button>
                     <button 
                         className="bg-cyan-500 text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-cyan-200 flex items-center gap-2 hover:bg-cyan-600 transition-all"

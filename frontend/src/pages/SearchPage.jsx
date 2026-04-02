@@ -48,7 +48,7 @@ const SearchPage = () => {
   return (
     <div className="min-h-screen bg-[#f8f9fa] flex flex-col">
       {/* Cinematic Header Block - Only show when there is an active search query */}
-      {query && (
+      {query ? (
           <div className="bg-slate-900 pt-16 pb-16 relative overflow-hidden shadow-2xl shrink-0">
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent z-10 pointer-events-none"></div>
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-red/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
@@ -63,6 +63,8 @@ const SearchPage = () => {
                 </p>
             </div>
           </div>
+      ) : (
+        <h1 className="sr-only">Search Pbtadka - Find Movies, News, & Celebrities</h1>
       )}
 
       <main className="page-container py-12 flex-1">

@@ -22,7 +22,7 @@ const Hero = () => {
   if (!news || news.length === 0) return null;
 
   return (
-    <div className="mb-8 w-full transition-all">
+    <div className="mb-4 w-full transition-all">
       
       {/* Expanded Feature Slider (Full width of Hero container) */}
       <div className="relative overflow-hidden rounded-3xl bg-slate-900 aspect-[4/5] sm:aspect-[16/10] md:aspect-[21/10] lg:h-[500px] w-full group shadow-2xl">
