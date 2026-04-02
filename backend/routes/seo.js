@@ -195,8 +195,7 @@ router.post('/sync-images', async (req, res) => {
             if (item.image && item.image.startsWith('http')) {
                 const newUrl = await uploadFromUrl(item.image);
                 if (newUrl !== item.image) {
-                    item.image = newUrl;
-                    await item.save();
+                    await News.findByIdAndUpdate(item._id, { image: newUrl });
                     syncedCount++;
                 }
             }
@@ -207,8 +206,7 @@ router.post('/sync-images', async (req, res) => {
             if (item.image && item.image.startsWith('http')) {
                 const newUrl = await uploadFromUrl(item.image);
                 if (newUrl !== item.image) {
-                    item.image = newUrl;
-                    await item.save();
+                    await Movie.findByIdAndUpdate(item._id, { image: newUrl });
                     syncedCount++;
                 }
             }
@@ -219,8 +217,7 @@ router.post('/sync-images', async (req, res) => {
             if (item.image && item.image.startsWith('http')) {
                 const newUrl = await uploadFromUrl(item.image);
                 if (newUrl !== item.image) {
-                    item.image = newUrl;
-                    await item.save();
+                    await Celebrity.findByIdAndUpdate(item._id, { image: newUrl });
                     syncedCount++;
                 }
             }
@@ -231,8 +228,7 @@ router.post('/sync-images', async (req, res) => {
             if (item.image && item.image.startsWith('http')) {
                 const newUrl = await uploadFromUrl(item.image);
                 if (newUrl !== item.image) {
-                    item.image = newUrl;
-                    await item.save();
+                    await Video.findByIdAndUpdate(item._id, { image: newUrl });
                     syncedCount++;
                 }
             }
