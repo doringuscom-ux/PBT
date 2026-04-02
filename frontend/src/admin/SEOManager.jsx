@@ -165,9 +165,18 @@ const SEOManager = () => {
                                         <span className="px-2 py-1 rounded bg-slate-100 text-slate-600 text-[8px]">{entry.robots}</span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button onClick={() => handleEdit(entry)} className="text-cyan-500 hover:scale-125 transition-transform"><i className="fas fa-edit"></i></button>
-                                            <button onClick={() => handleDelete(entry._id)} className="text-red-500 hover:scale-125 transition-transform"><i className="fas fa-trash"></i></button>
+                                        <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <a 
+                                                href={entry.url} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                className="text-slate-400 hover:text-primary-red hover:scale-125 transition-all"
+                                                title="View Live Page"
+                                            >
+                                                <i className="fas fa-external-link-alt"></i>
+                                            </a>
+                                            <button onClick={() => handleEdit(entry)} className="text-cyan-500 hover:scale-125 transition-transform" title="Edit Metadata"><i className="fas fa-edit"></i></button>
+                                            <button onClick={() => handleDelete(entry._id)} className="text-red-500 hover:scale-125 transition-transform" title="Delete Record"><i className="fas fa-trash"></i></button>
                                         </div>
                                     </td>
                                 </tr>
