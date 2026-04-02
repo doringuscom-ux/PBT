@@ -3,6 +3,7 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useData } from '../context/DataContext';
 import Modal from '../components/Modal';
+import { slugify } from '../utils/slugify';
 
 const ManageSports = () => {
   const { user, news, addNews, updateNews, deleteNews } = useData();
@@ -143,7 +144,16 @@ const ManageSports = () => {
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input 
             placeholder="Match Headline" className="p-3 border rounded-xl md:col-span-2 font-bold focus:ring-2 focus:ring-primary-red/20 outline-none" required
-            value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
+            value={formData.title} 
+            onChange={e => {
+                const newTitle = e.target.value;
+                const newSlug = `sports/${slugify(newTitle)}`;
+                if (!formData.slug || formData.slug === `sports/${slugify(formData.title)}`) {
+                    setFormData({...formData, title: newTitle, slug: newSlug});
+                } else {
+                    setFormData({...formData, title: newTitle});
+                }
+            }}
           />
           <input 
             placeholder="URL Slug (e.g. ipl-final-match)" className="p-3 border rounded-xl md:col-span-2 bg-yellow-50 font-bold focus:ring-2 focus:ring-primary-red/20 outline-none"

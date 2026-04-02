@@ -88,7 +88,7 @@ const CelebGrid = () => {
         >
           <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
           {[...displayedCelebs, ...displayedCelebs].map((celeb, idx) => (
-            <Link to={`/celeb/${celeb._id}`} key={`${celeb._id}-${idx}`} className="w-[200px] shrink-0 bg-white rounded-xl shadow-md text-center hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 group no-underline text-inherit block overflow-hidden">
+            <Link to={`/celeb/${celeb.slug || celeb._id}`} key={`${celeb._id}-${idx}`} className="w-[200px] shrink-0 bg-white rounded-xl shadow-md text-center hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 group no-underline text-inherit block overflow-hidden">
               <div className="relative w-full pt-[125%] overflow-hidden bg-slate-100">
                 <img 
                   src={celeb.image} 

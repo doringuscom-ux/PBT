@@ -3,6 +3,7 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useData } from '../context/DataContext';
 import Modal from '../components/Modal';
+import { slugify } from '../utils/slugify';
 
 const ManageVideos = () => {
     const { user, videos, addVideo, updateVideo, deleteVideo, deleteVideoComment, updateVideoComment } = useData();
@@ -146,7 +147,17 @@ const ManageVideos = () => {
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input 
                         placeholder="Video Title" className="p-2 border rounded md:col-span-2" required
-                        value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
+                        value={formData.title} 
+                        onChange={e => {
+                            const newTitle = e.target.value;
+                            const newSlug = formData.category ? `${slugify(formData.category)}/${slugify(newTitle)}` : slugify(newTitle);
+                            const currentTitleSlug = formData.category ? `${slugify(formData.category)}/${slugify(formData.title)}` : slugify(formData.title);
+                            if (!formData.slug || formData.slug === currentTitleSlug) {
+                                setFormData({...formData, title: newTitle, slug: newSlug});
+                            } else {
+                                setFormData({...formData, title: newTitle});
+                            }
+                        }}
                     />
                     <input 
                         placeholder="URL Slug (e.g. trailer-carry-on-jatta)" className="p-2 border rounded md:col-span-2 bg-yellow-50 font-bold px-3"
@@ -242,7 +253,18 @@ const ManageVideos = () => {
                         />
                         <input 
                             placeholder="Category (e.g. Trailer)" className="p-2 border rounded w-1/2"
-                            value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
+                            value={formData.category} 
+                            onChange={e => {
+                                const newCat = e.target.value;
+                                const newSlug = newCat ? `${slugify(newCat)}/${slugify(formData.title)}` : slugify(formData.title);
+                                const currentCatSlug = formData.category ? `${slugify(formData.category)}/${slugify(formData.title)}` : slugify(formData.title);
+                                
+                                if (!formData.slug || formData.slug === currentCatSlug) {
+                                    setFormData({...formData, category: newCat, slug: newSlug});
+                                } else {
+                                    setFormData({...formData, category: newCat});
+                                }
+                            }}
                         />
                     </div>
                     <div className="flex gap-2">

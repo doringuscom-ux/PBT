@@ -102,15 +102,15 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/news" element={<NewsList />} />
             <Route path="/today-news" element={<TodayNews />} />
-            <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/news/*" element={<NewsDetail />} />
             <Route path="/movies" element={<MovieList />} />
             <Route path="/upcoming" element={<UpcomingList />} />
-            <Route path="/movie/:id" element={<MovieDetail />} />
+            <Route path="/movie/*" element={<MovieDetail />} />
             <Route path="/actor/:name" element={<ActorDetail />} />
             <Route path="/celebs" element={<CelebList />} />
-            <Route path="/celeb/:id" element={<CelebDetail />} />
+            <Route path="/celeb/*" element={<CelebDetail />} />
             <Route path="/videos" element={<VideosList />} />
-            <Route path="/video/:id" element={<VideoDetail />} />
+            <Route path="/video/*" element={<VideoDetail />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/sports" element={<SportsList />} />
             <Route path="/contact-us" element={<ContactUs />} />

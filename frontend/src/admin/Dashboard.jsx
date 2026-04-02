@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import SlugMigrator from '../components/SlugMigrator';
 
 const Dashboard = () => {
   const { movies, news, celebs, videos, user, manualAnnouncements: announcements, updateAnnouncements } = useData();
@@ -132,6 +133,11 @@ const Dashboard = () => {
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
             CONNECTED TO BACKEND
           </div>
+        </div>
+
+        {/* Slug Migrator Tool */}
+        <div className="lg:col-span-2">
+            <SlugMigrator />
         </div>
       </div>
     </div>

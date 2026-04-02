@@ -4,7 +4,8 @@ import { useData } from '../context/DataContext';
 import MovieDetailLayout from './MovieDetailLayout';
 
 const MovieDetail = () => {
-    const { id } = useParams();
+    const params = useParams();
+    const id = params['*'];
     const { movies, news, addMovieComment, likeMovieComment, updateMovieComment, deleteMovieComment } = useData();
     
     // Find movie by ID or Slug

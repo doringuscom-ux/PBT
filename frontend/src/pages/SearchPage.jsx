@@ -111,7 +111,7 @@ const SearchPage = () => {
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                   {results.celebs.map(celeb => (
-                    <Link key={celeb._id} to={`/celeb/${celeb._id}`} className="group flex flex-col text-center no-underline text-inherit bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                    <Link key={celeb._id} to={`/celeb/${celeb.slug || celeb._id}`} className="group flex flex-col text-center no-underline text-inherit bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
                       <div className="relative w-full aspect-[4/5] overflow-hidden bg-slate-100">
                         <img src={celeb.image} className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700" alt="" />
                       </div>
@@ -132,7 +132,7 @@ const SearchPage = () => {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {results.news.map(item => (
-                    <Link key={item._id} to={`/news/${item._id}`} className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline text-inherit flex flex-col">
+                    <Link key={item._id} to={`/news/${item.slug || item._id}`} className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline text-inherit flex flex-col">
                       <div className="relative aspect-video overflow-hidden">
                         <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
                         <div className="absolute top-3 left-3 bg-orange-500 text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded shadow-md">
@@ -161,7 +161,7 @@ const SearchPage = () => {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {results.videos.map(video => (
-                    <Link key={video._id} to={`/video/${video._id}`} className="group bg-white rounded-2xl shadow-sm border border-gray-100 p-3 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline text-inherit">
+                    <Link key={video._id} to={`/video/${video.slug || video._id}`} className="group bg-white rounded-2xl shadow-sm border border-gray-100 p-3 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline text-inherit">
                       <div className="relative aspect-video rounded-xl overflow-hidden mb-4 shadow-inner bg-slate-100">
                         <img src={video.image} className="w-full h-full object-cover opacity-90 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500" alt="" />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-all">
@@ -216,7 +216,7 @@ const SearchPage = () => {
                         </h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                         {trendingCelebs.map(celeb => (
-                            <Link key={celeb._id} to={`/celeb/${celeb._id}`} className="group flex flex-col text-center no-underline text-inherit bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300">
+                            <Link key={celeb._id} to={`/celeb/${celeb.slug || celeb._id}`} className="group flex flex-col text-center no-underline text-inherit bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300">
                             <div className="relative w-full aspect-[4/5] overflow-hidden bg-slate-100">
                                 <img src={celeb.image} className="absolute inset-0 w-full h-full object-cover object-[center_top] group-hover:scale-110 transition-transform duration-700" alt="" />
                             </div>

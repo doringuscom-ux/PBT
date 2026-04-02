@@ -3,6 +3,7 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useData } from '../context/DataContext';
 import Modal from '../components/Modal';
+import { slugify } from '../utils/slugify';
 
 const INDUSTRIES = ["Bollywood", "Hollywood", "Tollywood", "Kollywood", "Mollywood", "Sandalwood", "South Indian", "Haryanvi", "Bhojpuri", "Pollywood"];
 
@@ -168,7 +169,17 @@ const ManageUpcoming = () => {
                     <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Title</label>
                     <input 
                         placeholder="Movie Title" className="p-3 border rounded-xl focus:ring-2 focus:ring-primary-red/20 outline-none font-bold" required
-                        value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
+                        value={formData.title} 
+                        onChange={e => {
+                            const newTitle = e.target.value;
+                            const newSlug = formData.industry ? `${slugify(formData.industry)}/${slugify(newTitle)}` : slugify(newTitle);
+                            const currentTitleSlug = formData.industry ? `${slugify(formData.industry)}/${slugify(formData.title)}` : slugify(formData.title);
+                            if (!formData.slug || formData.slug === currentTitleSlug) {
+                                setFormData({...formData, title: newTitle, slug: newSlug});
+                            } else {
+                                setFormData({...formData, title: newTitle});
+                            }
+                        }}
                     />
                 </div>
                 <div className="flex flex-col gap-1">
@@ -207,8 +218,21 @@ const ManageUpcoming = () => {
                         className="p-3 border rounded-xl focus:ring-2 focus:ring-primary-red/20 outline-none font-bold text-sm"
                         value={isCustomIndustry ? 'Custom' : formData.industry} 
                         onChange={e => {
-                            if (e.target.value === 'Custom') { setIsCustomIndustry(true); setFormData({...formData, industry: ''}); }
-                            else { setIsCustomIndustry(false); setFormData({...formData, industry: e.target.value}); }
+                            const newInd = e.target.value;
+                            if (newInd === 'Custom') { 
+                                setIsCustomIndustry(true); 
+                                setFormData({...formData, industry: ''}); 
+                            } else { 
+                                setIsCustomIndustry(false); 
+                                const newSlug = `${slugify(newInd)}/${slugify(formData.title)}`;
+                                const currentSlug = formData.industry ? `${slugify(formData.industry)}/${slugify(formData.title)}` : slugify(formData.title);
+                                
+                                if (!formData.slug || formData.slug === currentSlug) {
+                                    setFormData({...formData, industry: newInd, slug: newSlug}); 
+                                } else {
+                                    setFormData({...formData, industry: newInd}); 
+                                }
+                            }
                         }}
                     >
                         {INDUSTRIES.map(ind => <option key={ind} value={ind}>{ind}</option>)}

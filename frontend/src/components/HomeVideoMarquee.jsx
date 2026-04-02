@@ -104,7 +104,7 @@ const HomeVideoMarquee = () => {
                         return (
                             <Link 
                                 key={`${video._id}-${idx}`} 
-                                to={isPlaying ? '#' : `/video/${video._id}`} 
+                                to={isPlaying ? '#' : `/video/${video.slug || video._id}`} 
                                 onClick={(e) => isPlaying && e.preventDefault()}
                                 className="w-[280px] shrink-0 group relative rounded-2xl overflow-hidden shadow-md block no-underline bg-black"
                             >

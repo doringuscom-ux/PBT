@@ -20,7 +20,7 @@ const VideoGrid = () => {
         {videos.slice(0, 4).map((video) => (
           <Link 
             key={video._id} 
-            to={`/video/${video._id}`}
+            to={`/video/${video.slug || video._id}`}
             className="bg-white rounded-lg overflow-hidden shadow-lg hover:-translate-y-1 transition-all group cursor-pointer no-underline text-inherit"
           >
             <div className="h-[160px] overflow-hidden relative">

@@ -24,7 +24,7 @@ const NewsGrid = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {news.slice(0, 6).map((item, index) => (
-          <Link to={`/news/${item._id}`} key={item._id} className="group cursor-pointer no-underline text-inherit block">
+          <Link to={`/news/${item.slug || item._id}`} key={item._id} className="group cursor-pointer no-underline text-inherit block">
             <div className="relative aspect-video rounded-3xl overflow-hidden mb-6 shadow-xl border border-slate-100 bg-slate-50">
               <img 
                 src={item.image} 

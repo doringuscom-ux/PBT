@@ -29,7 +29,7 @@ const Hero = () => {
         {sliderStories.map((story, index) => (
           <Link 
             key={story._id}
-            to={`/news/${story._id}`} 
+            to={`/news/${story.slug || story._id}`} 
             className={`absolute inset-0 transition-all duration-1000 ease-in-out no-underline block
               ${index === currentIndex ? 'opacity-100 visible z-10' : 'opacity-0 invisible z-0'}`}
           >

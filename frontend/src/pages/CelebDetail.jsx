@@ -6,7 +6,8 @@ import ImageModal from '../components/ImageModal';
 import UserAuthModal from '../components/UserAuthModal';
 
 const CelebDetail = () => {
-    const { id } = useParams();
+    const params = useParams();
+    const id = params['*'];
     const { celebs, news, movies, addCelebComment, likeCelebComment, updateCelebComment, deleteCelebComment, followCeleb, user } = useData();
     const [activeSection, setActiveSection] = useState('All');
     const [isBioExpanded, setIsBioExpanded] = useState(false);

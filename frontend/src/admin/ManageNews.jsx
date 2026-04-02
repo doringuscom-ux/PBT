@@ -3,6 +3,7 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useData } from '../context/DataContext';
 import Modal from '../components/Modal';
+import { slugify } from '../utils/slugify';
 
 const ManageNews = () => {
   const { user, celebs, movies, news, addNews, updateNews, deleteNews, deleteComment, updateComment } = useData();
@@ -142,7 +143,18 @@ const ManageNews = () => {
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input 
             placeholder="Headline" className="p-2 border rounded md:col-span-2" required
-            value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
+            value={formData.title} 
+            onChange={e => {
+              const newTitle = e.target.value;
+              const newSlug = formData.category ? `${slugify(formData.category)}/${slugify(newTitle)}` : slugify(newTitle);
+              // Only auto-update slug if it's currently empty or matches the previous title's slug
+              const currentTitleSlug = formData.category ? `${slugify(formData.category)}/${slugify(formData.title)}` : slugify(formData.title);
+              if (!formData.slug || formData.slug === currentTitleSlug) {
+                setFormData({...formData, title: newTitle, slug: newSlug});
+              } else {
+                setFormData({...formData, title: newTitle});
+              }
+            }}
           />
           <div className="md:col-span-2 space-y-2">
             <div className="flex gap-4 mb-2">
@@ -183,7 +195,18 @@ const ManageNews = () => {
           <div className="flex flex-col gap-1">
             <input 
               placeholder="Category (e.g. EXCLUSIVE)" className="p-2 border rounded" required
-              value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
+              value={formData.category} 
+              onChange={e => {
+                const newCat = e.target.value;
+                const newSlug = newCat ? `${slugify(newCat)}/${slugify(formData.title)}` : slugify(formData.title);
+                const currentCatSlug = formData.category ? `${slugify(formData.category)}/${slugify(formData.title)}` : slugify(formData.title);
+                
+                if (!formData.slug || formData.slug === currentCatSlug) {
+                    setFormData({...formData, category: newCat, slug: newSlug});
+                } else {
+                    setFormData({...formData, category: newCat});
+                }
+              }}
             />
             <button 
               type="button"

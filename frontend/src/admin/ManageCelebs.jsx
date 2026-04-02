@@ -3,6 +3,7 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useData } from '../context/DataContext';
 import Modal from '../components/Modal';
+import { slugify } from '../utils/slugify';
 
 const ManageCelebs = () => {
   const { user, celebs, addCeleb, updateCeleb, deleteCeleb, deleteCelebComment, updateCelebComment } = useData();
@@ -236,7 +237,17 @@ const ManageCelebs = () => {
                   <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Name <span className="text-red-500">*</span></label>
                   <input 
                     placeholder="Enter full name" className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none transition-all" 
-                    value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
+                    value={formData.name} 
+                    onChange={e => {
+                        const newName = e.target.value;
+                        const newSlug = formData.industry ? `${slugify(formData.industry)}/${slugify(newName)}` : slugify(newName);
+                        const currentNameSlug = formData.industry ? `${slugify(formData.industry)}/${slugify(formData.name)}` : slugify(formData.name);
+                        if (!formData.slug || formData.slug === currentNameSlug) {
+                            setFormData({...formData, name: newName, slug: newSlug});
+                        } else {
+                            setFormData({...formData, name: newName});
+                        }
+                    }}
                   />
                 </div>
                 <div>
@@ -260,7 +271,18 @@ const ManageCelebs = () => {
                   <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Industry</label>
                   <input 
                     placeholder="e.g. Pollywood" className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red outline-none transition-all"
-                    value={formData.industry} onChange={e => setFormData({...formData, industry: e.target.value})}
+                    value={formData.industry} 
+                    onChange={e => {
+                      const newInd = e.target.value;
+                      const newSlug = newInd ? `${slugify(newInd)}/${slugify(formData.name)}` : slugify(formData.name);
+                      const currentIndSlug = formData.industry ? `${slugify(formData.industry)}/${slugify(formData.name)}` : slugify(formData.name);
+                      
+                      if (!formData.slug || formData.slug === currentIndSlug) {
+                          setFormData({...formData, industry: newInd, slug: newSlug});
+                      } else {
+                          setFormData({...formData, industry: newInd});
+                      }
+                    }}
                   />
                 </div>
                 <div>

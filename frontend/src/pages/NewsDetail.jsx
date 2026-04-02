@@ -5,9 +5,10 @@ import CommentSection from '../components/CommentSection';
 import ImageModal from '../components/ImageModal';
 
 const NewsDetail = () => {
-    const { id } = useParams();
+    const params = useParams();
+    const id = params['*'];
     const { news, addComment, likeComment, reportComment, updateComment, deleteComment } = useData();
-    const article = news.find(n => n._id === id);
+    const article = news.find(n => n._id === id || n.slug === id);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -105,7 +106,7 @@ const NewsDetail = () => {
                                 
                                 <div className="space-y-8 overflow-y-auto flex-1 pr-2 no-scrollbar">
                                     {relatedNews.map((item) => (
-                                        <Link key={item._id} to={`/news/${item._id}`} className="flex gap-4 group cursor-pointer no-underline items-center">
+                                        <Link key={item._id} to={`/news/${item.slug || item._id}`} className="flex gap-4 group cursor-pointer no-underline items-center">
                                             <div className="w-24 h-24 lg:w-28 lg:h-24 flex-shrink-0 rounded-2xl overflow-hidden shadow-md relative">
                                                 <img src={item.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>

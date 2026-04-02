@@ -53,7 +53,7 @@ const TodayNews = () => {
             {(todayNews.length > 0 ? todayNews : fallbackNews).map((item) => (
               <Link 
                 key={item._id} 
-                to={`/news/${item._id}`}
+                to={`/news/${item.slug || item._id}`}
                 className="group bg-white rounded-[16px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full relative"
               >
                 {todayNews.length === 0 && (
