@@ -29,6 +29,8 @@ const MovieSchema = new mongoose.Schema({
     trailerUrl: { type: String },
     trailerVideo: { type: mongoose.Schema.Types.ObjectId, ref: 'Video' },
     releaseDate: { type: Date },
+    isReleaseDateConfirmed: { type: Boolean, default: true },
+    estimatedRelease: { type: String },
     likes: { type: Number, default: 0 },
     cast: [{
         name: { type: String, required: true },

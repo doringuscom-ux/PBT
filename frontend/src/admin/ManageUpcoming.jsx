@@ -25,7 +25,7 @@ const ManageUpcoming = () => {
     title: '', image: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
     overview: '', director: '', runtime: '', certification: '', 
     performance: { day1: '', weekend: '', status: 'Upcoming' }, industry: 'Bollywood',
-    fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: [], slug: '', photos: [], coverImage: ''
+    fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', isReleaseDateConfirmed: true, estimatedRelease: '', cast: [], slug: '', photos: [], coverImage: ''
   });
 
   const [showForm, setShowForm] = useState(false);
@@ -39,7 +39,11 @@ const ManageUpcoming = () => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const selectedMovie = movies.find(m => m._id === selectedMovieId);
 
-  const upcomingMovies = movies.filter(movie => movie.releaseDate && new Date(movie.releaseDate) > new Date());
+  const upcomingMovies = movies.filter(movie => 
+    movie.performance?.status === 'Upcoming' || 
+    (movie.isReleaseDateConfirmed === false && movie.performance?.status !== 'Released') ||
+    (movie.releaseDate && new Date(movie.releaseDate) > new Date())
+  );
 
   const filteredMovies = upcomingMovies
     .filter(movie => 
@@ -47,8 +51,16 @@ const ManageUpcoming = () => {
       movie.genre.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
-      if (sortBy === 'newest') return new Date(b.releaseDate) - new Date(a.releaseDate);
-      if (sortBy === 'oldest') return new Date(a.releaseDate) - new Date(b.releaseDate);
+      if (sortBy === 'newest') {
+        if (!a.releaseDate) return 1;
+        if (!b.releaseDate) return -1;
+        return new Date(b.releaseDate) - new Date(a.releaseDate);
+      }
+      if (sortBy === 'oldest') {
+        if (!a.releaseDate) return 1;
+        if (!b.releaseDate) return -1;
+        return new Date(a.releaseDate) - new Date(b.releaseDate);
+      }
       if (sortBy === 'title') return a.title.localeCompare(b.title);
       return 0;
     });
@@ -86,7 +98,7 @@ const ManageUpcoming = () => {
       title: '', image: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
       overview: '', director: '', runtime: '', certification: '', 
       performance: { day1: '', weekend: '', status: 'Upcoming' }, industry: 'Bollywood',
-      fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: [], slug: '', photos: []
+      fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', isReleaseDateConfirmed: true, estimatedRelease: '', cast: [], slug: '', photos: []
     });
     setSelectedFile(null);
     setImageSource('url');
@@ -276,15 +288,38 @@ const ManageUpcoming = () => {
                         <i className="fas fa-clock"></i> Release Schedule
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1">
-                            <label className="text-[10px] font-black text-primary-red/60 uppercase ml-1">Release Date</label>
-                            <input 
-                                type="date" required
-                                className="p-3 border border-primary-red/20 rounded-xl font-bold outline-none focus:ring-2 focus:ring-primary-red/20"
-                                value={formData.releaseDate ? new Date(formData.releaseDate).toISOString().split('T')[0] : ''} 
-                                onChange={e => setFormData({...formData, releaseDate: e.target.value})}
-                            />
+                        <div className="md:col-span-2 bg-slate-900 rounded-xl p-4 flex items-center justify-between mb-2">
+                          <label className="text-[10px] font-black text-white uppercase tracking-widest">Release Date Confirmed?</label>
+                          <button 
+                            type="button"
+                            onClick={() => setFormData({...formData, isReleaseDateConfirmed: !formData.isReleaseDateConfirmed})}
+                            className={`w-12 h-6 rounded-full transition-all relative ${formData.isReleaseDateConfirmed ? 'bg-green-500' : 'bg-slate-700'}`}
+                          >
+                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.isReleaseDateConfirmed ? 'right-1' : 'left-1'}`}></div>
+                          </button>
                         </div>
+
+                        {formData.isReleaseDateConfirmed ? (
+                          <div className="flex flex-col gap-1">
+                              <label className="text-[10px] font-black text-primary-red/60 uppercase ml-1">Release Date</label>
+                              <input 
+                                  type="date" required
+                                  className="p-3 border border-primary-red/20 rounded-xl font-bold outline-none focus:ring-2 focus:ring-primary-red/20"
+                                  value={formData.releaseDate ? new Date(formData.releaseDate).toISOString().split('T')[0] : ''} 
+                                  onChange={e => setFormData({...formData, releaseDate: e.target.value})}
+                              />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-1">
+                              <label className="text-[10px] font-black text-primary-red/60 uppercase ml-1">Estimated Release (e.g. Mid 2026)</label>
+                              <input 
+                                  placeholder="Late 2026, Diwali 2027..."
+                                  className="p-3 border border-primary-red/20 rounded-xl font-bold outline-none focus:ring-2 focus:ring-primary-red/20"
+                                  value={formData.estimatedRelease || ''} 
+                                  onChange={e => setFormData({...formData, estimatedRelease: e.target.value})}
+                              />
+                          </div>
+                        )}
                         <div className="flex flex-col gap-1">
                             <label className="text-[10px] font-black text-primary-red/60 uppercase ml-1">Calendar Status</label>
                             <input 
