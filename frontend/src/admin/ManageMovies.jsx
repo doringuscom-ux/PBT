@@ -48,8 +48,13 @@ const ManageMovies = () => {
   const [trailerSearchTerm, setTrailerSearchTerm] = useState('');
   const [showTrailerDropdown, setShowTrailerDropdown] = useState(false);
 
-  // Released movies only (release date is today or past)
-  const releasedMovies = movies.filter(movie => !movie.releaseDate || new Date(movie.releaseDate) <= new Date());
+  // Released movies only (confirmed past dates or explicit released status)
+  const releasedMovies = movies.filter(m => {
+    const today = new Date();
+    const isConfirmedPast = m.isReleaseDateConfirmed && m.releaseDate && new Date(m.releaseDate) <= today;
+    const isExplicitlyReleased = m.performance?.status === 'Released' || m.performance?.status === 'Blockbuster' || m.performance?.status === 'Hit';
+    return isConfirmedPast || isExplicitlyReleased;
+  });
 
   const filteredMovies = releasedMovies
     .filter(movie => 

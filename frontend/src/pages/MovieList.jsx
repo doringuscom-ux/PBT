@@ -11,8 +11,13 @@ const MovieList = () => {
   const industries = ['ALL', ...new Set(movies.filter(m => m.industry).map(m => m.industry.trim().toUpperCase()))];
   
   const releasedMovies = movies.filter(m => {
-    if (!m.releaseDate) return true;
-    return new Date(m.releaseDate) <= new Date();
+    const today = new Date();
+    // 1. Confirmed date is today or in the past
+    const isConfirmedPast = m.isReleaseDateConfirmed && m.releaseDate && new Date(m.releaseDate) <= today;
+    // 2. Explicitly marked as Released (manual override)
+    const isExplicitlyReleased = m.performance?.status === 'Released' || m.performance?.status === 'Blockbuster' || m.performance?.status === 'Hit';
+    
+    return isConfirmedPast || isExplicitlyReleased;
   });
 
   const filteredMovies = releasedMovies.filter(m => {
