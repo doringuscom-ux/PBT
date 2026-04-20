@@ -223,7 +223,15 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                 </h1>
                             </div>
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-y-2 gap-x-4 text-white font-bold uppercase tracking-widest text-[9px] md:text-xs">
-                                <span className="opacity-90">Release date: {new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+                                <span className="text-yellow-400 font-black leading-tight">
+                                    RELEASE DATE: {
+                                        (movie.isReleaseDateConfirmed && movie.releaseDate) ? (
+                                            <span className="text-white opacity-90 font-bold">{new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+                                        ) : (
+                                            <span className="text-white opacity-90 font-bold">{movie.estimatedRelease || 'TBA'}</span>
+                                        )
+                                    }
+                                </span>
                                 <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"></span>
                                 <span className="text-yellow-400 font-black tracking-tight">{movie.industry}</span>
                                 <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"></span>
@@ -511,7 +519,15 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                             </div>
                                             <div>
                                                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Release Date</p>
-                                                <h4 className="text-xl font-black italic uppercase text-slate-900">{new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</h4>
+                                                <h4 className="text-xl font-black italic uppercase text-slate-900">
+                                                    {
+                                                        (movie.isReleaseDateConfirmed && movie.releaseDate) ? (
+                                                            new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                                                        ) : (
+                                                            movie.estimatedRelease || 'TBA'
+                                                        )
+                                                    }
+                                                </h4>
                                             </div>
                                         </div>
                                     </div>

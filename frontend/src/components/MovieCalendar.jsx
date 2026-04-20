@@ -121,12 +121,18 @@ const MovieCalendar = () => {
                 
                 {/* Date Badge */}
                 <div className="absolute top-3 left-3 bg-yellow-400 text-[#0f172a] px-2 py-1 rounded-md flex flex-col items-center justify-center min-w-[35px] shadow-lg backdrop-blur-sm scale-90 font-black">
-                    <span className="text-[8px] font-black uppercase tracking-tighter opacity-90 leading-none mb-0.5">
-                        {new Date(movie.releaseDate).toLocaleDateString('en-US', { month: 'short' })}
-                    </span>
-                    <span className="text-sm font-black leading-none uppercase">
-                        {new Date(movie.releaseDate).getDate()}
-                    </span>
+                    { (movie.isReleaseDateConfirmed && movie.releaseDate) ? (
+                        <>
+                            <span className="text-[8px] font-black uppercase tracking-tighter opacity-90 leading-none mb-0.5">
+                                {new Date(movie.releaseDate).toLocaleDateString('en-US', { month: 'short' })}
+                            </span>
+                            <span className="text-sm font-black leading-none uppercase">
+                                {new Date(movie.releaseDate).getDate()}
+                            </span>
+                        </>
+                    ) : (
+                        <span className="text-[10px] font-black uppercase tracking-tighter px-1">TBA</span>
+                    )}
                 </div>
             </div>
 

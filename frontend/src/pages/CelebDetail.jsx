@@ -438,7 +438,9 @@ const CelebDetail = () => {
                                                 <div className="aspect-[2/3] rounded-2xl overflow-hidden relative shadow-lg group-hover:shadow-2xl transition-all duration-500">
                                                     <img src={movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
                                                     <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
-                                                        <span className="text-primary-red text-[10px] font-black uppercase tracking-tighter mb-1 block italic">{new Date(movie.releaseDate).getFullYear()}</span>
+                                                        <span className="text-primary-red text-[10px] font-black uppercase tracking-tighter mb-1 block italic">
+                                                            { (movie.isReleaseDateConfirmed && movie.releaseDate) ? new Date(movie.releaseDate).getFullYear() : (movie.year || 'TBA') }
+                                                        </span>
                                                         <h4 className="text-white text-xs font-black uppercase tracking-tighter italic leading-none line-clamp-2">{movie.title}</h4>
                                                     </div>
                                                 </div>

@@ -6,10 +6,12 @@ const MovieSlider = () => {
   const { movies } = useData();
   const sliderRef = useRef(null);
 
-  // Filter for movies that are already released (past or today) OR have no release date set yet
-  const releasedMovies = movies.filter(movie => {
-    if (!movie.releaseDate) return true;
-    return new Date(movie.releaseDate) <= new Date();
+  // Filter for movies that are already released (past confirmed dates or explicit released status)
+  const releasedMovies = movies.filter(m => {
+    const today = new Date();
+    const isConfirmedPast = m.isReleaseDateConfirmed && m.releaseDate && new Date(m.releaseDate) <= today;
+    const isExplicitlyReleased = m.performance?.status === 'Released' || m.performance?.status === 'Blockbuster' || m.performance?.status === 'Hit';
+    return isConfirmedPast || isExplicitlyReleased;
   });
 
   useEffect(() => {
