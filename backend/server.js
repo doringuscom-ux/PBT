@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const path = require('path');
-const { startWidgetService } = require('./utils/widgetService');
+const { startHeartbeat } = require('./utils/heartbeat');
 require('dotenv').config();
 
 const MongoStore = require('connect-mongo');
@@ -14,7 +14,7 @@ const startServer = async () => {
     try {
         // Connect Database
         await connectDB();
-        startWidgetService();
+        startHeartbeat();
 
         // Init Middleware
         app.set('trust proxy', 1); // Trust first proxy (Render, Heroku, etc.)
@@ -60,7 +60,6 @@ const startServer = async () => {
         app.use('/api/celebrities', require('./routes/celebrities'));
         app.use('/api/videos', require('./routes/videos'));
         app.use('/api/users', require('./routes/users'));
-        app.use('/api/widgets', require('./routes/widgets'));
         app.use('/api/seo', require('./routes/seo'));
 
         const PORT = process.env.PORT || 5000;

@@ -2,7 +2,11 @@ import axios from 'axios';
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
-    withCredentials: true // Crucial for sessions/cookies
+    withCredentials: true
+});
+
+const widgetApi = axios.create({
+    baseURL: import.meta.env.VITE_WIDGET_API_URL || 'http://localhost:5001/api'
 });
 
 export const getMe = () => api.get('/auth/me');
@@ -59,6 +63,6 @@ export const updateUser = (id, userData) => api.put(`/users/${id}`, userData);
 export const updateUserPassword = (id, newPassword) => api.put(`/users/${id}/password`, { newPassword });
 export const deleteVideoOld = (id) => api.delete(`/users/${id}`); // Corrected in next call if needed, this was users
 export const deleteUser = (id) => api.delete(`/users/${id}`);
-export const getWidgets = (params) => api.get('/widgets', { params });
+export const getWidgets = (params) => widgetApi.get('/widgets', { params });
 
 export default api;

@@ -86,6 +86,7 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
             .populate('trailerVideo');
         res.status(201).json(enrich([newMessage], req.session.user)[0]);
     } catch (err) {
+        console.error("[Movies Route] Error creating movie:", err);
         res.status(400).json({ message: err.message });
     }
 });
