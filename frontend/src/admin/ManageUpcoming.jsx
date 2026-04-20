@@ -39,11 +39,19 @@ const ManageUpcoming = () => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const selectedMovie = movies.find(m => m._id === selectedMovieId);
 
-  const upcomingMovies = movies.filter(movie => 
-    movie.performance?.status === 'Upcoming' || 
-    (movie.isReleaseDateConfirmed === false && movie.performance?.status !== 'Released') ||
-    (movie.releaseDate && new Date(movie.releaseDate) > new Date())
-  );
+  const upcomingMovies = movies.filter(m => {
+    const today = new Date();
+    // A movie is NOT upcoming if it's already released
+    const isConfirmedPast = m.isReleaseDateConfirmed && m.releaseDate && new Date(m.releaseDate) <= today;
+    const isExplicitlyReleased = m.performance?.status === 'Released' || m.performance?.status === 'Blockbuster' || m.performance?.status === 'Hit';
+    
+    if (isConfirmedPast || isExplicitlyReleased) return false;
+    
+    // Otherwise, check if it's marked as Upcoming OR has a future date OR is unconfirmed (TBA)
+    return m.performance?.status === 'Upcoming' || 
+           m.isReleaseDateConfirmed === false || 
+           (m.releaseDate && new Date(m.releaseDate) > today);
+  });
 
   const filteredMovies = upcomingMovies
     .filter(movie => 
