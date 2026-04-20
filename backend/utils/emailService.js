@@ -44,11 +44,8 @@ const sendOtpEmail = async (to, otp) => {
     }
 };
 
-const nodemailer = require('nodemailer');
-const EmailLog = require('../models/EmailLog');
-require('dotenv').config();
 
-// ... (transporter and sendOtpEmail remain)
+const EmailLog = require('../models/EmailLog');
 
 /**
  * PB Tadka - Send Notification to Subscribers when a new post is created
