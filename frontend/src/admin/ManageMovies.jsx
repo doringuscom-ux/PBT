@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useData } from '../context/DataContext';
@@ -143,7 +144,11 @@ const ManageMovies = () => {
     <div className="space-y-6 relative">
       <div className="sticky top-0 z-30 bg-gray-100/80 backdrop-blur-md pb-4 pt-2 -mt-2">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-          <div>
+          <div className="flex flex-col gap-1">
+            <div className="flex bg-slate-100 p-1 rounded-xl w-fit mb-2">
+                <button className="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-white text-primary-red shadow-sm">Released</button>
+                <Link to="/admin/upcoming" className="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Upcoming</Link>
+            </div>
             <h2 className="text-xl font-bold text-text-dark flex items-center gap-2">
                 <i className="fas fa-video text-primary-red"></i> Released Movies
             </h2>
