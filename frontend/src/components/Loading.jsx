@@ -29,23 +29,27 @@ const Loading = ({ fullScreen = true, progress = 0 }) => {
 
       {/* Loading Progress & Text */}
       <div className="mt-16 flex flex-col items-center gap-6 relative z-10">
-        <div className="flex flex-col items-center">
-            <h2 className="text-[10px] font-black text-white uppercase tracking-[0.5em] mb-3 animate-shimmer whitespace-nowrap">
-                Initializing <span className="text-accent-gold">Cinematic</span> Experience
+        <div className="flex flex-col items-center text-center">
+            <h2 className="text-sm md:text-base font-black text-white uppercase tracking-[0.6em] mb-2 animate-shimmer">
+                Initializing <span className="text-accent-gold drop-shadow-[0_0_8px_rgba(255,193,7,0.4)]">Cinematic</span> Experience
             </h2>
-            <p className="text-[8px] font-bold text-white/30 uppercase tracking-[0.3em] font-mono italic">Syncing with global vaults...</p>
+            <p className="text-[10px] md:text-xs font-medium text-white/40 uppercase tracking-[0.4em] font-mono flex items-center gap-3">
+                <span className="w-8 h-[1px] bg-white/20"></span>
+                Syncing with global vaults
+                <span className="w-8 h-[1px] bg-white/20"></span>
+            </p>
         </div>
 
         {/* Premium Progress Bar */}
-        <div className="flex flex-col items-center gap-2">
-            <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
+        <div className="flex flex-col items-center gap-4">
+            <div className="w-64 h-1.5 bg-white/10 rounded-full overflow-hidden relative border border-white/5">
                 <div 
-                    className="absolute inset-0 bg-gradient-to-r from-primary-red to-accent-gold transition-all duration-500 ease-out origin-left"
+                    className="absolute inset-0 bg-gradient-to-r from-primary-red to-accent-gold transition-all duration-500 ease-out origin-left shadow-[0_0_15px_rgba(255,193,7,0.4)]"
                     style={{ width: `${progress}%` }}
                 ></div>
                 <div className="absolute inset-0 bg-white/20 w-1/4 animate-loading-shimmer"></div>
             </div>
-            <div className="text-[10px] font-mono font-black text-accent-gold/80 tracking-widest animate-pulse">
+            <div className="text-2xl font-mono font-black text-accent-gold tracking-[0.2em] drop-shadow-[0_0_10px_rgba(255,193,7,0.5)]">
                 {progress}%
             </div>
         </div>
