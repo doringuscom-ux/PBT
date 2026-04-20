@@ -84,6 +84,17 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
             .populate('createdBy', 'username employeeId fullName')
             .populate('cast.celebrity')
             .populate('trailerVideo');
+
+        // Background: Send email notification to all subscribers
+        try {
+            const subscribers = await Subscriber.find({ isActive: true });
+            if (subscribers.length > 0) {
+                sendPostNotification(newMessage, subscribers);
+            }
+        } catch (emailErr) {
+            console.error("Failed to send movie notification:", emailErr);
+        }
+
         res.status(201).json(enrich([newMessage], req.session.user)[0]);
     } catch (err) {
         console.error("[Movies Route] Error creating movie:", err);

@@ -71,6 +71,17 @@ router.post('/', cloudinaryUpload.fields([
 
         const video = new Video(videoData);
         const newVideo = await video.save();
+
+        // Background: Send email notification to all subscribers
+        try {
+            const subscribers = await Subscriber.find({ isActive: true });
+            if (subscribers.length > 0) {
+                sendPostNotification(newVideo, subscribers);
+            }
+        } catch (emailErr) {
+            console.error("Failed to send video notification:", emailErr);
+        }
+
         res.status(201).json(newVideo);
     } catch (err) {
         res.status(400).json({ message: err.message });

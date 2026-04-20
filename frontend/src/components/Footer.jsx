@@ -1,12 +1,33 @@
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
+import * as api from '../api';
 
 const Footer = () => {
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState({ type: '', message: '' });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const email = e.target.elements[0].value;
-    alert(`Thank you for subscribing with email: ${email}`);
-    e.target.reset();
+    if (!email) return;
+
+    setLoading(true);
+    setStatus({ type: '', message: '' });
+
+    try {
+      const res = await api.subscribeNewsletter(email);
+      setStatus({ type: 'success', message: res.data.message || 'Subscribed successfully!' });
+      setEmail('');
+    } catch (err) {
+      console.error("Newsletter Subscription Error:", err);
+      setStatus({ 
+        type: 'error', 
+        message: err.response?.data?.message || 'Something went wrong. Please try again.' 
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,17 +91,26 @@ const Footer = () => {
                 <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
                 <input 
                   type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address" 
                   className="w-full py-3.5 pl-11 pr-4 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm outline-none focus:border-primary-red focus:bg-slate-900 transition-all font-medium placeholder:text-slate-600"
                   required 
+                  disabled={loading}
                 />
               </div>
               <button 
                 type="submit" 
-                className="w-full bg-primary-red text-white border-none py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-[0.2em] cursor-pointer hover:bg-red-600 active:scale-[0.98] transition-all shadow-lg shadow-primary-red/20 flex items-center justify-center gap-2"
+                disabled={loading}
+                className={`w-full bg-primary-red text-white border-none py-3.5 px-6 rounded-xl font-black text-xs uppercase tracking-[0.2em] cursor-pointer hover:bg-red-600 active:scale-[0.98] transition-all shadow-lg shadow-primary-red/20 flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
-                Subscribe Now <i className="fas fa-paper-plane"></i>
+                {loading ? 'Subscribing...' : 'Subscribe Now'} <i className="fas fa-paper-plane"></i>
               </button>
+              {status.message && (
+                <div className={`text-xs font-bold mt-2 px-3 py-2 rounded-lg ${status.type === 'success' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
+                  {status.message}
+                </div>
+              )}
             </form>
           </div>
         </div>

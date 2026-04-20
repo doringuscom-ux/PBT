@@ -63,6 +63,11 @@ export const updateUser = (id, userData) => api.put(`/users/${id}`, userData);
 export const updateUserPassword = (id, newPassword) => api.put(`/users/${id}/password`, { newPassword });
 export const deleteVideoOld = (id) => api.delete(`/users/${id}`); // Corrected in next call if needed, this was users
 export const deleteUser = (id) => api.delete(`/users/${id}`);
+export const subscribeNewsletter = (email) => api.post('/subscribers/subscribe', { email });
+export const getSubscribersList = () => api.get('/subscribers');
+export const getSubStats = () => api.get('/subscribers/stats');
+export const getEmailLogs = () => api.get('/subscribers/logs');
+export const deleteSubscriber = (id) => api.delete(`/subscribers/${id}`);
 export const getWidgets = (params) => widgetApi.get('/widgets', { params });
 
 export default api;

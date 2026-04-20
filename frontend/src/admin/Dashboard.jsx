@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import SlugMigrator from '../components/SlugMigrator';
+import * as api from '../api';
 
 const Dashboard = () => {
   const { movies, news, celebs, videos, user, manualAnnouncements: announcements, updateAnnouncements } = useData();
@@ -19,10 +20,23 @@ const Dashboard = () => {
     updateAnnouncements(updated);
   };
 
+  const [subStats, setSubStats] = useState({ total: 0 });
+
+  useEffect(() => {
+    const fetchSubStats = async () => {
+      try {
+        const res = await api.getSubStats();
+        setSubStats(res.data);
+      } catch (err) { console.error(err); }
+    };
+    fetchSubStats();
+  }, []);
+
   const releasedMoviesCount = movies.filter(m => !m.releaseDate || new Date(m.releaseDate) <= new Date()).length;
   const upcomingMoviesCount = movies.filter(m => m.releaseDate && new Date(m.releaseDate) > new Date()).length;
 
   const stats = [
+    { name: 'Subscribers', count: subStats.total, icon: 'fas fa-users', color: 'bg-teal-600' },
     { name: 'Released Movies', count: releasedMoviesCount, icon: 'fas fa-film', color: 'bg-blue-600' },
     { name: 'Upcoming Movies', count: upcomingMoviesCount, icon: 'fas fa-calendar-alt', color: 'bg-indigo-600' },
     { name: 'News Articles', count: news.length, icon: 'fas fa-newspaper', color: 'bg-red-500' },
@@ -56,7 +70,7 @@ const Dashboard = () => {
     <div>
       <h2 className="text-xl font-bold mb-6 text-text-dark">Dashboard Overview</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
         {stats.map((stat) => (
           <div key={stat.name} className="bg-white border border-gray-100 rounded-xl p-6 shadow-md hover:shadow-lg transition-all flex items-center gap-5">
             <div className={`${stat.color} w-14 h-14 rounded-xl flex items-center justify-center text-white text-2xl shadow-inner`}>
@@ -71,10 +85,11 @@ const Dashboard = () => {
       </div>
 
       <h2 className="text-xl font-bold mb-6 text-text-dark">Quick Actions</h2>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-10">
         <QuickActionLink to="/admin/movies" icon="fas fa-film" text="Movies" color="bg-blue-600" />
         <QuickActionLink to="/admin/upcoming" icon="fas fa-calendar-plus" text="Upcoming" color="bg-indigo-600" />
         <QuickActionLink to="/admin/news" icon="fas fa-edit" text="Post News" color="bg-red-600" />
+        <QuickActionLink to="/admin/subscribers" icon="fas fa-mail-bulk" text="Newsletter" color="bg-amber-600" />
         <QuickActionLink to="/admin/celebs" icon="fas fa-user-plus" text="Add Celeb" color="bg-yellow-600" />
         <QuickActionLink to="/admin/videos" icon="fas fa-video" text="Upload Video" color="bg-purple-600" />
         {user?.role === 'admin' && (

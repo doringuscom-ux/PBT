@@ -24,6 +24,7 @@ const AdminLayout = () => {
     { name: 'Celebrities', path: '/admin/celebs', icon: 'fas fa-star' },
     { name: 'Videos', path: '/admin/videos', icon: 'fas fa-video' },
     { name: 'Comments', path: '/admin/comments', icon: 'fas fa-comments text-primary-red' },
+    { name: 'Subscribers', path: '/admin/subscribers', icon: 'fas fa-mail-bulk text-amber-500' },
     { name: 'SEO Manager', path: '/admin/seo', icon: 'fas fa-search-dollar text-cyan-500' },
   ];
 

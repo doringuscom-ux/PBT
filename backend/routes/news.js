@@ -90,6 +90,18 @@ router.post('/', (req, res, next) => {
         }
         const news = new News(newsData);
         const newNews = await news.save();
+
+        // Background: Send email notification to all subscribers
+        try {
+            const subscribers = await Subscriber.find({ isActive: true });
+            if (subscribers.length > 0) {
+                // We don't await this to keep the response fast
+                sendPostNotification(newNews, subscribers);
+            }
+        } catch (emailErr) {
+            console.error("Failed to fetch subscribers or send mail:", emailErr);
+        }
+
         res.status(201).json(newNews);
     } catch (err) {
         console.error("News POST Error:", err);
