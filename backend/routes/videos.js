@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Video = require('../models/Video');
+const Subscriber = require('../models/Subscriber');
+const { sendPostNotification } = require('../utils/emailService');
 const { upload: cloudinaryUpload, uploadFromUrl } = require('../config/cloudinary');
 const multer = require('multer');
 const path = require('path');

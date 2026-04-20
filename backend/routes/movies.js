@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Movie = require('../models/Movie');
+const Subscriber = require('../models/Subscriber');
+const { sendPostNotification } = require('../utils/emailService');
 const { upload, uploadFromUrl } = require('../config/cloudinary');
 
 // Helper to enrich with isLiked status for comments
