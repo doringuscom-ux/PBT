@@ -1,7 +1,7 @@
 import React from 'react';
 import Logo from './Logo';
 
-const Loading = ({ fullScreen = true }) => {
+const Loading = ({ fullScreen = true, progress = 0 }) => {
   return (
     <div className={`flex flex-col items-center justify-center bg-slate-950 z-[2000] overflow-hidden ${fullScreen ? 'fixed inset-0 w-screen h-screen' : 'w-full py-24 rounded-[3rem] my-8'}`}>
       
@@ -37,9 +37,17 @@ const Loading = ({ fullScreen = true }) => {
         </div>
 
         {/* Premium Progress Bar */}
-        <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-red to-accent-gold w-full animate-loading-bar origin-left"></div>
-            <div className="absolute inset-0 bg-white/20 w-1/4 animate-loading-shimmer"></div>
+        <div className="flex flex-col items-center gap-2">
+            <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
+                <div 
+                    className="absolute inset-0 bg-gradient-to-r from-primary-red to-accent-gold transition-all duration-500 ease-out origin-left"
+                    style={{ width: `${progress}%` }}
+                ></div>
+                <div className="absolute inset-0 bg-white/20 w-1/4 animate-loading-shimmer"></div>
+            </div>
+            <div className="text-[10px] font-mono font-black text-accent-gold/80 tracking-widest animate-pulse">
+                {progress}%
+            </div>
         </div>
       </div>
 

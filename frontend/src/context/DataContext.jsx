@@ -21,25 +21,41 @@ export const DataProvider = ({ children }) => {
   const [announcements, setAnnouncements] = useState([]);
   const [user, setUser] = useState(null); // New user state for session
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   const fetchData = async () => {
     setIsLoading(true);
+    setLoadingProgress(0);
+    const totalRequests = 6;
+    let completed = 0;
+
+    const increment = () => {
+      completed++;
+      setLoadingProgress(Math.round((completed / totalRequests) * 100));
+    };
+
     try {
-      // Check session first
+      // Check session first (treated as 1st request)
       try {
         const meRes = await api.getMe();
         if (meRes.data.success) setUser(meRes.data.user);
       } catch (e) {
         setUser(null);
+      } finally {
+        increment();
       }
 
-      const [moviesRes, newsRes, todayNewsRes, celebsRes, videosRes] = await Promise.all([
-        api.getMovies(),
-        api.getNews(),
-        api.getTodayNews(),
-        api.getCelebrities(),
-        api.getVideos()
+      // Parallel requests (5 more)
+      const results = await Promise.all([
+        api.getMovies().finally(increment),
+        api.getNews().finally(increment),
+        api.getTodayNews().finally(increment),
+        api.getCelebrities().finally(increment),
+        api.getVideos().finally(increment)
       ]);
+
+      const [moviesRes, newsRes, todayNewsRes, celebsRes, videosRes] = results;
+
       setMovies(moviesRes.data.sort((a, b) => new Date(b.createdAt || b.year) - new Date(a.createdAt || a.year)));
       setNews(newsRes.data.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)));
       setTodayNews(todayNewsRes.data.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)));
@@ -409,7 +425,7 @@ export const DataProvider = ({ children }) => {
     //   combinedAnnouncements.push({ text: "Stay tuned for the latest film updates!", link: null });
     // }
 
-    if (isLoading) return <Loading />;
+    if (isLoading) return <Loading progress={loadingProgress} />;
 
     return (
       <DataContext.Provider value={{
