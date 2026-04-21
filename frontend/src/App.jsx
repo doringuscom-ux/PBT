@@ -44,6 +44,7 @@ import UpcomingList from './pages/UpcomingList';
 import ManageUpcoming from './admin/ManageUpcoming';
 import ContactUs from './pages/ContactUs';
 import BoxOffice from './pages/BoxOffice';
+import SubmitContent from './pages/SubmitContent';
 
 import WeatherWidget from './components/WeatherWidget';
 import MarketWidget from './components/MarketWidget';
@@ -122,6 +123,7 @@ function App() {
             <Route path="/sports" element={<SportsList />} />
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/box-office" element={<BoxOffice />} />
+            <Route path="/submit-content" element={<SubmitContent />} />
             <Route path="*" element={<NotFound />} />
           </Route>
           
@@ -145,7 +147,8 @@ function App() {
             <Route path="videos" element={<ManageVideos />} />
             <Route path="comments" element={<ManageComments />} />
             <Route path="subscribers" element={<ManageSubscribers />} />
-            <Route path="inquiries" element={<ManageInquiries />} />
+            <Route path="whatsapp-leads" element={<ManageInquiries mode="whatsapp" />} />
+            <Route path="promotion-leads" element={<ManageInquiries mode="promotions" />} />
             <Route path="users" element={<ManageUsers />} />
             <Route path="seo" element={<SEOManager />} />
           </Route>

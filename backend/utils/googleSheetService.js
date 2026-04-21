@@ -5,9 +5,9 @@ require('dotenv').config();
 /**
  * Append inquiry data to Google Sheet
  */
-const appendToSheet = async (data) => {
+const appendToSheet = async (data, spreadsheetId = null) => {
     try {
-        const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+        const targetId = spreadsheetId || process.env.GOOGLE_SHEET_ID_ADS;
         const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
         const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
@@ -23,7 +23,7 @@ const appendToSheet = async (data) => {
             scopes: ['https://www.googleapis.com/auth/spreadsheets'],
         });
 
-        const doc = new GoogleSpreadsheet(spreadsheetId, serviceAccountAuth);
+        const doc = new GoogleSpreadsheet(targetId, serviceAccountAuth);
 
         await doc.loadInfo(); // loads document properties and worksheets
         const sheet = doc.sheetsByIndex[0]; // Get the first sheet
@@ -33,14 +33,16 @@ const appendToSheet = async (data) => {
             await sheet.loadHeaderRow();
         } catch (err) {
             // If loadHeaderRow fails, it usually means the sheet is empty
-            await sheet.setHeaderRow(['Name', 'Email', 'Phone', 'Date']);
+            await sheet.setHeaderRow(['Name', 'Email', 'Phone', 'Type', 'Message', 'Date']);
         }
 
         // Append the row
         await sheet.addRow({
             Name: data.name,
             Email: data.email,
-            Phone: `'${data.phone}`, // Added apostrophe to ensure it's treated as string
+            Phone: `'${data.phone}`, 
+            Type: data.type || 'Other',
+            Message: data.message || '',
             Date: new Date(data.createdAt || Date.now()).toLocaleString(),
         });
 

@@ -16,16 +16,10 @@ const InquiryPopup = () => {
         // Only show on home page
         if (window.location.pathname !== '/') return;
 
-        // Check if already submitted in the last 24 hours
+        // Check if already submitted (if so, never show again)
         const submittedAt = localStorage.getItem('pbt_popup_submitted_at');
         if (submittedAt) {
-            const lastSubmitted = new Date(parseInt(submittedAt));
-            const now = new Date();
-            const hoursPassed = (now - lastSubmitted) / (1000 * 60 * 60);
-            
-            if (hoursPassed < 24) {
-                return; // Don't show if submitted in last 24h
-            }
+            return;
         }
 
         // Show on every refresh
@@ -69,17 +63,17 @@ const InquiryPopup = () => {
     if (!isOpen) return null;
 
     return (
-        <Modal isOpen={isOpen} onClose={handleClose} title="Promotions & Advertising">
+        <Modal isOpen={isOpen} onClose={handleClose} title="Join WhatsApp Group">
             <div className="flex flex-col md:flex-row -m-6 min-h-[400px]">
                 {/* Left Side Branding */}
                 <div className="hidden md:flex md:w-2/5 bg-slate-900 relative overflow-hidden items-center justify-center p-8 text-center border-r border-white/5">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-red/20 to-blue-500/20 opacity-50"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-emerald-500/20 opacity-50"></div>
                     <div className="relative z-10 space-y-4">
-                        <div className="w-16 h-16 bg-primary-red/20 rounded-2xl flex items-center justify-center mx-auto backdrop-blur-xl border border-white/10 shadow-xl shadow-primary-red/20">
-                            <i className="fas fa-ad text-2xl text-primary-red"></i>
+                        <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto backdrop-blur-xl border border-white/10 shadow-xl shadow-green-500/20">
+                            <i className="fab fa-whatsapp text-3xl text-green-500"></i>
                         </div>
-                        <h4 className="text-xl font-black text-white uppercase tracking-tighter">Grow With Us</h4>
-                        <p className="text-xs text-slate-400 font-bold leading-relaxed uppercase tracking-widest">Advertise your news or brand on PB Tadka.</p>
+                        <h4 className="text-xl font-black text-white uppercase tracking-tighter">WhatsApp News</h4>
+                        <p className="text-xs text-slate-400 font-bold leading-relaxed uppercase tracking-widest">Get the latest news updates directly on your phone.</p>
                     </div>
                 </div>
 
@@ -87,8 +81,8 @@ const InquiryPopup = () => {
                 <div className="w-full md:w-3/5 p-8 lg:p-10 bg-white">
                     <div className="max-w-md mx-auto space-y-6">
                         <header className="space-y-1">
-                            <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tighter italic"><span className="text-primary-red">Promotions</span></h2>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Submit your details to advertise or post news on our website.</p>
+                            <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tighter italic">Join Our <span className="text-green-500">WhatsApp</span></h2>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Fill this form to join our official WhatsApp group and get all news updates.</p>
                         </header>
 
                         {status.message && (
@@ -152,7 +146,7 @@ const InquiryPopup = () => {
                             <button 
                                 type="submit" 
                                 disabled={isLoading}
-                                className="w-full bg-slate-900 text-white font-black py-4 rounded-xl hover:bg-primary-red hover:shadow-2xl hover:shadow-primary-red/20 transition-all hover:-translate-y-1 active:translate-y-0 uppercase tracking-widest text-[11px] mt-4 disabled:opacity-70 flex items-center justify-center gap-3 shadow-lg shadow-slate-200"
+                                className="w-full bg-slate-900 text-white font-black py-4 rounded-xl hover:bg-green-600 hover:shadow-2xl hover:shadow-green-500/20 transition-all hover:-translate-y-1 active:translate-y-0 uppercase tracking-widest text-[11px] mt-4 disabled:opacity-70 flex items-center justify-center gap-3 shadow-lg shadow-slate-200"
                             >
                                 {isLoading ? (
                                     <>
@@ -160,7 +154,7 @@ const InquiryPopup = () => {
                                     </>
                                 ) : (
                                     <>
-                                        Send Message <i className="fas fa-arrow-right"></i>
+                                        Join Group <i className="fas fa-arrow-right"></i>
                                     </>
                                 )}
                             </button>

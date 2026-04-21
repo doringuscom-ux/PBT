@@ -31,7 +31,8 @@ const Header = () => {
     { name: 'NEWS', path: '/news' },
     { name: 'SPORTS', path: '/sports' },
     { name: 'VIDEOS', path: '/videos' },
-    { name: 'BOX OFFICE', path: '/box-office', badge: '🏆' }
+    { name: 'BOX OFFICE', path: '/box-office', badge: '🏆' },
+    { name: 'SUBMIT', path: '/submit-content', badge: 'HOT' }
   ];
 
   const isAdmin = user?.role === 'admin' || user?.role === 'sub-admin';

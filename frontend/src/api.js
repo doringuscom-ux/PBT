@@ -72,6 +72,7 @@ export const deleteSubscriber = (id) => api.delete(`/subscribers/${id}`);
 export const getInquiries = () => api.get('/inquiries');
 export const submitInquiry = (data) => api.post('/inquiries', data);
 export const deleteInquiry = (id) => api.delete(`/inquiries/${id}`);
+export const updateInquiry = (id, data) => api.put(`/inquiries/${id}`, data);
 
 export const getWidgets = (params) => widgetApi.get('/widgets', { params });
 

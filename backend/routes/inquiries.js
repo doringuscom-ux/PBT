@@ -15,18 +15,21 @@ const isAdmin = (req, res, next) => {
 // @route   POST /api/inquiries
 // @desc    Submit a new inquiry (Public)
 router.post('/', async (req, res) => {
-    const { name, email, phone } = req.body;
+    const { name, email, phone, type, message } = req.body;
     
     if (!name || !email || !phone) {
         return res.status(400).json({ message: 'Please provide name, email and phone' });
     }
 
     try {
-        const inquiry = new Inquiry({ name, email, phone });
+        const inquiryData = { name, email, phone, type, message };
+        const inquiry = new Inquiry(inquiryData);
         await inquiry.save();
         
         // Sync to Google Sheets (Background)
-        appendToSheet(inquiry);
+        // WhatsApp submissions go to the "Old" sheet, others go to the "Ads" sheet
+        const sheetId = type === 'WhatsApp' ? process.env.GOOGLE_SHEET_ID_WHATSAPP : process.env.GOOGLE_SHEET_ID_ADS;
+        appendToSheet(inquiry, sheetId);
 
         res.status(201).json({ success: true, message: 'Inquiry submitted successfully!' });
     } catch (err) {
@@ -55,6 +58,18 @@ router.delete('/:id', isAdmin, async (req, res) => {
         
         await Inquiry.findByIdAndDelete(req.params.id);
         res.json({ message: 'Inquiry removed' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// @route   PUT /api/inquiries/:id
+// @desc    Update an inquiry status (Admin only)
+router.put('/:id', isAdmin, async (req, res) => {
+    try {
+        const inquiry = await Inquiry.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!inquiry) return res.status(404).json({ message: 'Inquiry not found' });
+        res.json(inquiry);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
