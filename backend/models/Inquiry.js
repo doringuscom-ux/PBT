@@ -19,7 +19,7 @@ const InquirySchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['News', 'Movie', 'Advertising', 'Other'],
+        enum: ['News', 'Movie', 'Advertising', 'WhatsApp', 'Other'],
         default: 'Other'
     },
     message: {

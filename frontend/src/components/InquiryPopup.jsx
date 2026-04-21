@@ -8,7 +8,8 @@ const InquiryPopup = () => {
         name: '',
         email: '',
         phone: '',
-        type: 'WhatsApp'
+        type: 'WhatsApp',
+        message: 'Requested to join WhatsApp group'
     });
     const [isLoading, setIsLoading] = useState(false);
     const [status, setStatus] = useState({ type: '', message: '' });
