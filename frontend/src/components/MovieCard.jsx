@@ -69,7 +69,7 @@ const MovieCard = ({ movie, isUpcoming = false }) => {
            <span className="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
            <span className="text-[10px] font-black text-yellow-400 uppercase tracking-tighter italic">
              {isUpcoming && !isReleased ? (
-                movie.isReleaseDateConfirmed ? (
+                (movie.isReleaseDateConfirmed && movie.releaseDate) ? (
                     new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
                 ) : (
                     movie.estimatedRelease || 'TBA'

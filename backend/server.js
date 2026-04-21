@@ -61,6 +61,7 @@ const startServer = async () => {
         app.use('/api/videos', require('./routes/videos'));
         app.use('/api/users', require('./routes/users'));
         app.use('/api/subscribers', require('./routes/subscribers'));
+        app.use('/api/inquiries', require('./routes/inquiries'));
         app.use('/api/seo', require('./routes/seo'));
 
         const PORT = process.env.PORT || 5000;

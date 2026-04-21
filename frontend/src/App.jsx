@@ -38,6 +38,7 @@ import SportsList from './pages/SportsList';
 import ManageSports from './admin/ManageSports';
 import SEOManager from './admin/SEOManager';
 import ManageSubscribers from './admin/ManageSubscribers';
+import ManageInquiries from './admin/ManageInquiries';
 
 import UpcomingList from './pages/UpcomingList';
 import ManageUpcoming from './admin/ManageUpcoming';
@@ -144,6 +145,7 @@ function App() {
             <Route path="videos" element={<ManageVideos />} />
             <Route path="comments" element={<ManageComments />} />
             <Route path="subscribers" element={<ManageSubscribers />} />
+            <Route path="inquiries" element={<ManageInquiries />} />
             <Route path="users" element={<ManageUsers />} />
             <Route path="seo" element={<SEOManager />} />
           </Route>
