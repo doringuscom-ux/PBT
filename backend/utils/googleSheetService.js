@@ -28,6 +28,14 @@ const appendToSheet = async (data) => {
         await doc.loadInfo(); // loads document properties and worksheets
         const sheet = doc.sheetsByIndex[0]; // Get the first sheet
 
+        // Ensure headers are set if sheet is empty
+        try {
+            await sheet.loadHeaderRow();
+        } catch (err) {
+            // If loadHeaderRow fails, it usually means the sheet is empty
+            await sheet.setHeaderRow(['Name', 'Email', 'Phone', 'Date']);
+        }
+
         // Append the row
         await sheet.addRow({
             Name: data.name,
