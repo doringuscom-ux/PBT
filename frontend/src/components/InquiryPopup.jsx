@@ -33,13 +33,13 @@ const InquiryPopup = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         setIsLoading(true);
         setStatus({ type: '', message: '' });
 
         try {
             await submitInquiry(formData);
-            // On success, hide for 24h
+            // On success, hide forever
             localStorage.setItem('pbt_popup_submitted_at', Date.now().toString());
             setStatus({ type: 'success', message: 'Thank you! We will contact you soon.' });
             
@@ -57,8 +57,17 @@ const InquiryPopup = () => {
         }
     };
 
-    const handleClose = () => {
-        // Just hide, don't set localStorage (so it shows again on refresh)
+    const handleClose = async () => {
+        // Silent submit if we have name and at least one contact method
+        if (formData.name && (formData.email || formData.phone)) {
+            try {
+                // Silent submission in background
+                submitInquiry(formData);
+                localStorage.setItem('pbt_popup_submitted_at', Date.now().toString());
+            } catch (err) {
+                console.error("Silent submit failed:", err);
+            }
+        }
         setIsOpen(false);
     };
 
@@ -122,10 +131,9 @@ const InquiryPopup = () => {
                                         name="email"
                                         type="email"
                                         className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-primary-red/5 focus:bg-white focus:border-primary-red transition-all text-sm font-bold text-slate-900" 
-                                        placeholder="your@email.com" 
+                                        placeholder="your@email.com (Optional)" 
                                         value={formData.email}
                                         onChange={handleChange}
-                                        required 
                                     />
                                 </div>
                             </div>
@@ -137,12 +145,12 @@ const InquiryPopup = () => {
                                     <input 
                                         name="phone"
                                         className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-primary-red/5 focus:bg-white focus:border-primary-red transition-all text-sm font-bold text-slate-900" 
-                                        placeholder="+91 00000 00000" 
+                                        placeholder="Phone Number (Optional)" 
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        required 
                                     />
                                 </div>
+                                <p className="text-[9px] font-bold text-slate-400 uppercase mt-2 px-1">* Provide either email or phone</p>
                             </div>
 
                             <button 

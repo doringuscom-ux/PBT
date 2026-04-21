@@ -58,7 +58,7 @@ const Hero = () => {
             <img 
               src={optimizeImage(story.image)} 
               alt={story.title}
-              fetchpriority={index === 0 ? "high" : "auto"}
+              fetchPriority={index === 0 ? "high" : "auto"}
               decoding="async"
               className={`w-full h-full object-cover opacity-60 transition-transform duration-[5s] ease-linear
                 ${index === currentIndex ? 'scale-110' : 'scale-100'}`}

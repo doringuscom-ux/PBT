@@ -17,8 +17,8 @@ const isAdmin = (req, res, next) => {
 router.post('/', async (req, res) => {
     const { name, email, phone, type, message } = req.body;
     
-    if (!name || !email || !phone) {
-        return res.status(400).json({ message: 'Please provide name, email and phone' });
+    if (!name || (!email && !phone)) {
+        return res.status(400).json({ message: 'Please provide name and at least one contact method (email or phone)' });
     }
 
     try {
