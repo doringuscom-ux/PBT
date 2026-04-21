@@ -228,7 +228,7 @@ const ManageInquiries = ({ mode = 'promotions' }) => {
                                 Close View
                             </button>
                             <a 
-                                href={`https://wa.me/${selectedInquiry.phone.replace(/[^0-9]/g, '')}`}
+                                href={`https://wa.me/${(selectedInquiry.phone || '').replace(/[^0-9]/g, '')}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex-1 bg-green-500 text-white py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-green-600 transition-all text-center flex items-center justify-center gap-2"

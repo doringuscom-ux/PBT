@@ -13,6 +13,10 @@ const InquirySchema = new mongoose.Schema({
             'Please add a valid email'
         ]
     },
+    phone: {
+        type: String,
+        required: [true, 'Please add a phone number']
+    },
     type: {
         type: String,
         enum: ['News', 'Movie', 'Advertising', 'Other'],

@@ -7,7 +7,8 @@ const InquiryPopup = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        phone: ''
+        phone: '',
+        type: 'WhatsApp'
     });
     const [isLoading, setIsLoading] = useState(false);
     const [status, setStatus] = useState({ type: '', message: '' });

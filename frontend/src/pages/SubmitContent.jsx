@@ -92,9 +92,14 @@ const SubmitContent = () => {
                             <div className="pt-6 border-t border-white/5">
                                 <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-black border border-white/5">
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Join our WhatsApp</p>
-                                    <button className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+                                    <a 
+                                        href="https://wa.me/919041266297" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 no-underline"
+                                    >
                                         <i className="fab fa-whatsapp text-sm"></i> Connect Now
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
