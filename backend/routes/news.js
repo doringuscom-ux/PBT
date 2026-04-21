@@ -28,6 +28,65 @@ const enrichNews = (articles, sessionUser) => {
     }).filter(Boolean);
 };
 
+// Helper to normalize and heal incoming news data
+const normalizeNewsData = (data) => {
+    const newsData = { ...data };
+
+    // 1. Handle relatedCelebrities (Array of ObjectIds)
+    if (newsData.relatedCelebrities !== undefined) {
+        let celebArray = newsData.relatedCelebrities;
+        
+        if (typeof celebArray === 'string') {
+            // Check if it looks like a stringified array: "[ 'id1', 'id2' ]"
+            if (celebArray.includes('[') || celebArray.includes(',')) {
+                try {
+                    // Try to parse as JSON first (handles '["id"]' etc)
+                    const jsonString = celebArray.replace(/'/g, '"');
+                    celebArray = JSON.parse(jsonString);
+                } catch (e) {
+                    // Fallback: clean up brackets and split by comma
+                    celebArray = celebArray.replace(/[\[\]'"]/g, '').split(',').map(s => s.trim());
+                }
+            } else {
+                // Single ID as string
+                celebArray = [celebArray];
+            }
+        }
+
+        if (Array.isArray(celebArray)) {
+            // Filter only valid-looking 24-char hex ObjectIds and remove empty strings
+            newsData.relatedCelebrities = celebArray
+                .map(id => id?.toString().trim())
+                .filter(id => id && (id.length === 24 || id.match(/^[0-9a-fA-F]{24}$/)));
+        } else {
+            newsData.relatedCelebrities = [];
+        }
+    }
+
+    // 2. Handle relatedMovie (Single ObjectId)
+    if (newsData.relatedMovie === '' || newsData.relatedMovie === 'null' || newsData.relatedMovie === 'undefined') {
+        newsData.relatedMovie = null;
+    } else if (newsData.relatedMovie && typeof newsData.relatedMovie === 'string') {
+        const cleanedMovie = newsData.relatedMovie.trim();
+        if (cleanedMovie.length !== 24) {
+            newsData.relatedMovie = null;
+        } else {
+            newsData.relatedMovie = cleanedMovie;
+        }
+    }
+
+    // 3. Handle comments if they come as string (FormData artifact)
+    if (newsData.comments && !Array.isArray(newsData.comments)) {
+        try {
+            newsData.comments = JSON.parse(newsData.comments);
+        } catch (e) {
+            delete newsData.comments;
+        }
+    }
+
+    return newsData;
+};
+
 router.get('/', async (req, res) => {
     try {
         const isAdmin = req.session.user && (req.session.user.role === 'admin' || req.session.user.role === 'sub-admin');
@@ -90,7 +149,9 @@ router.post('/', (req, res, next) => {
         if (req.session.user) {
             newsData.createdBy = req.session.user.id;
         }
-        const news = new News(newsData);
+
+        const normalizedData = normalizeNewsData(newsData);
+        const news = new News(normalizedData);
         const newNews = await news.save();
 
         // Background: Send email notification to all subscribers
@@ -137,12 +198,9 @@ router.put('/:id', (req, res, next) => {
             updateData.createdBy = req.session.user.id;
         }
 
-        // Heal corrupted data (remove invalid string entries if passed)
-        if (updateData.comments && !Array.isArray(updateData.comments)) {
-            delete updateData.comments;
-        }
+        const normalizedData = normalizeNewsData(updateData);
 
-        const updatedNews = await News.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' })
+        const updatedNews = await News.findByIdAndUpdate(req.params.id, normalizedData, { returnDocument: 'after' })
             .populate('createdBy', 'username employeeId fullName');
 
         if (!updatedNews) return res.status(404).json({ message: 'Article not found' });

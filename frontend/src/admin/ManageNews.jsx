@@ -54,7 +54,15 @@ const ManageNews = () => {
     Object.keys(formData).forEach(key => {
         if (!fieldsToExclude.includes(key)) {
             if (key !== 'image' || imageSource === 'url') {
-                data.append(key, formData[key]);
+                const value = formData[key];
+                if (Array.isArray(value)) {
+                    // Correct way to append arrays to FormData
+                    value.forEach(val => {
+                        if (val) data.append(key, val);
+                    });
+                } else {
+                    data.append(key, value);
+                }
             }
         }
     });
