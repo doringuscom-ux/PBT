@@ -107,13 +107,14 @@ router.get('/', async (req, res) => {
 // Get Today's News
 router.get('/today', async (req, res) => {
     try {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const threeDaysAgo = new Date();
+        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+        threeDaysAgo.setHours(0, 0, 0, 0);
         
         const isAdmin = req.session.user && (req.session.user.role === 'admin' || req.session.user.role === 'sub-admin');
         let query = News.find({
             createdAt: {
-                $gte: today
+                $gte: threeDaysAgo
             }
         });
 

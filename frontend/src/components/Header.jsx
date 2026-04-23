@@ -32,7 +32,7 @@ const Header = () => {
     { name: 'SPORTS', path: '/sports' },
     { name: 'VIDEOS', path: '/videos' },
     { name: 'BOX OFFICE', path: '/box-office' },
-    { name: 'JOIN US', path: '/submit-content' }
+    { name: 'Lets PROMOTE', path: '/submit-content' }
   ];
 
   const isAdmin = user?.role === 'admin' || user?.role === 'sub-admin';
@@ -44,7 +44,7 @@ const Header = () => {
         <Link to="/" className="no-underline group shrink-0 relative z-30" aria-label="Pbtadka Home">
           <Logo className="h-8 md:h-12 lg:h-16 w-auto transition-transform duration-500 group-hover:scale-105" />
         </Link>
- 
+
         {/* Desktop Navigation - Centered */}
         <nav className="hidden xl:flex items-center bg-white/5 p-1.5 rounded-full border border-white/10 backdrop-blur-md">
           <ul className="flex items-center list-none p-0 m-0">
@@ -52,17 +52,16 @@ const Header = () => {
               const isActive = location.pathname === item.path;
               return (
                 <li key={item.name} className="relative">
-                  <Link 
-                    to={item.path} 
-                    className={`flex items-center px-4 lg:px-6 py-2.5 rounded-full transition-all duration-300 text-[10px] lg:text-[11px] font-black uppercase tracking-widest no-underline relative group overflow-hidden ${
-                      item.name === 'JOIN US' 
-                        ? 'bg-gradient-to-r from-red-600 via-primary-red to-red-600 text-white shadow-[0_0_20px_rgba(211,47,47,0.4)] hover:shadow-[0_0_30px_rgba(211,47,47,0.6)] hover:scale-105 active:scale-95' 
-                        : isActive 
-                          ? 'bg-accent-gold text-black shadow-xl shadow-accent-gold/20' 
-                          : 'text-white/70 hover:text-white hover:bg-white/10'
-                    }`}
+                  <Link
+                    to={item.path}
+                    className={`flex items-center px-4 lg:px-6 py-2.5 rounded-full transition-all duration-100 text-[10px] lg:text-[11px] font-black uppercase tracking-widest no-underline relative group overflow-hidden ${item.name === 'Lets PROMOTE'
+                      ? 'bg-gradient-to-r from-red-600 via-primary-red to-red-600 text-white shadow-[0_5px_0_rgb(153,27,27)] hover:shadow-[0_6px_0_rgb(153,27,27)] active:shadow-[0_2px_0_rgb(153,27,27)] active:translate-y-[3px] hover:-translate-y-[1px]'
+                      : isActive
+                        ? 'bg-accent-gold text-black shadow-xl shadow-accent-gold/20'
+                        : 'text-white/70 hover:text-white hover:bg-white/10'
+                      }`}
                   >
-                    {item.name === 'JOIN US' && (
+                    {item.name === 'Lets PROMOTE' && (
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 translate-x-[-150%] animate-[shine_2.5s_infinite] pointer-events-none"></div>
                     )}
                     <span className="relative z-10 flex items-center">
@@ -79,7 +78,7 @@ const Header = () => {
             })}
           </ul>
         </nav>
- 
+
         {/* Right Side: Search & User Actions */}
         <div className="flex items-center gap-2 lg:gap-4 ml-auto relative z-30">
           {/* User Auth */}
@@ -94,7 +93,7 @@ const Header = () => {
               </button>
             </div>
           ) : (
-            <button 
+            <button
               onClick={() => setShowUserAuth(true)}
               className="bg-accent-gold text-black py-1.5 px-4 lg:py-2.5 lg:px-8 rounded-full font-black text-[9px] lg:text-[11px] uppercase tracking-widest hover:bg-yellow-400 transition-all shadow-lg shadow-accent-gold/20"
               aria-label="Sign In or Register"
@@ -102,10 +101,10 @@ const Header = () => {
               Sign In
             </button>
           )}
- 
+
           {/* Mobile Menu Toggle */}
-          <button 
-            className="xl:hidden w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-white bg-white/5 rounded-full hover:bg-white/10 border border-white/10" 
+          <button
+            className="xl:hidden w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-white bg-white/5 rounded-full hover:bg-white/10 border border-white/10"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={isMenuOpen ? "Close Menu" : "Open Menu"}
             aria-expanded={isMenuOpen}
@@ -114,7 +113,7 @@ const Header = () => {
           </button>
         </div>
       </div>
- 
+
       {/* Mobile Navigation Overlay - Solid Dark and Opaque */}
       <nav className={`xl:hidden fixed inset-0 top-[48px] md:top-[60px] lg:top-[80px] bg-slate-950 z-[140] transition-transform duration-500 overflow-y-auto ${isMenuOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'}`}>
         <div className="page-container py-8 flex flex-col gap-6 bg-slate-950 min-h-[calc(100vh-48px)]">
@@ -123,20 +122,19 @@ const Header = () => {
               const isActive = location.pathname === item.path;
               return (
                 <li key={item.name}>
-                  <Link 
-                    to={item.path} 
+                  <Link
+                    to={item.path}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center justify-between px-6 py-4 rounded-xl text-lg font-black uppercase tracking-widest no-underline transition-all relative group overflow-hidden ${
-                      item.name === 'JOIN US'
-                        ? 'bg-gradient-to-r from-red-600 to-primary-red text-white shadow-2xl shadow-primary-red/40 animate-pulse'
-                        : isActive 
-                          ? 'bg-accent-gold text-black shadow-xl shadow-accent-gold/20' 
-                          : 'text-white bg-white/5 hover:bg-white/10 border border-white/5'
-                    }`}
+                    className={`flex items-center justify-between px-6 py-4 rounded-xl text-lg font-black uppercase tracking-widest no-underline transition-all relative group overflow-hidden ${item.name === 'Lets PROMOTE'
+                      ? 'bg-gradient-to-r from-red-600 to-primary-red text-white shadow-[0_5px_0_rgb(153,27,27)] active:shadow-[0_2px_0_rgb(153,27,27)] active:translate-y-[3px]'
+                      : isActive
+                        ? 'bg-accent-gold text-black shadow-xl shadow-accent-gold/20'
+                        : 'text-white bg-white/5 hover:bg-white/10 border border-white/5'
+                      }`}
                   >
                     <span className="relative z-10">{item.name}</span>
-                    {item.name === 'JOIN US' && (
-                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-150%] animate-[shine_2s_infinite] pointer-events-none"></div>
+                    {item.name === 'Lets PROMOTE' && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-150%] animate-[shine_2s_infinite] pointer-events-none"></div>
                     )}
                     {item.badge && (
                       <span className="bg-primary-red text-white text-[10px] px-2 py-0.5 rounded-full font-black shadow-sm shadow-primary-red/50">
@@ -148,9 +146,9 @@ const Header = () => {
               );
             })}
           </ul>
- 
+
           <div className="mt-6 pt-8 border-t border-white/5 flex flex-col gap-6 bg-slate-950">
-             <div className="relative w-full">
+            <div className="relative w-full">
               <label htmlFor="search-input-mobile" className="sr-only">Search Articles</label>
               <input
                 id="search-input-mobile"
@@ -174,10 +172,10 @@ const Header = () => {
           </div>
         </div>
       </nav>
-      <UserAuthModal 
-        isOpen={showUserAuth} 
-        onClose={() => setShowUserAuth(false)} 
-        onAuthSuccess={() => setShowUserAuth(false)} 
+      <UserAuthModal
+        isOpen={showUserAuth}
+        onClose={() => setShowUserAuth(false)}
+        onAuthSuccess={() => setShowUserAuth(false)}
       />
     </header>
   );

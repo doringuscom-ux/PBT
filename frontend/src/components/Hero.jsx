@@ -72,12 +72,9 @@ const Hero = () => {
                     </span>
                     <span className="text-white/50 text-[10px] font-black uppercase tracking-widest">Global Top Story</span>
                 </div>
-                <h2 className={`text-xl md:text-3xl lg:text-4xl font-black text-white text-shadow-premium group-hover:text-accent-gold transition-colors duration-300 leading-[1.2] mb-4 italic tracking-tighter uppercase line-clamp-1 ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '400ms' }}>
+                <h2 className={`text-lg md:text-2xl lg:text-3xl font-black text-white text-shadow-premium group-hover:text-accent-gold transition-colors duration-300 leading-[1.2] mb-4 italic tracking-tighter uppercase ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '400ms' }}>
                     {story.title}
                 </h2>
-                <p className={`text-sm md:text-base line-clamp-1 md:line-clamp-2 max-w-3xl font-medium italic text-white/90 text-shadow-premium ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '600ms' }}>
-                    {story.excerpt}
-                </p>
                 <div className={`mt-8 flex items-center gap-4 ${index === currentIndex ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '800ms' }}>
                     <div className="flex items-center gap-3 bg-white/10 hover:bg-accent-gold group/btn px-6 py-3 rounded-full backdrop-blur-md transition-all cursor-pointer shadow-lg hover:shadow-accent-gold/20 border border-white/10">
                         <i className="fas fa-play text-[10px] text-white group-hover/btn:text-slate-900"></i>

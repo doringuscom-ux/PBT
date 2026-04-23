@@ -36,17 +36,17 @@ const Footer = () => {
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none translate-y-1/2 -translate-x-1/2"></div>
       
       <div className="page-container relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 mb-16">
           
           {/* Brand Column */}
-          <div className="lg:col-span-4 flex flex-col items-start">
+          <div className="col-span-2 lg:col-span-4 flex flex-col items-center md:items-start">
             <Link to="/" className="mb-6 inline-block no-underline shrink-0">
                 <Logo className="h-20 w-auto" />
             </Link>
-            <p className="text-slate-400 text-sm leading-relaxed mb-8 font-medium italic pr-4">
+            <p className="text-slate-400 text-sm leading-relaxed mb-8 font-medium italic pr-4 text-center md:text-left">
               Your premier destination for cinema news, reviews, trailers, and celebrity interviews. Experience the magic of the cinematic universe in premium quality.
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-3 justify-center md:justify-start">
               <SocialIcon icon="fab fa-facebook-f" label="Follow us on Facebook" />
               <SocialIcon icon="fab fa-twitter" label="Follow us on Twitter" />
               <SocialIcon icon="fab fa-instagram" label="Follow us on Instagram" />
@@ -55,7 +55,7 @@ const Footer = () => {
           </div>
           
           {/* Quick Links */}
-          <div className="lg:col-span-2">
+          <div className="col-span-1 lg:col-span-2">
             <h3 className="text-lg font-black mb-6 text-white uppercase tracking-widest flex items-center gap-2">
                 <span className="w-1.5 h-6 bg-primary-red rounded-sm"></span> Explore
             </h3>
@@ -69,7 +69,7 @@ const Footer = () => {
           </div>
           
           {/* Additional Pages */}
-          <div className="lg:col-span-2">
+          <div className="col-span-1 lg:col-span-2">
             <h3 className="text-lg font-black mb-6 text-white uppercase tracking-widest flex items-center gap-2">
                 <span className="w-1.5 h-6 bg-blue-500 rounded-sm"></span> Portals
             </h3>
@@ -83,7 +83,7 @@ const Footer = () => {
           </div>
           
           {/* Newsletter */}
-          <div className="lg:col-span-4 bg-slate-900/50 p-6 sm:p-8 rounded-3xl border border-white/5 shadow-2xl">
+          <div className="col-span-2 lg:col-span-4 bg-slate-900/50 p-6 sm:p-8 rounded-3xl border border-white/5 shadow-2xl">
             <h3 className="text-lg font-black mb-4 text-white uppercase tracking-widest">Newsletter</h3>
             <p className="text-slate-400 text-sm mb-6 leading-relaxed">Join our inner circle. Get the latest exclusive trailers, breaking news, and reviews directly to your inbox.</p>
             <form className="flex flex-col gap-3" onSubmit={handleSubmit}>

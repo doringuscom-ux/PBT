@@ -67,7 +67,7 @@ const CelebGrid = () => {
               <span className="text-[10px] lg:text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Popular Stars</span>
             </div>
             <h2 className="text-4xl md:text-6xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">
-              Featured <span className="text-red-600">Celebrities</span>
+              Trending <span className="text-red-600">Celebrities</span>
             </h2>
           </div>
           <Link to="/celebs" className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2">

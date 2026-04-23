@@ -37,14 +37,7 @@ const WeatherWidget = () => {
 
     const handleRefresh = useCallback(() => {
         if (refreshing) return;
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => fetchWeather(position.coords.latitude, position.coords.longitude),
-                () => fetchWeather()
-            );
-        } else {
-            fetchWeather();
-        }
+        fetchWeather();
     }, [fetchWeather, refreshing]);
 
     useEffect(() => {
@@ -52,7 +45,7 @@ const WeatherWidget = () => {
     }, []);
 
     if (loading) return (
-        <div className="relative overflow-hidden rounded-2xl skeleton min-h-[140px] lg:min-h-[180px] w-full border border-white/5 shadow-2xl">
+        <div className="hidden md:block relative overflow-hidden rounded-2xl skeleton min-h-[140px] lg:min-h-[180px] w-full border border-white/5 shadow-2xl">
             <div className="absolute inset-x-0 bottom-0 p-4 space-y-2">
                 <div className="w-1/2 h-8 bg-white/5 rounded-lg animate-pulse"></div>
                 <div className="w-3/4 h-4 bg-white/5 rounded-lg animate-pulse"></div>
@@ -71,7 +64,7 @@ const WeatherWidget = () => {
     };
 
     return (
-        <div className="relative overflow-hidden rounded-2xl shadow-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 min-h-[140px] lg:min-h-[180px]">
+        <div className="hidden md:block relative overflow-hidden rounded-2xl shadow-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 min-h-[140px] lg:min-h-[180px]">
             {/* Header */}
             <div className="px-3 py-2 lg:px-4 lg:py-3 border-b border-white/5 bg-white/5 flex justify-between items-center relative z-20">
                 <div className="flex items-center gap-1.5 lg:gap-2">

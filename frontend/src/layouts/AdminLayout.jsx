@@ -53,7 +53,7 @@ const AdminLayout = () => {
           <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-2 italic">Control Center</span>
         </div>
         
-        <nav className="flex-1 p-4 space-y-2 mt-4">
+        <nav className="flex-1 p-4 space-y-2 mt-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
           {menuItems.map((item) => (
             <Link 
               key={item.path} 
