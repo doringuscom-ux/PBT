@@ -24,15 +24,15 @@ const Header = () => {
 
   const navItems = [
     { name: 'HOME', path: '/' },
-    { name: 'LATEST', path: '/today-news', badge: 'NEW' },
+    { name: 'LATEST', path: '/today-news' },
     { name: 'MOVIES', path: '/movies' },
     { name: 'UPCOMING', path: '/upcoming' },
     { name: 'CELEBS', path: '/celebs' },
     { name: 'NEWS', path: '/news' },
     { name: 'SPORTS', path: '/sports' },
     { name: 'VIDEOS', path: '/videos' },
-    { name: 'BOX OFFICE', path: '/box-office', badge: '🏆' },
-    { name: 'SUBMIT', path: '/submit-content', badge: 'HOT' }
+    { name: 'BOX OFFICE', path: '/box-office' },
+    { name: 'JOIN US', path: '/submit-content' }
   ];
 
   const isAdmin = user?.role === 'admin' || user?.role === 'sub-admin';
@@ -54,14 +54,25 @@ const Header = () => {
                 <li key={item.name} className="relative">
                   <Link 
                     to={item.path} 
-                    className={`flex items-center px-4 lg:px-5 py-2 rounded-full transition-all duration-300 text-[10px] lg:text-[11px] font-black uppercase tracking-widest no-underline relative ${isActive ? 'bg-accent-gold text-black shadow-xl shadow-accent-gold/20' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                    className={`flex items-center px-4 lg:px-6 py-2.5 rounded-full transition-all duration-300 text-[10px] lg:text-[11px] font-black uppercase tracking-widest no-underline relative group overflow-hidden ${
+                      item.name === 'JOIN US' 
+                        ? 'bg-gradient-to-r from-red-600 via-primary-red to-red-600 text-white shadow-[0_0_20px_rgba(211,47,47,0.4)] hover:shadow-[0_0_30px_rgba(211,47,47,0.6)] hover:scale-105 active:scale-95' 
+                        : isActive 
+                          ? 'bg-accent-gold text-black shadow-xl shadow-accent-gold/20' 
+                          : 'text-white/70 hover:text-white hover:bg-white/10'
+                    }`}
                   >
-                    {item.name}
-                    {item.badge && (
-                      <span className="ml-1.5 bg-primary-red text-white text-[8px] px-1.5 py-0.5 rounded-full font-black animate-pulse shadow-sm shadow-primary-red/50">
-                        {item.badge}
-                      </span>
+                    {item.name === 'JOIN US' && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 translate-x-[-150%] animate-[shine_2.5s_infinite] pointer-events-none"></div>
                     )}
+                    <span className="relative z-10 flex items-center">
+                      {item.name}
+                      {item.badge && (
+                        <span className="ml-1.5 bg-primary-red text-white text-[8px] px-1.5 py-0.5 rounded-full font-black animate-pulse shadow-sm shadow-primary-red/50">
+                          {item.badge}
+                        </span>
+                      )}
+                    </span>
                   </Link>
                 </li>
               );
@@ -105,7 +116,7 @@ const Header = () => {
       </div>
  
       {/* Mobile Navigation Overlay - Solid Dark and Opaque */}
-      <nav className={`xl:hidden fixed inset-0 top-[48px] md:top-[60px] lg:top-[80px] bg-slate-950 z-[140] transition-transform duration-500 overflow-y-auto ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <nav className={`xl:hidden fixed inset-0 top-[48px] md:top-[60px] lg:top-[80px] bg-slate-950 z-[140] transition-transform duration-500 overflow-y-auto ${isMenuOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'}`}>
         <div className="page-container py-8 flex flex-col gap-6 bg-slate-950 min-h-[calc(100vh-48px)]">
           <ul className="flex flex-col gap-2 list-none p-0 m-0">
             {navItems.map((item) => {
@@ -115,9 +126,18 @@ const Header = () => {
                   <Link 
                     to={item.path} 
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center justify-between px-6 py-4 rounded-xl text-lg font-black uppercase tracking-widest no-underline transition-all ${isActive ? 'bg-accent-gold text-black shadow-xl shadow-accent-gold/20' : 'text-white bg-white/5 hover:bg-white/10 border border-white/5'}`}
+                    className={`flex items-center justify-between px-6 py-4 rounded-xl text-lg font-black uppercase tracking-widest no-underline transition-all relative group overflow-hidden ${
+                      item.name === 'JOIN US'
+                        ? 'bg-gradient-to-r from-red-600 to-primary-red text-white shadow-2xl shadow-primary-red/40 animate-pulse'
+                        : isActive 
+                          ? 'bg-accent-gold text-black shadow-xl shadow-accent-gold/20' 
+                          : 'text-white bg-white/5 hover:bg-white/10 border border-white/5'
+                    }`}
                   >
-                    {item.name}
+                    <span className="relative z-10">{item.name}</span>
+                    {item.name === 'JOIN US' && (
+                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-150%] animate-[shine_2s_infinite] pointer-events-none"></div>
+                    )}
                     {item.badge && (
                       <span className="bg-primary-red text-white text-[10px] px-2 py-0.5 rounded-full font-black shadow-sm shadow-primary-red/50">
                         {item.badge}

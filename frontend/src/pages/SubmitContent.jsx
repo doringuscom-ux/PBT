@@ -33,9 +33,9 @@ const SubmitContent = () => {
             setStatus({ type: 'success', message: 'Successfully submitted! Our team will contact you soon.' });
             setFormData({ name: '', email: '', phone: '', type: 'News', message: '' });
         } catch (err) {
-            setStatus({ 
-                type: 'error', 
-                message: err.response?.data?.message || 'Failed to submit. Please try again.' 
+            setStatus({
+                type: 'error',
+                message: err.response?.data?.message || 'Failed to submit. Please try again.'
             });
         } finally {
             setIsLoading(false);
@@ -57,11 +57,10 @@ const SubmitContent = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-accent-gold">Partner With Us</span>
                     </div>
                     <h1 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter leading-none">
-                        Submit Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-gold to-yellow-200">Exclusive</span> Content
+                        Submit Your <span className="inline-block px-4 text-transparent bg-clip-text bg-gradient-to-r from-accent-gold to-yellow-200">Exclusive</span> Content
                     </h1>
                     <p className="text-slate-400 text-sm md:text-lg font-medium max-w-2xl mx-auto leading-relaxed">
-                        Have high-quality news, a movie to promote, or want to advertise your brand on <span className="text-white font-bold italic">PB TADKA</span>? 
-                        Fill the form below and let's work together.
+                        Have high-quality news, a movie to promote, or want to advertise your brand on <span className="inline-block px-1 mr-1.5 text-white font-bold italic">PB TADKA?</span> Fill the form below and let's work together.
                     </p>
                 </div>
 
@@ -70,7 +69,7 @@ const SubmitContent = () => {
                     <div className="lg:col-span-4 space-y-6">
                         <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl space-y-8">
                             <h3 className="text-xl font-black uppercase tracking-tight italic">Why Collaborate?</h3>
-                            
+
                             <div className="space-y-6">
                                 {[
                                     { title: 'Huge Audience', desc: 'Reach millions of cinema lovers across the globe.', icon: 'fa-users' },
@@ -92,9 +91,9 @@ const SubmitContent = () => {
                             <div className="pt-6 border-t border-white/5">
                                 <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-black border border-white/5">
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Join our WhatsApp</p>
-                                    <a 
-                                        href="https://wa.me/919041266297" 
-                                        target="_blank" 
+                                    <a
+                                        href="https://wa.me/919041266297"
+                                        target="_blank"
                                         rel="noopener noreferrer"
                                         className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 no-underline"
                                     >
@@ -115,9 +114,8 @@ const SubmitContent = () => {
                             </div>
 
                             {status.message && (
-                                <div className={`mb-8 p-4 rounded-2xl text-xs font-black flex items-center gap-3 border animate-in slide-in-from-top-4 ${
-                                    status.type === 'success' ? 'bg-green-50 text-green-600 border-green-200' : 'bg-red-50 text-red-600 border-red-200'
-                                }`}>
+                                <div className={`mb-8 p-4 rounded-2xl text-xs font-black flex items-center gap-3 border animate-in slide-in-from-top-4 ${status.type === 'success' ? 'bg-green-50 text-green-600 border-green-200' : 'bg-red-50 text-red-600 border-red-200'
+                                    }`}>
                                     <i className={`fas fa-${status.type === 'success' ? 'check-circle' : 'exclamation-triangle'}`}></i>
                                     {status.message}
                                 </div>
@@ -127,7 +125,7 @@ const SubmitContent = () => {
                                 {/* Name Input */}
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Full Name</label>
-                                    <input 
+                                    <input
                                         name="name" required value={formData.name} onChange={handleChange}
                                         placeholder="Enter your name"
                                         className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:border-accent-gold focus:ring-4 focus:ring-accent-gold/10 transition-all font-bold text-sm"
@@ -137,7 +135,7 @@ const SubmitContent = () => {
                                 {/* Email Input */}
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Email Address</label>
-                                    <input 
+                                    <input
                                         name="email" type="email" required value={formData.email} onChange={handleChange}
                                         placeholder="your@email.com"
                                         className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:border-accent-gold focus:ring-4 focus:ring-accent-gold/10 transition-all font-bold text-sm"
@@ -147,7 +145,7 @@ const SubmitContent = () => {
                                 {/* Phone Input */}
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Phone Number</label>
-                                    <input 
+                                    <input
                                         name="phone" required value={formData.phone} onChange={handleChange}
                                         placeholder="+91 00000 00000"
                                         className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:border-accent-gold focus:ring-4 focus:ring-accent-gold/10 transition-all font-bold text-sm"
@@ -157,7 +155,7 @@ const SubmitContent = () => {
                                 {/* Category Select */}
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Content Category</label>
-                                    <select 
+                                    <select
                                         name="type" value={formData.type} onChange={handleChange}
                                         className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:border-accent-gold transition-all font-black text-xs uppercase tracking-widest"
                                     >
@@ -171,7 +169,7 @@ const SubmitContent = () => {
                                 {/* Message Input */}
                                 <div className="md:col-span-2 space-y-2">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Describe Your Content</label>
-                                    <textarea 
+                                    <textarea
                                         name="message" required value={formData.message} onChange={handleChange}
                                         placeholder="Please provide details about what you want to upload or promote..."
                                         rows="5"
@@ -181,7 +179,7 @@ const SubmitContent = () => {
 
                                 {/* Submit Button */}
                                 <div className="md:col-span-2 pt-4">
-                                    <button 
+                                    <button
                                         type="submit" disabled={isLoading}
                                         className="w-full py-5 bg-slate-900 hover:bg-accent-gold hover:text-black text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-slate-200 flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50"
                                     >
