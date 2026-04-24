@@ -19,7 +19,7 @@ const SEOHead = () => {
                 });
                 setMetadata(res.data);
             } catch (err) {
-                // Fallback handled by h1Title logic below
+                setMetadata(null); // Fallback handled by h1Title logic below
             }
         };
 
@@ -28,28 +28,20 @@ const SEOHead = () => {
 
     // MutationObserver to catch the <h1> from the page content automatically
     useEffect(() => {
-        // If we have database metadata for title, we don't need to fallback
         if (metadata?.title) return;
 
         const findH1 = () => {
-            // Find first H1 on the page
             const h1 = document.querySelector('h1');
             if (h1 && h1.innerText) {
                 const text = h1.innerText.replace(/'/g, '').trim();
-                // Avoid redundant state updates
                 if (text && text !== h1Title) {
                     setH1Title(text);
                 }
             }
         };
 
-        // Initial check after render
         const timeoutId = setTimeout(findH1, 500);
-
-        const observer = new MutationObserver(() => {
-            findH1();
-        });
-
+        const observer = new MutationObserver(() => findH1());
         observer.observe(document.body, { childList: true, subtree: true });
         
         return () => {
@@ -60,26 +52,36 @@ const SEOHead = () => {
 
     const displayTitle = metadata?.title || (h1Title ? `${h1Title} | Pbtadka` : 'Pbtadka | Film News & Updates');
     const displayDescription = metadata?.description || 'Latest film news, movie reviews, celebrity updates, and more at Pbtadka.';
+    
+    // Automatic Canonical URL to prevent duplicate content issues
+    const currentPath = location.pathname.replace(/\/$/, '') || '';
+    const canonicalUrl = metadata?.canonical || `https://pbtadka.com${currentPath}`;
 
     return (
         <Helmet>
             <title>{displayTitle}</title>
             <meta name="description" content={displayDescription} />
-            <meta name="keywords" content={metadata?.keywords || ''} />
-            {metadata?.canonical && <link rel="canonical" href={metadata.canonical} />}
+            <meta name="keywords" content={metadata?.keywords || 'film news, movie reviews, bollywood, pollywood, celebrity updates'} />
+            
+            {/* Robots Tag - Ensure it's never empty and defaults to index */}
             <meta name="robots" content={metadata?.robots || 'index, follow'} />
             
+            {/* Canonical Tag - Always present to help Google indexing */}
+            <link rel="canonical" href={canonicalUrl} />
+
             {/* Open Graph / Facebook */}
             <meta property="og:type" content="website" />
-            <meta property="og:url" content={window.location.href} />
+            <meta property="og:url" content={canonicalUrl} />
             <meta property="og:title" content={displayTitle} />
             <meta property="og:description" content={displayDescription} />
-            
+            <meta property="og:image" content={metadata?.ogImage || 'https://pbtadka.com/og-image.jpg'} />
+
             {/* Twitter */}
-            <meta property="twitter:card" content="summary_large_image" />
-            <meta property="twitter:url" content={window.location.href} />
-            <meta property="twitter:title" content={displayTitle} />
-            <meta property="twitter:description" content={displayDescription} />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:url" content={canonicalUrl} />
+            <meta name="twitter:title" content={displayTitle} />
+            <meta name="twitter:description" content={displayDescription} />
+            <meta name="twitter:image" content={metadata?.ogImage || 'https://pbtadka.com/og-image.jpg'} />
         </Helmet>
     );
 };

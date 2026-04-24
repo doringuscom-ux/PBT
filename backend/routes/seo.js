@@ -47,10 +47,16 @@ router.get('/stats', async (req, res) => {
 // Get SEO for a specific URL
 router.get('/metadata', async (req, res) => {
     try {
-        const { url } = req.query;
+        let { url } = req.query;
         if (!url) return res.status(400).json({ message: 'URL is required' });
-        
-        const entry = await SEO.findOne({ url: url.toLowerCase() });
+
+        // Normalize URL: lowercase and strip trailing slash (except for root '/')
+        url = url.toLowerCase();
+        if (url.length > 1 && url.endsWith('/')) {
+            url = url.slice(0, -1);
+        }
+
+        const entry = await SEO.findOne({ url });
         if (!entry) return res.status(404).json({ message: 'SEO not found' });
         
         res.json(entry);
@@ -116,13 +122,14 @@ router.post('/auto-generate', async (req, res) => {
 
         // Process News
         for (const item of news) {
-            const url = `/news/${item.slug || item._id}`.toLowerCase();
+            const url = `/news/${item.slug || item._id}`.toLowerCase().replace(/\/$/, '');
             const exists = await SEO.findOne({ url });
             if (!exists) {
                 await SEO.create({
                     url,
                     title: `${item.title} | News | Pbtadka`,
-                    description: (item.excerpt || item.fullStory || '').substring(0, 160).trim(),
+                    description: (item.excerpt || item.fullStory || '').substring(0, 160).trim() || `Latest news about ${item.title} on Pbtadka.`,
+                    robots: 'index, follow',
                     isAuto: true
                 });
                 createdCount++;

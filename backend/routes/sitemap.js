@@ -45,9 +45,10 @@ router.get('/', async (req, res) => {
         // Add News
         news.forEach(item => {
             if (item.slug) {
+                const url = `${BASE_URL}/news/${item.slug}`.toLowerCase().replace(/\/$/, '');
                 xml += `
   <url>
-    <loc>${BASE_URL}/news/${item.slug}</loc>
+    <loc>${url}</loc>
     <lastmod>${item.updatedAt.toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -58,9 +59,10 @@ router.get('/', async (req, res) => {
         // Add Movies
         movies.forEach(item => {
             if (item.slug) {
+                const url = `${BASE_URL}/movie/${item.slug}`.toLowerCase().replace(/\/$/, '');
                 xml += `
   <url>
-    <loc>${BASE_URL}/movie/${item.slug}</loc>
+    <loc>${url}</loc>
     <lastmod>${item.updatedAt.toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -71,9 +73,10 @@ router.get('/', async (req, res) => {
         // Add Celebs
         celebs.forEach(item => {
             if (item.slug) {
+                const url = `${BASE_URL}/celeb/${item.slug}`.toLowerCase().replace(/\/$/, '');
                 xml += `
   <url>
-    <loc>${BASE_URL}/celeb/${item.slug}</loc>
+    <loc>${url}</loc>
     <lastmod>${item.updatedAt.toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
