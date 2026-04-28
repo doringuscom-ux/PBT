@@ -201,8 +201,8 @@ const ManageNews = () => {
             )}
           </div>
           <div className="flex flex-col gap-1">
-            <input 
-              placeholder="Category (e.g. EXCLUSIVE)" className="p-2 border rounded" required
+            <select 
+              className="p-2 border rounded bg-white font-semibold" required
               value={formData.category} 
               onChange={e => {
                 const newCat = e.target.value;
@@ -215,7 +215,20 @@ const ManageNews = () => {
                     setFormData({...formData, category: newCat});
                 }
               }}
-            />
+            >
+              <option value="">Select Category</option>
+              <option value="EXCLUSIVE">EXCLUSIVE</option>
+              <option value="BREAKING NEWS">BREAKING NEWS</option>
+              <option value="MOVIES">MOVIES</option>
+              <option value="CELEBS">CELEBS</option>
+              <option value="MUSIC">MUSIC</option>
+              <option value="SPORTS">SPORTS</option>
+              <option value="BOX OFFICE">BOX OFFICE</option>
+              <option value="LIFESTYLE">LIFESTYLE</option>
+              <option value="TRENDING">TRENDING</option>
+              <option value="INTERVIEWS">INTERVIEWS</option>
+              <option value="REVIEWS">REVIEWS</option>
+            </select>
             <button 
               type="button"
               onClick={() => setFormData({...formData, category: 'BREAKING NEWS'})}
@@ -224,10 +237,7 @@ const ManageNews = () => {
               + Tag as Breaking News
             </button>
           </div>
-          <input 
-            placeholder="Published Date/Time (Optional - defaults to now)" className="p-2 border rounded"
-            value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})}
-          />
+
           <input 
             placeholder="URL Slug (e.g. carry-on-jatta)" className="p-2 border rounded bg-yellow-50 font-bold"
             value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})}
