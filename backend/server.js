@@ -25,7 +25,7 @@ const startServer = async () => {
         app.use(express.json());
 
         // Session Middleware
-        const store = (typeof MongoStore.create === 'function') 
+        const store = (typeof MongoStore.create === 'function')
             ? MongoStore.create({ mongoUrl: process.env.MONGO_URI, ttl: 14 * 24 * 60 * 60 })
             : MongoStore.default && typeof MongoStore.default.create === 'function'
                 ? MongoStore.default.create({ mongoUrl: process.env.MONGO_URI, ttl: 14 * 24 * 60 * 60 })
@@ -38,11 +38,11 @@ const startServer = async () => {
             saveUninitialized: false,
             store: store,
             proxy: true, // Required for secure cookies behind proxies
-            cookie: { 
-                secure: process.env.NODE_ENV === 'production', 
+            cookie: {
+                secure: process.env.NODE_ENV === 'production',
                 httpOnly: true,
                 sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site cookies in prod
-                maxAge: 24 * 60 * 60 * 1000 
+                maxAge: 24 * 60 * 60 * 1000
             }
         }));
 
@@ -63,6 +63,7 @@ const startServer = async () => {
         app.use('/api/subscribers', require('./routes/subscribers'));
         app.use('/api/inquiries', require('./routes/inquiries'));
         app.use('/api/seo', require('./routes/seo'));
+        app.use('/api/redirects', require('./routes/redirects'));
 
         const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

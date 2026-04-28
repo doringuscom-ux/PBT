@@ -28,6 +28,7 @@ const AdminLayout = () => {
     { name: 'WhatsApp Leads', path: '/admin/whatsapp-leads', icon: 'fab fa-whatsapp text-green-500' },
     { name: 'Promotion Leads', path: '/admin/promotion-leads', icon: 'fas fa-users-viewfinder text-blue-500' },
     { name: 'SEO Manager', path: '/admin/seo', icon: 'fas fa-search-dollar text-cyan-500' },
+    { name: 'Redirects', path: '/admin/redirects', icon: 'fas fa-directions text-purple-500' },
   ];
 
   if (userRole === 'admin') {

@@ -31,7 +31,7 @@ import ActorDetail from './pages/ActorDetail';
 import CelebList from './pages/CelebList';
 import CelebDetail from './pages/CelebDetail';
 import VideosList from './pages/VideosList';
-import VideoDetail from './pages/VideoDetail'; 
+import VideoDetail from './pages/VideoDetail';
 import TodayNews from './pages/TodayNews';
 import SearchPage from './pages/SearchPage';
 import SportsList from './pages/SportsList';
@@ -39,6 +39,7 @@ import ManageSports from './admin/ManageSports';
 import SEOManager from './admin/SEOManager';
 import ManageSubscribers from './admin/ManageSubscribers';
 import ManageInquiries from './admin/ManageInquiries';
+import ManageRedirects from './admin/ManageRedirects';
 
 import UpcomingList from './pages/UpcomingList';
 import ManageUpcoming from './admin/ManageUpcoming';
@@ -49,15 +50,16 @@ import SubmitContent from './pages/SubmitContent';
 import WeatherWidget from './components/WeatherWidget';
 import MarketWidget from './components/MarketWidget';
 import NotFound from './components/NotFound';
+import GlobalRedirector from './components/GlobalRedirector';
 
 import { useData } from './context/DataContext';
 
 // Helper for Protected Routes
 const ProtectedRoute = ({ children }) => {
   const { user, isLoading } = useData();
-  
+
   if (isLoading) return <div className="min-h-screen flex items-center justify-center font-black uppercase tracking-widest text-slate-400">Loading Session...</div>;
-  
+
   const isAdmin = user?.role === 'admin' || user?.role === 'sub-admin';
   return isAdmin ? children : <Navigate to="/admin/login" replace />;
 };
@@ -66,7 +68,7 @@ const ProtectedRoute = ({ children }) => {
 const HomePage = () => (
   <main className="page-container py-2 lg:py-4">
     <h1 className="sr-only">Pbtadka - Latest News, Movies, & Celebrity Updates</h1>
-    
+
     <div className="space-y-8 lg:space-y-12">
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         {/* Mobile Widgets - Shown only on small screens at the top */}
@@ -78,7 +80,7 @@ const HomePage = () => (
         <div className="flex-1 lg:w-[68%] xl:w-[70%] min-w-0">
           <Hero />
         </div>
-        
+
         <aside className="hidden lg:flex lg:w-[32%] xl:w-[30%] flex-col gap-8">
           <div className="flex flex-col gap-4">
             <WeatherWidget />
@@ -104,6 +106,7 @@ function App() {
   return (
     <DataProvider>
       <Router>
+        <GlobalRedirector />
         <Routes>
           {/* Public Routes with MainLayout */}
           <Route element={<MainLayout />}>
@@ -126,11 +129,11 @@ function App() {
             <Route path="/submit-content" element={<SubmitContent />} />
             <Route path="*" element={<NotFound />} />
           </Route>
-          
+
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route 
-            path="/admin" 
+          <Route
+            path="/admin"
             element={
               <ProtectedRoute>
                 <AdminLayout />
@@ -151,6 +154,7 @@ function App() {
             <Route path="promotion-leads" element={<ManageInquiries mode="promotions" />} />
             <Route path="users" element={<ManageUsers />} />
             <Route path="seo" element={<SEOManager />} />
+            <Route path="redirects" element={<ManageRedirects />} />
           </Route>
 
           <Route path="/admin/login" element={<AdminLogin />} />
