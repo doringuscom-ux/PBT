@@ -13,6 +13,28 @@ router.get('/active', async (req, res) => {
     }
 });
 
+// Check single redirect for a path
+router.get('/check', async (req, res) => {
+    try {
+        const { path } = req.query;
+        if (!path) return res.status(400).json({ msg: 'Path is required' });
+
+        const redirect = await Redirect.findOne({ 
+            isActive: true,
+            $or: [
+                { fromPath: path },
+                { fromPath: path + '/' },
+                { fromPath: path.endsWith('/') ? path.slice(0, -1) : path }
+            ]
+        });
+        
+        res.json(redirect);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // Get all redirects (for admin panel)
 router.get('/', async (req, res) => {
     try {

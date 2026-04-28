@@ -89,28 +89,54 @@ const ManageRedirects = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">From Path</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">From Path (Relative or Full URL)</label>
                             <input 
                                 type="text" 
                                 name="fromPath" 
                                 value={formData.fromPath} 
-                                onChange={handleInputChange} 
-                                placeholder="/celebs" 
+                                onChange={(e) => {
+                                    let val = e.target.value;
+                                    // If user pastes a full URL of the same site, we can keep it as is
+                                    // but we should warn them or normalize it.
+                                    // For now, we just update the state.
+                                    setFormData(prev => ({ ...prev, fromPath: val }));
+                                }}
+                                onBlur={(e) => {
+                                    let val = e.target.value.trim();
+                                    if (val.startsWith('http')) {
+                                        try {
+                                            const url = new URL(val);
+                                            // If it's a full URL, we extract the pathname to make it cleaner
+                                            // but only if it's the same domain or if we want to be safe.
+                                            // The GlobalRedirector now handles both, so this is just for UI cleanliness.
+                                            if (window.confirm('You entered a full URL. Convert it to a relative path (' + url.pathname + ')?')) {
+                                                setFormData(prev => ({ ...prev, fromPath: url.pathname }));
+                                            }
+                                        } catch (err) {
+                                            // ignore invalid urls
+                                        }
+                                    } else if (val && !val.startsWith('/')) {
+                                        setFormData(prev => ({ ...prev, fromPath: '/' + val }));
+                                    }
+                                }}
+                                placeholder="/old-page or https://pbtadka.com/old-page" 
                                 required
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary-red/10 outline-none font-medium"
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary-red/10 outline-none font-medium text-sm"
                             />
+                            <p className="text-[9px] text-slate-400 mt-1 font-bold uppercase tracking-tighter">Tip: Use relative paths like /news/kkr for best results.</p>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">To URL</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">To URL (Destination)</label>
                             <input 
                                 type="url" 
                                 name="toUrl" 
                                 value={formData.toUrl} 
                                 onChange={handleInputChange} 
-                                placeholder="https://pbtadka.com/stsrd" 
+                                placeholder="https://pbtadka.com/new-page" 
                                 required
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary-red/10 outline-none font-medium"
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary-red/10 outline-none font-medium text-sm"
                             />
+                            <p className="text-[9px] text-slate-400 mt-1 font-bold uppercase tracking-tighter">Enter the full destination URL.</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">

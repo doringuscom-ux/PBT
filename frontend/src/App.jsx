@@ -106,59 +106,60 @@ function App() {
   return (
     <DataProvider>
       <Router>
-        <GlobalRedirector />
-        <Routes>
-          {/* Public Routes with MainLayout */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/news" element={<NewsList />} />
-            <Route path="/today-news" element={<TodayNews />} />
-            <Route path="/news/*" element={<NewsDetail />} />
-            <Route path="/movies" element={<MovieList />} />
-            <Route path="/upcoming" element={<UpcomingList />} />
-            <Route path="/movie/*" element={<MovieDetail />} />
-            <Route path="/actor/:name" element={<ActorDetail />} />
-            <Route path="/celebs" element={<CelebList />} />
-            <Route path="/celeb/*" element={<CelebDetail />} />
-            <Route path="/videos" element={<VideosList />} />
-            <Route path="/video/*" element={<VideoDetail />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/sports" element={<SportsList />} />
-            <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/box-office" element={<BoxOffice />} />
-            <Route path="/submit-content" element={<SubmitContent />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
+        <GlobalRedirector>
+          <Routes>
+            {/* Public Routes with MainLayout */}
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/news" element={<NewsList />} />
+              <Route path="/today-news" element={<TodayNews />} />
+              <Route path="/news/*" element={<NewsDetail />} />
+              <Route path="/movies" element={<MovieList />} />
+              <Route path="/upcoming" element={<UpcomingList />} />
+              <Route path="/movie/*" element={<MovieDetail />} />
+              <Route path="/actor/:name" element={<ActorDetail />} />
+              <Route path="/celebs" element={<CelebList />} />
+              <Route path="/celeb/*" element={<CelebDetail />} />
+              <Route path="/videos" element={<VideosList />} />
+              <Route path="/video/*" element={<VideoDetail />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/sports" element={<SportsList />} />
+              <Route path="/contact-us" element={<ContactUs />} />
+              <Route path="/box-office" element={<BoxOffice />} />
+              <Route path="/submit-content" element={<SubmitContent />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
 
-          {/* Admin Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <AdminLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="movies" element={<ManageMovies />} />
-            <Route path="upcoming" element={<ManageUpcoming />} />
-            <Route path="news" element={<ManageNews />} />
-            <Route path="sports" element={<ManageSports />} />
-            <Route path="celebs" element={<ManageCelebs />} />
-            <Route path="videos" element={<ManageVideos />} />
-            <Route path="comments" element={<ManageComments />} />
-            <Route path="subscribers" element={<ManageSubscribers />} />
-            <Route path="whatsapp-leads" element={<ManageInquiries mode="whatsapp" />} />
-            <Route path="promotion-leads" element={<ManageInquiries mode="promotions" />} />
-            <Route path="users" element={<ManageUsers />} />
-            <Route path="seo" element={<SEOManager />} />
-            <Route path="redirects" element={<ManageRedirects />} />
-          </Route>
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="movies" element={<ManageMovies />} />
+              <Route path="upcoming" element={<ManageUpcoming />} />
+              <Route path="news" element={<ManageNews />} />
+              <Route path="sports" element={<ManageSports />} />
+              <Route path="celebs" element={<ManageCelebs />} />
+              <Route path="videos" element={<ManageVideos />} />
+              <Route path="comments" element={<ManageComments />} />
+              <Route path="subscribers" element={<ManageSubscribers />} />
+              <Route path="whatsapp-leads" element={<ManageInquiries mode="whatsapp" />} />
+              <Route path="promotion-leads" element={<ManageInquiries mode="promotions" />} />
+              <Route path="users" element={<ManageUsers />} />
+              <Route path="seo" element={<SEOManager />} />
+              <Route path="redirects" element={<ManageRedirects />} />
+            </Route>
 
-          <Route path="/admin/login" element={<AdminLogin />} />
-        </Routes>
+            <Route path="/admin/login" element={<AdminLogin />} />
+          </Routes>
+        </GlobalRedirector>
       </Router>
     </DataProvider>
   );
