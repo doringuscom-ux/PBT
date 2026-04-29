@@ -44,7 +44,7 @@ const NewsDetail = () => {
                         <nav className="mb-6 text-[10px] font-black uppercase tracking-widest text-gray-400">
                             <Link to="/" className="hover:text-primary-red">Home</Link> 
                             <span className="mx-2">/</span>
-                            <Link to="/news" className="hover:text-primary-red">News</Link> 
+                            <Link to="/latest-news" className="hover:text-primary-red">News</Link> 
                             <span className="mx-2">/</span>
                             <span className="text-slate-900">{article.category}</span>
                         </nav>
@@ -106,7 +106,7 @@ const NewsDetail = () => {
                                 
                                 <div className="space-y-8 overflow-y-auto flex-1 pr-2 no-scrollbar">
                                     {relatedNews.map((item) => (
-                                        <Link key={item._id} to={`/news/${item.slug || item._id}`} className="flex gap-4 group cursor-pointer no-underline items-center">
+                                        <Link key={item._id} to={`/latest-news/${item.slug || item._id}`} className="flex gap-4 group cursor-pointer no-underline items-center">
                                             <div className="w-24 h-24 lg:w-28 lg:h-24 flex-shrink-0 rounded-2xl overflow-hidden shadow-md relative">
                                                 <img src={item.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>

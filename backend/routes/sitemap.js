@@ -11,22 +11,22 @@ router.get('/', async (req, res) => {
     try {
         const [news, movies, celebs, videos] = await Promise.all([
             News.find({}, 'slug updatedAt'),
-            Movie.find({}, 'slug updatedAt'),
-            Celebrity.find({}, 'slug updatedAt'),
+            Movie.find({}, 'slug updatedAt releaseDate'),
+            Celebrity.find({}, 'slug updatedAt industry'),
             Video.find({}, 'slug updatedAt')
         ]);
 
         const staticPages = [
             '',
-            '/news',
-            '/movies',
-            '/celebs',
-            '/videos',
-            '/box-office',
+            '/latest-news',
+            '/latest-movies',
+            '/celebrities',
+            '/latest-viral-videos',
+            '/movie-box-office',
             '/contact-us',
-            '/today-news',
-            '/upcoming',
-            '/sports'
+            '/latest-news/today',
+            '/latest-movies/upcoming',
+            '/latest-news/sports'
         ];
 
         let xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
         // Add News
         news.forEach(item => {
             if (item.slug) {
-                const url = `${BASE_URL}/news/${item.slug}`.toLowerCase().replace(/\/$/, '');
+                const url = `${BASE_URL}/latest-news/${item.slug}`.toLowerCase().replace(/\/$/, '');
                 xml += `
   <url>
     <loc>${url}</loc>
@@ -59,7 +59,9 @@ router.get('/', async (req, res) => {
         // Add Movies
         movies.forEach(item => {
             if (item.slug) {
-                const url = `${BASE_URL}/movie/${item.slug}`.toLowerCase().replace(/\/$/, '');
+                const isReleased = item.releaseDate && new Date(item.releaseDate) <= new Date();
+                const pathPrefix = isReleased ? '/latest-movies' : '/latest-movies/upcoming';
+                const url = `${BASE_URL}${pathPrefix}/${item.slug}`.toLowerCase().replace(/\/$/, '');
                 xml += `
   <url>
     <loc>${url}</loc>
@@ -73,7 +75,7 @@ router.get('/', async (req, res) => {
         // Add Celebs
         celebs.forEach(item => {
             if (item.slug) {
-                const url = `${BASE_URL}/celeb/${item.slug}`.toLowerCase().replace(/\/$/, '');
+                const url = `${BASE_URL}/celebrities/${item.slug}`.toLowerCase().replace(/\/$/, '');
                 xml += `
   <url>
     <loc>${url}</loc>
@@ -84,12 +86,23 @@ router.get('/', async (req, res) => {
             }
         });
 
+        // Add Celebrity Industry Pages
+        const industries = [...new Set(celebs.map(c => c.industry).filter(Boolean))];
+        industries.forEach(ind => {
+            xml += `
+  <url>
+    <loc>${BASE_URL}/celebrities/${ind}</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>`;
+        });
+
         // Add Videos
         videos.forEach(item => {
             if (item.slug) {
                 xml += `
   <url>
-    <loc>${BASE_URL}/video/${item.slug}</loc>
+    <loc>${BASE_URL}/latest-viral-videos/${item.slug}</loc>
     <lastmod>${item.updatedAt.toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>

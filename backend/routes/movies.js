@@ -71,6 +71,9 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
     if (typeof movieData.photos === 'string') {
         try { movieData.photos = JSON.parse(movieData.photos); } catch (e) { console.error("Photos parse error:", e); }
     }
+    if (typeof movieData.youtubeLinks === 'string') {
+        try { movieData.youtubeLinks = JSON.parse(movieData.youtubeLinks); } catch (e) { console.error("YoutubeLinks parse error:", e); }
+    }
 
     // Sanitize all stringified nulls/undefineds from FormData
     Object.keys(movieData).forEach(key => {
@@ -129,6 +132,9 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trail
         }
         if (typeof updateData.photos === 'string') {
             try { updateData.photos = JSON.parse(updateData.photos); } catch (e) { console.error("Photos parse error:", e); }
+        }
+        if (typeof updateData.youtubeLinks === 'string') {
+            try { updateData.youtubeLinks = JSON.parse(updateData.youtubeLinks); } catch (e) { console.error("YoutubeLinks parse error:", e); }
         }
 
         // Sanitize all stringified nulls/undefineds from FormData

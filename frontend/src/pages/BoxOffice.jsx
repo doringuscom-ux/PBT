@@ -9,7 +9,7 @@ const BoxOffice = () => {
 
     // Only released movies
     const releasedMovies = useMemo(() => movies.filter(m => {
-        if (!m.releaseDate) return true;
+        if (!m.releaseDate) return false;
         return new Date(m.releaseDate) <= new Date();
     }), [movies]);
 
@@ -104,7 +104,7 @@ const BoxOffice = () => {
                                 return (
                                     <Link
                                         key={movie._id}
-                                        to={`/movie/${movie.slug || movie._id}`}
+                                        to={`${(movie.releaseDate && new Date(movie.releaseDate) <= new Date()) ? '/latest-movies' : '/latest-movies/upcoming'}/${movie.slug || movie._id}`}
                                         state={{ scrollToTab: 'Box Office' }}
                                         className={`group relative rounded-xl overflow-hidden border transition-all duration-500 hover:-translate-y-1 no-underline block ${rank === 1 ? 'border-yellow-400/30 shadow-[0_0_20px_rgba(250,204,21,0.1)]' : 'border-white/5'}`}
                                     >
@@ -130,7 +130,8 @@ const BoxOffice = () => {
                                     </h3>
                                     <div className="flex items-center gap-1.5 flex-wrap">
                                         <span className={`text-[9px] font-black uppercase tracking-widest ${getPerformanceColor(movie.performance?.status)}`}>
-                                            <i className="fas fa-fire mr-1"></i>{movie.performance?.status || 'In Theatres'}
+                                            <i className="fas fa-fire mr-1"></i>
+                                            {(movie.performance?.status && movie.performance.status !== 'Upcoming') ? movie.performance.status : 'Released'}
                                         </span>
                                     </div>
                                 </div>
@@ -155,7 +156,7 @@ const BoxOffice = () => {
                                 return (
                                     <Link
                                         key={movie._id}
-                                        to={`/movie/${movie.slug || movie._id}`}
+                                        to={`${(movie.releaseDate && new Date(movie.releaseDate) <= new Date()) ? '/latest-movies' : '/latest-movies/upcoming'}/${movie.slug || movie._id}`}
                                         state={{ scrollToTab: 'Box Office' }}
                                         className="group flex items-center gap-4 bg-white/3 hover:bg-white/8 border border-white/5 hover:border-yellow-400/20 rounded-2xl px-4 py-3 transition-all duration-300 no-underline"
                                     >
@@ -183,7 +184,7 @@ const BoxOffice = () => {
 
                                         {/* Performance */}
                                         <span className={`hidden sm:block text-[9px] font-black uppercase tracking-widest shrink-0 ${getPerformanceColor(movie.performance?.status)}`}>
-                                            {movie.performance?.status || 'Active'}
+                                            {(movie.performance?.status && movie.performance.status !== 'Upcoming') ? movie.performance.status : 'Released'}
                                         </span>
 
                                         {/* Rating */}

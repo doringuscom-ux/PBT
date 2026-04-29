@@ -12,6 +12,7 @@ const MovieList = () => {
   
   const releasedMovies = movies.filter(m => {
     const today = new Date();
+    
     // 1. Confirmed date is today or in the past
     const isConfirmedPast = m.isReleaseDateConfirmed && m.releaseDate && new Date(m.releaseDate) <= today;
     // 2. Explicitly marked as Released (manual override)

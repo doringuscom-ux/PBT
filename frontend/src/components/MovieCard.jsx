@@ -9,7 +9,7 @@ const MovieCard = ({ movie, isUpcoming = false }) => {
       
       {/* Visual Container */}
       <Link 
-        to={`/movie/${movie.slug || movie._id}`} 
+        to={`${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${movie.slug || movie._id}`} 
         className="relative aspect-[2/3] rounded-[1.5rem] overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.1)] group-hover:shadow-[0_20px_60px_rgba(230,57,70,0.25)] transition-all duration-500 border border-white/10 group-hover:border-primary-red/30"
       >
         <img 
@@ -68,14 +68,16 @@ const MovieCard = ({ movie, isUpcoming = false }) => {
            </span>
            <span className="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
            <span className="text-[10px] font-black text-yellow-400 uppercase tracking-tighter italic">
-             {isUpcoming && !isReleased ? (
+             {isReleased ? (
+                // If past release date, show performance status, but default to 'Released' if it's still 'Upcoming'
+                (movie.performance?.status && movie.performance.status !== 'Upcoming') ? movie.performance.status : 'Released'
+             ) : (
+                // If future release date, show date or estimated release
                 (movie.isReleaseDateConfirmed && movie.releaseDate) ? (
                     new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
                 ) : (
-                    movie.estimatedRelease || 'TBA'
+                    movie.estimatedRelease || 'Upcoming'
                 )
-             ) : (
-                movie.performance?.status || 'Active'
              )}
            </span>
         </div>

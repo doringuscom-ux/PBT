@@ -34,7 +34,7 @@ const NewsList = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredNews.map((article) => (
-              <Link to={`/news/${article.slug || article._id}`} key={article._id} className="group flex flex-col bg-white rounded-[16px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full">
+              <Link to={`/latest-news/${article.slug || article._id}`} key={article._id} className="group flex flex-col bg-white rounded-[16px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full">
                 <article className="h-full flex flex-col">
                   <div className="relative h-[200px] overflow-hidden">
                     <img src={article.image} alt={article.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />

@@ -2,10 +2,14 @@ import { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 
-const CelebGrid = () => {
+const CelebGrid = ({ industry }) => {
   const { celebs } = useData();
+  
+  // Filter by industry if provided
+  const baseCelebs = industry ? celebs.filter(c => c.industry === industry) : celebs;
+
   // Sort by total followers descending
-  const sortedCelebs = [...celebs].sort((a, b) => {
+  const sortedCelebs = [...baseCelebs].sort((a, b) => {
     const aFollowers = (a.followers?.length || 0) + (a.bonusFollowers || 0);
     const bFollowers = (b.followers?.length || 0) + (b.bonusFollowers || 0);
     return bFollowers - aFollowers;
@@ -67,11 +71,14 @@ const CelebGrid = () => {
               <span className="text-[10px] lg:text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Popular Stars</span>
             </div>
             <h2 className="text-4xl md:text-6xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">
-              Trending <span className="text-red-600">Celebrities</span>
+              {industry ? industry : 'Trending'} <span className="text-red-600">Celebrities</span>
             </h2>
           </div>
-          <Link to="/celebs" className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2">
-            View All <i className="fas fa-arrow-right text-[10px]"></i>
+          <Link 
+            to={industry ? `/celebrities/${industry}` : "/celebrities"} 
+            className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2"
+          >
+            View More <i className="fas fa-arrow-right text-[10px]"></i>
           </Link>
         </div>
       </div>
@@ -88,7 +95,7 @@ const CelebGrid = () => {
         >
           <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
           {[...displayedCelebs, ...displayedCelebs].map((celeb, idx) => (
-            <Link to={`/celeb/${celeb.slug || celeb._id}`} key={`${celeb._id}-${idx}`} className="w-[200px] shrink-0 bg-white rounded-xl shadow-md text-center hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 group no-underline text-inherit block overflow-hidden">
+            <Link to={`/celebrities/${celeb.slug || celeb._id}`} key={`${celeb._id}-${idx}`} className="w-[200px] shrink-0 bg-white rounded-xl shadow-md text-center hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 group no-underline text-inherit block overflow-hidden">
               <div className="relative w-full pt-[125%] overflow-hidden bg-slate-100">
                 <img 
                   src={celeb.image} 

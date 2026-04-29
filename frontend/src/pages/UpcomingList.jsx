@@ -11,9 +11,16 @@ const UpcomingList = () => {
   const industries = ['ALL', ...new Set(movies.filter(m => m.industry).map(m => m.industry.trim().toUpperCase()))];
   
   const upcomingMovies = movies.filter(m => {
+    const today = new Date();
+    const isReleased = m.releaseDate && new Date(m.releaseDate) <= today;
+    
+    // If already released by date, it's not upcoming anymore
+    if (isReleased) return false;
+
     // Show if release date is in the future OR if it's explicitly marked as unconfirmed (TBA)
-    const isFuture = m.releaseDate && new Date(m.releaseDate) > new Date();
+    const isFuture = m.releaseDate && new Date(m.releaseDate) > today;
     const isTBA = m.isReleaseDateConfirmed === false;
+    
     return isFuture || isTBA;
   }).sort((a, b) => {
     // Confirmed dates first (earliest to latest), then TBA

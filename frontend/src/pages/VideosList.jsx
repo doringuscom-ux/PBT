@@ -54,7 +54,7 @@ const VideosList = () => {
                         {filteredVideos.map((video) => (
                             <Link
                                 key={video._id}
-                                to={`/video/${video.slug || video._id}`}
+                                to={`/latest-viral-videos/${video.slug || video._id}`}
                                 className="group flex flex-col no-underline text-inherit transition-all duration-700 hover:-translate-y-3"
                             >
                                 {/* Thumbnail */}

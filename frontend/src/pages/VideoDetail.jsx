@@ -141,7 +141,7 @@ const VideoDetail = () => {
                             </div>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {recommendedVideos.map(v => (
-                                    <Link key={v._id} to={`/video/${v.slug || v._id}`} className="group cursor-pointer no-underline">
+                                    <Link key={v._id} to={`/latest-viral-videos/${v.slug || v._id}`} className="group cursor-pointer no-underline">
                                         <div className="relative aspect-video rounded-xl overflow-hidden mb-2 shadow-md">
                                             <img src={v.image.startsWith('/uploads/') ? `${baseUrl}${v.image}` : v.image} alt={v.title} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                                             <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -165,7 +165,7 @@ const VideoDetail = () => {
                                 
                                 <div className="space-y-8 overflow-y-auto flex-1 pr-2 no-scrollbar">
                                     {sidebarNews.slice(0, 10).map((item) => (
-                                        <Link key={item._id} to={`/news/${item.slug || item._id}`} className="flex gap-4 group cursor-pointer no-underline items-center">
+                                        <Link key={item._id} to={`/latest-news/${item.slug || item._id}`} className="flex gap-4 group cursor-pointer no-underline items-center">
                                             <div className="w-24 h-24 lg:w-28 lg:h-24 flex-shrink-0 rounded-2xl overflow-hidden shadow-md relative">
                                                 <img src={item.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>

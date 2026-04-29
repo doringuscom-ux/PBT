@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { DataProvider } from './context/DataContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -64,7 +64,21 @@ const ProtectedRoute = ({ children }) => {
   return isAdmin ? children : <Navigate to="/admin/login" replace />;
 };
 
-// Helper for landing page
+// Wrapper to decide between Industry List and Celeb Detail
+const CelebrityPageWrapper = () => {
+  const params = useParams();
+  const param = params['*'];
+  const { celebs } = useData();
+  
+  const industries = [...new Set((celebs || []).map(c => c.industry).filter(Boolean))];
+  const isIndustry = industries.some(ind => ind.toLowerCase() === param?.toLowerCase());
+
+  if (isIndustry) {
+    return <CelebList />;
+  }
+  return <CelebDetail />;
+};
+
 const HomePage = () => (
   <main className="page-container py-2 lg:py-4">
     <h1 className="sr-only">Pbtadka - Latest News, Movies, & Celebrity Updates</h1>
@@ -96,6 +110,8 @@ const HomePage = () => (
         <MovieCalendar />
         <NewsGrid />
         <TopComments />
+        <CelebGrid industry="Bollywood" />
+        <CelebGrid industry="Hollywood" />
         <CelebGrid />
       </div>
     </div>
@@ -111,21 +127,22 @@ function App() {
             {/* Public Routes with MainLayout */}
             <Route element={<MainLayout />}>
               <Route path="/" element={<HomePage />} />
-              <Route path="/news" element={<NewsList />} />
-              <Route path="/today-news" element={<TodayNews />} />
-              <Route path="/news/*" element={<NewsDetail />} />
-              <Route path="/movies" element={<MovieList />} />
-              <Route path="/upcoming" element={<UpcomingList />} />
-              <Route path="/movie/*" element={<MovieDetail />} />
+              <Route path="/latest-news" element={<NewsList />} />
+              <Route path="/latest-news/today" element={<TodayNews />} />
+              <Route path="/latest-news/*" element={<NewsDetail />} />
+              <Route path="/latest-movies" element={<MovieList />} />
+              <Route path="/latest-movies/upcoming" element={<UpcomingList />} />
+              <Route path="/latest-movies/*" element={<MovieDetail />} />
+              <Route path="/latest-movies/upcoming/*" element={<MovieDetail />} />
               <Route path="/actor/:name" element={<ActorDetail />} />
-              <Route path="/celebs" element={<CelebList />} />
-              <Route path="/celeb/*" element={<CelebDetail />} />
-              <Route path="/videos" element={<VideosList />} />
-              <Route path="/video/*" element={<VideoDetail />} />
+              <Route path="/celebrities" element={<CelebList />} />
+              <Route path="/celebrities/*" element={<CelebrityPageWrapper />} />
+              <Route path="/latest-viral-videos" element={<VideosList />} />
+              <Route path="/latest-viral-videos/*" element={<VideoDetail />} />
               <Route path="/search" element={<SearchPage />} />
-              <Route path="/sports" element={<SportsList />} />
+              <Route path="/latest-news/sports" element={<SportsList />} />
               <Route path="/contact-us" element={<ContactUs />} />
-              <Route path="/box-office" element={<BoxOffice />} />
+              <Route path="/movie-box-office" element={<BoxOffice />} />
               <Route path="/submit-content" element={<SubmitContent />} />
               <Route path="*" element={<NotFound />} />
             </Route>
@@ -146,7 +163,7 @@ function App() {
               <Route path="upcoming" element={<ManageUpcoming />} />
               <Route path="news" element={<ManageNews />} />
               <Route path="sports" element={<ManageSports />} />
-              <Route path="celebs" element={<ManageCelebs />} />
+              <Route path="celebrities" element={<ManageCelebs />} />
               <Route path="videos" element={<ManageVideos />} />
               <Route path="comments" element={<ManageComments />} />
               <Route path="subscribers" element={<ManageSubscribers />} />

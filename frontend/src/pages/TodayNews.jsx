@@ -52,7 +52,7 @@ const TodayNews = () => {
             {(todayNews.length > 0 ? todayNews : fallbackNews).map((item) => (
               <Link 
                 key={item._id} 
-                to={`/news/${item.slug || item._id}`}
+                to={`/latest-news/${item.slug || item._id}`}
                 className="group flex flex-col bg-white rounded-[16px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full relative"
               >
                 {todayNews.length === 0 && (
@@ -99,8 +99,8 @@ const TodayNews = () => {
             <h2 className="text-2xl font-bold text-gray-400 mb-2">The News Desk is Quiet</h2>
             <p className="text-gray-400">We're verifying some big scoops. In the meantime, explore our other sections!</p>
             <div className="flex justify-center gap-4 mt-8">
-               <Link to="/movies" className="px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-primary-red transition-colors">Browse Movies</Link>
-               <Link to="/celebs" className="px-6 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors">Meet Celebs</Link>
+               <Link to="/latest-movies" className="px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-primary-red transition-colors">Browse Movies</Link>
+               <Link to="/celebrities" className="px-6 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors">Meet Celebs</Link>
             </div>
           </div>
         )}

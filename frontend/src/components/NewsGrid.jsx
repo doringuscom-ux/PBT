@@ -26,7 +26,7 @@ const NewsGrid = () => {
               Latest <span className="text-red-600">News</span>
             </h2>
           </div>
-          <Link to="/news" className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2">
+          <Link to="/latest-news" className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2">
             View All <i className="fas fa-arrow-right text-[10px]"></i>
           </Link>
         </div>
@@ -34,7 +34,7 @@ const NewsGrid = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {news.slice(0, 6).map((item, index) => (
-          <Link to={`/news/${item.slug || item._id}`} key={item._id} className="group cursor-pointer no-underline text-inherit block">
+          <Link to={`/latest-news/${item.slug || item._id}`} key={item._id} className="group cursor-pointer no-underline text-inherit block">
             <div className="relative aspect-video rounded-3xl overflow-hidden mb-6 shadow-xl border border-slate-100 bg-slate-50">
               <img 
                 src={item.image} 

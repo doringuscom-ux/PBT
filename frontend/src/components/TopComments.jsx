@@ -58,7 +58,7 @@ const TopComments = () => {
                     sourceImage: item.image,
                     sourceGenre: item.category || 'Trailer',
                     sourceRating: 10,
-                    link: `/video/${item.slug || item._id}`
+                    link: `/latest-viral-videos/${item.slug || item._id}`
                 }));
             }
         });
@@ -92,7 +92,7 @@ const TopComments = () => {
                     sourceImage: item.image,
                     sourceGenre: item.category || 'Actor',
                     sourceRating: 10,
-                    link: `/celeb/${item.slug || item._id}`
+                    link: `/celebrities/${item.slug || item._id}`
                 }));
             }
         });
@@ -122,7 +122,7 @@ const TopComments = () => {
                     <h3 className="text-2xl font-bold text-white flex items-center gap-4">
                         Recent Discussions
                     </h3>
-                    <Link to="/news" className="relative px-6 py-2 group no-underline">
+                    <Link to="/latest-news" className="relative px-6 py-2 group no-underline">
                         <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-primary-red transform -skew-x-[20deg] rounded-sm group-hover:scale-105 transition-transform duration-300"></div>
                         <span className="relative z-10 text-white font-black text-xs uppercase tracking-widest px-2">View All</span>
                     </Link>

@@ -11,7 +11,7 @@ const VideoGrid = () => {
         <h2 className="text-3xl font-extrabold text-text-dark flex items-center">
           <i className="fas fa-video mr-2.5 text-primary-red"></i> Latest Videos
         </h2>
-        <Link to="/videos" className="text-primary-red font-semibold no-underline text-sm hover:underline">
+        <Link to="/latest-viral-videos" className="text-primary-red font-semibold no-underline text-sm hover:underline">
           View All Videos <i className="fas fa-arrow-right ml-1"></i>
         </Link>
       </div>
@@ -20,7 +20,7 @@ const VideoGrid = () => {
         {videos.slice(0, 4).map((video) => (
           <Link 
             key={video._id} 
-            to={`/video/${video.slug || video._id}`}
+            to={`/latest-viral-videos/${video.slug || video._id}`}
             className="bg-white rounded-lg overflow-hidden shadow-lg hover:-translate-y-1 transition-all group cursor-pointer no-underline text-inherit"
           >
             <div className="h-[160px] overflow-hidden relative">

@@ -70,7 +70,7 @@ const MovieSlider = () => {
               Latest <span className="text-red-600">Movies</span>
             </h2>
           </div>
-          <Link to="/movies" className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2">
+          <Link to="/latest-movies" className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2">
             View All <i className="fas fa-arrow-right text-[10px]"></i>
           </Link>
         </div>
@@ -88,8 +88,10 @@ const MovieSlider = () => {
             }
           `}
         </style>
-        {releasedMovies.map((movie) => (
-          <Link to={`/movie/${movie.slug || movie._id}`} key={movie._id} className="min-w-[180px] bg-white rounded-lg overflow-hidden shadow-lg hover:-translate-y-1 transition-transform group no-underline text-inherit">
+        {releasedMovies.map((movie) => {
+          const isReleased = movie.releaseDate && new Date(movie.releaseDate) <= new Date();
+          return (
+            <Link to={`${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${movie.slug || movie._id}`} key={movie._id} className="min-w-[180px] bg-white rounded-lg overflow-hidden shadow-lg hover:-translate-y-1 transition-transform group no-underline text-inherit">
             <img 
               src={movie.image} 
               alt={movie.title} 
@@ -103,7 +105,8 @@ const MovieSlider = () => {
               </div>
             </div>
           </Link>
-        ))}
+            );
+        })}
       </div>
     </div>
   );

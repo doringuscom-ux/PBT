@@ -61,10 +61,12 @@ const Footer = () => {
             </h3>
             <ul className="list-none space-y-4 m-0 p-0">
               <FooterLink text="Home" path="/" />
-              <FooterLink text="News" path="/news" />
-              <FooterLink text="Trailers" path="/videos" />
-              <FooterLink text="Celebrities" path="/celebs" />
-              <FooterLink text="Movies Vault" path="/movies" />
+              <FooterLink text="News" path="/latest-news" />
+              <FooterLink text="Trailers" path="/latest-viral-videos" />
+              <FooterLink text="Celebrities" path="/celebrities" />
+              <FooterLink text="Bollywood Stars" path="/celebrities/bollywood" />
+              <FooterLink text="Hollywood Stars" path="/celebrities/hollywood" />
+              <FooterLink text="Movies Vault" path="/latest-movies" />
             </ul>
           </div>
           
@@ -75,9 +77,9 @@ const Footer = () => {
             </h3>
             <ul className="list-none space-y-4 m-0 p-0">
               <FooterLink text="Search Area" path="/search" />
-              <FooterLink text="Today's News" path="/today-news" />
-              <FooterLink text="Sports Actions" path="/sports" />
-              <FooterLink text="Upcoming Movies" path="/upcoming" />
+              <FooterLink text="Today's News" path="/latest-news/today" />
+              <FooterLink text="Sports Actions" path="/latest-news/sports" />
+              <FooterLink text="Upcoming Movies" path="/latest-movies/upcoming" />
               <FooterLink text="Contact Us" path="/contact-us" />
             </ul>
           </div>

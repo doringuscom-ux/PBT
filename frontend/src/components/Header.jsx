@@ -5,12 +5,15 @@ import UserAuthModal from './UserAuthModal';
 import { useData } from '../context/DataContext';
 
 const Header = () => {
-  const { user, logout } = useData();
+  const { user, logout, celebs } = useData();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserAuth, setShowUserAuth] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Dynamically get unique industries from celebs data
+  const industries = [...new Set(celebs.map(c => c.industry).filter(Boolean))].sort();
 
   const handleSearch = (e) => {
     if (e.key === 'Enter' || e.type === 'click') {
@@ -24,14 +27,14 @@ const Header = () => {
 
   const navItems = [
     { name: 'HOME', path: '/' },
-    { name: 'LATEST', path: '/today-news' },
-    { name: 'MOVIES', path: '/movies' },
-    { name: 'UPCOMING', path: '/upcoming' },
-    { name: 'CELEBS', path: '/celebs' },
-    { name: 'NEWS', path: '/news' },
-    { name: 'SPORTS', path: '/sports' },
-    { name: 'VIDEOS', path: '/videos' },
-    { name: 'BOX OFFICE', path: '/box-office' },
+    { name: 'LATEST', path: '/latest-news/today' },
+    { name: 'MOVIES', path: '/latest-movies' },
+    { name: 'UPCOMING', path: '/latest-movies/upcoming' },
+    { name: 'CELEBS', path: '/celebrities' },
+    { name: 'NEWS', path: '/latest-news' },
+    { name: 'SPORTS', path: '/latest-news/sports' },
+    { name: 'VIDEOS', path: '/latest-viral-videos' },
+    { name: 'BOX OFFICE', path: '/movie-box-office' },
     { name: 'Lets PROMOTE', path: '/submit-content' }
   ];
 
@@ -51,7 +54,7 @@ const Header = () => {
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               return (
-                <li key={item.name} className="relative">
+                <li key={item.name} className="relative group/nav">
                   <Link
                     to={item.path}
                     className={`flex items-center px-4 lg:px-6 py-2.5 rounded-full transition-all duration-100 text-[10px] lg:text-[11px] font-black uppercase tracking-widest no-underline relative group overflow-hidden ${item.name === 'Lets PROMOTE'
@@ -66,6 +69,9 @@ const Header = () => {
                     )}
                     <span className="relative z-10 flex items-center">
                       {item.name}
+                      {item.subItems && (
+                        <i className="fas fa-chevron-down ml-1.5 text-[8px] opacity-50 group-hover:rotate-180 transition-transform"></i>
+                      )}
                       {item.badge && (
                         <span className="ml-1.5 bg-primary-red text-white text-[8px] px-1.5 py-0.5 rounded-full font-black animate-pulse shadow-sm shadow-primary-red/50">
                           {item.badge}
@@ -73,6 +79,22 @@ const Header = () => {
                       )}
                     </span>
                   </Link>
+
+                  {/* Dropdown Menu */}
+                  {item.subItems && (
+                    <div className="absolute top-full left-0 mt-2 w-48 py-3 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl opacity-0 translate-y-4 pointer-events-none group-hover/nav:opacity-100 group-hover/nav:translate-y-0 group-hover/nav:pointer-events-auto transition-all duration-300 z-50">
+                      <div className="absolute top-0 left-8 -translate-y-full border-[6px] border-transparent border-b-slate-900"></div>
+                      {item.subItems.map((sub) => (
+                        <Link
+                          key={sub.name}
+                          to={sub.path}
+                          className="block px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-white/70 hover:text-white hover:bg-white/5 transition-colors no-underline"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -121,10 +143,10 @@ const Header = () => {
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               return (
-                <li key={item.name}>
+                <li key={item.name} className="flex flex-col gap-1">
                   <Link
                     to={item.path}
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={() => !item.subItems && setIsMenuOpen(false)}
                     className={`flex items-center justify-between px-6 py-4 rounded-xl text-lg font-black uppercase tracking-widest no-underline transition-all relative group overflow-hidden ${item.name === 'Lets PROMOTE'
                       ? 'bg-gradient-to-r from-red-600 to-primary-red text-white shadow-[0_5px_0_rgb(153,27,27)] active:shadow-[0_2px_0_rgb(153,27,27)] active:translate-y-[3px]'
                       : isActive
@@ -133,6 +155,9 @@ const Header = () => {
                       }`}
                   >
                     <span className="relative z-10">{item.name}</span>
+                    {item.subItems && (
+                      <i className="fas fa-chevron-down text-sm opacity-50"></i>
+                    )}
                     {item.name === 'Lets PROMOTE' && (
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-150%] animate-[shine_2s_infinite] pointer-events-none"></div>
                     )}
@@ -142,6 +167,22 @@ const Header = () => {
                       </span>
                     )}
                   </Link>
+                  
+                  {/* Mobile Sub-items */}
+                  {item.subItems && (
+                    <div className="flex flex-col gap-1 ml-4 mt-1 border-l-2 border-white/5 pl-4">
+                      {item.subItems.map((sub) => (
+                        <Link
+                          key={sub.name}
+                          to={sub.path}
+                          onClick={() => setIsMenuOpen(false)}
+                          className="block py-3 px-6 text-sm font-black uppercase tracking-widest text-white/50 hover:text-white no-underline transition-colors bg-white/5 rounded-lg"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </li>
               );
             })}

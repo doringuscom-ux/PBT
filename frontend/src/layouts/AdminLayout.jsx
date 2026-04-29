@@ -21,7 +21,7 @@ const AdminLayout = () => {
     { name: 'Movies', path: '/admin/movies', icon: 'fas fa-film' },
     { name: 'News', path: '/admin/news', icon: 'fas fa-newspaper' },
     { name: 'Sports News', path: '/admin/sports', icon: 'fas fa-running' },
-    { name: 'Celebrities', path: '/admin/celebs', icon: 'fas fa-star' },
+    { name: 'Celebrities', path: '/admin/celebrities', icon: 'fas fa-star' },
     { name: 'Videos', path: '/admin/videos', icon: 'fas fa-video' },
     { name: 'Comments', path: '/admin/comments', icon: 'fas fa-comments text-primary-red' },
     { name: 'Subscribers', path: '/admin/subscribers', icon: 'fas fa-mail-bulk text-amber-500' },

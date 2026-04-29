@@ -88,8 +88,10 @@ const SearchPage = () => {
                     <span className="w-2 h-8 bg-primary-red rounded-sm"></span> Matching Movies
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-                  {results.movies.map(movie => (
-                    <Link key={movie._id} to={`/movie/${movie.slug || movie._id}`} className="group flex flex-col no-underline text-inherit">
+                  {results.movies.map(movie => {
+                    const isReleased = movie.releaseDate && new Date(movie.releaseDate) <= new Date();
+                    return (
+                    <Link key={movie._id} to={`${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${movie.slug || movie._id}`} className="group flex flex-col no-underline text-inherit">
                       <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-lg border-2 border-white group-hover:border-primary-red transition-all duration-300">
                         <img src={movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
                         <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
@@ -101,7 +103,8 @@ const SearchPage = () => {
                       <h3 className="font-black text-xs md:text-sm truncate group-hover:text-primary-red transition-colors italic tracking-tight">{movie.title}</h3>
                       <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">{movie.industry}</span>
                     </Link>
-                  ))}
+                    );
+                  })}
                 </div>
               </section>
             )}
@@ -113,7 +116,7 @@ const SearchPage = () => {
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                   {results.celebs.map(celeb => (
-                    <Link key={celeb._id} to={`/celeb/${celeb.slug || celeb._id}`} className="group flex flex-col text-center no-underline text-inherit bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                    <Link key={celeb._id} to={`/celebrities/${celeb.slug || celeb._id}`} className="group flex flex-col text-center no-underline text-inherit bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
                       <div className="relative w-full aspect-[4/5] overflow-hidden bg-slate-100">
                         <img src={celeb.image} className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700" alt="" />
                       </div>
@@ -134,7 +137,7 @@ const SearchPage = () => {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {results.news.map(item => (
-                    <Link key={item._id} to={`/news/${item.slug || item._id}`} className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline text-inherit flex flex-col">
+                    <Link key={item._id} to={`/latest-news/${item.slug || item._id}`} className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline text-inherit flex flex-col">
                       <div className="relative aspect-video overflow-hidden">
                         <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
                         <div className="absolute top-3 left-3 bg-orange-500 text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded shadow-md">
@@ -163,7 +166,7 @@ const SearchPage = () => {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {results.videos.map(video => (
-                    <Link key={video._id} to={`/video/${video.slug || video._id}`} className="group bg-white rounded-2xl shadow-sm border border-gray-100 p-3 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline text-inherit">
+                    <Link key={video._id} to={`/latest-viral-videos/${video.slug || video._id}`} className="group bg-white rounded-2xl shadow-sm border border-gray-100 p-3 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline text-inherit">
                       <div className="relative aspect-video rounded-xl overflow-hidden mb-4 shadow-inner bg-slate-100">
                         <img src={video.image} className="w-full h-full object-cover opacity-90 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500" alt="" />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-all">
@@ -196,17 +199,20 @@ const SearchPage = () => {
                     <section>
                         <h3 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-widest flex items-center justify-between border-b pb-3">
                             <span>Hot Movies</span>
-                            <Link to="/movies" className="text-[10px] text-primary-red hover:text-slate-900 transition-colors">VIEW ALL</Link>
+                            <Link to="/latest-movies" className="text-[10px] text-primary-red hover:text-slate-900 transition-colors">VIEW ALL</Link>
                         </h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                        {trendingMovies.map(movie => (
-                            <Link key={movie._id} to={`/movie/${movie.slug || movie._id}`} className="group flex flex-col no-underline text-inherit">
-                                <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-md border-2 border-white group-hover:border-slate-900 transition-all duration-300">
-                                    <img src={movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
-                                </div>
-                                <h4 className="font-bold text-[11px] truncate group-hover:text-primary-red transition-colors uppercase tracking-tight">{movie.title}</h4>
-                            </Link>
-                        ))}
+                        {trendingMovies.map(movie => {
+                            const isReleased = movie.releaseDate && new Date(movie.releaseDate) <= new Date();
+                            return (
+                                <Link key={movie._id} to={`${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${movie.slug || movie._id}`} className="group flex flex-col no-underline text-inherit">
+                                    <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3 shadow-md border-2 border-white group-hover:border-slate-900 transition-all duration-300">
+                                        <img src={movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                                    </div>
+                                    <h4 className="font-bold text-[11px] truncate group-hover:text-primary-red transition-colors uppercase tracking-tight">{movie.title}</h4>
+                                </Link>
+                            );
+                        })}
                         </div>
                     </section>
 
@@ -214,11 +220,11 @@ const SearchPage = () => {
                     <section>
                         <h3 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-widest flex items-center justify-between border-b pb-3">
                             <span>Top Celebrities</span>
-                            <Link to="/celebs" className="text-[10px] text-primary-red hover:text-slate-900 transition-colors">VIEW ALL</Link>
+                            <Link to="/celebrities" className="text-[10px] text-primary-red hover:text-slate-900 transition-colors">VIEW ALL</Link>
                         </h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                         {trendingCelebs.map(celeb => (
-                            <Link key={celeb._id} to={`/celeb/${celeb.slug || celeb._id}`} className="group flex flex-col text-center no-underline text-inherit bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300">
+                            <Link key={celeb._id} to={`/celebrities/${celeb.slug || celeb._id}`} className="group flex flex-col text-center no-underline text-inherit bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300">
                             <div className="relative w-full aspect-[4/5] overflow-hidden bg-slate-100">
                                 <img src={celeb.image} className="absolute inset-0 w-full h-full object-cover object-[center_top] group-hover:scale-110 transition-transform duration-700" alt="" />
                             </div>

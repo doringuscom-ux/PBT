@@ -90,7 +90,7 @@ const MovieCalendar = () => {
               <i className="fas fa-chevron-right text-xs"></i>
             </button>
           </div>
-          <Link to="/movies" className="text-slate-900 text-[10px] lg:text-[11px] font-black uppercase hover:text-red-600 flex items-center gap-2 tracking-widest transition-colors mb-2">
+          <Link to="/latest-movies" className="text-slate-900 text-[10px] lg:text-[11px] font-black uppercase hover:text-red-600 flex items-center gap-2 tracking-widest transition-colors mb-2">
               View Schedule <i className="fas fa-arrow-right text-[10px]"></i>
           </Link>
         </div>
@@ -105,10 +105,12 @@ const MovieCalendar = () => {
         className="flex gap-6 overflow-x-auto pb-8 hide-scrollbar"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {upcomingMovies.map((movie, index) => (
-          <Link 
-            key={movie._id} 
-            to={`/movie/${movie.slug || movie._id}`}
+        {upcomingMovies.map((movie, index) => {
+          const isReleased = movie.releaseDate && new Date(movie.releaseDate) <= new Date();
+          return (
+            <Link 
+              key={movie._id} 
+              to={`${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${movie.slug || movie._id}`}
             className="min-w-[180px] bg-white rounded-lg overflow-hidden shadow-lg hover:-translate-y-1 transition-transform group no-underline text-inherit animate-slide-up"
             style={{ animationDelay: `${index * 150}ms` }}
           >
@@ -146,7 +148,8 @@ const MovieCalendar = () => {
               </div>
             </div>
           </Link>
-        ))}
+            );
+        })}
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `

@@ -270,6 +270,63 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                     <div className="lg:w-[65%] xl:w-[65%] space-y-12">
                         {activeTab === 'Timeline' && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-12">
+                                {/* YouTube Video Ribbon */}
+                                {movie.youtubeLinks?.length > 0 && (
+                                    <section className="relative overflow-hidden bg-slate-900 py-6 rounded-[2rem] shadow-xl border-b-4 border-primary-red group/ribbon">
+                                        <div className="absolute top-0 left-0 h-full w-20 bg-gradient-to-r from-slate-900 to-transparent z-10"></div>
+                                        <div className="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-slate-900 to-transparent z-10"></div>
+                                        
+                                        <div className="flex gap-6 animate-marquee whitespace-nowrap px-10 group-hover/ribbon:pause">
+                                            {/* Render twice for seamless loop */}
+                                            {[...movie.youtubeLinks, ...movie.youtubeLinks].map((link, idx) => {
+                                                let videoId = '';
+                                                if (link.url.includes('v=')) {
+                                                    videoId = link.url.split('v=')[1].split('&')[0];
+                                                } else if (link.url.includes('youtu.be/')) {
+                                                    videoId = link.url.split('youtu.be/')[1].split('?')[0];
+                                                } else {
+                                                    videoId = link.url.split('/').pop().split('?')[0];
+                                                }
+                                                const thumbUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                                                return (
+                                                    <a 
+                                                        key={idx} 
+                                                        href={link.url} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 p-2 pr-6 rounded-2xl transition-all hover:scale-105 no-underline group/link"
+                                                    >
+                                                        <div className="w-20 aspect-video rounded-xl overflow-hidden relative shrink-0">
+                                                            <img src={thumbUrl} className="w-full h-full object-cover" alt="" />
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover/link:bg-black/20">
+                                                                <i className="fas fa-play text-white text-xs"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <span className="text-[10px] font-black text-primary-red uppercase tracking-widest leading-none mb-1">Watch Now</span>
+                                                            <span className="text-sm font-black text-white italic tracking-tight uppercase line-clamp-1">{link.title || 'Official Video'}</span>
+                                                        </div>
+                                                    </a>
+                                                );
+                                            })}
+                                        </div>
+
+                                        <style dangerouslySetInnerHTML={{ __html: `
+                                            @keyframes marquee {
+                                                0% { transform: translateX(0); }
+                                                100% { transform: translateX(-50%); }
+                                            }
+                                            .animate-marquee {
+                                                display: flex;
+                                                width: max-content;
+                                                animation: marquee 30s linear infinite;
+                                            }
+                                            .pause {
+                                                animation-play-state: paused;
+                                            }
+                                        `}} />
+                                    </section>
+                                )}
                                 <section>
                                     <div className="flex items-center gap-4 mb-8">
                                         <div className="h-10 w-1.5 bg-primary-red rounded-full"></div>
@@ -375,7 +432,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                             {movie.cast.slice(0, 8).map((actor, idx) => (
                                                 <Link 
                                                     key={idx} 
-                                                    to={actor.celebrity ? `/celeb/${actor.celebrity.slug || actor.celebrity._id || actor.celebrity}` : `/actor/${encodeURIComponent(actor.name)}`} 
+                                                    to={actor.celebrity ? `/celebrities/${actor.celebrity.slug || actor.celebrity._id || actor.celebrity}` : `/actor/${encodeURIComponent(actor.name)}`} 
                                                     className="group flex flex-col items-center gap-2 shrink-0 no-underline"
                                                 >
                                                     <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-white shadow-lg overflow-hidden transition-all group-hover:scale-110 duration-500 relative ring-2 ring-transparent group-hover:ring-primary-red/20">
@@ -429,7 +486,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                 {movie.cast?.map((actor, idx) => (
                                     <Link 
                                         key={idx} 
-                                        to={actor.celebrity ? `/celeb/${actor.celebrity.slug || actor.celebrity._id || actor.celebrity}` : `/actor/${encodeURIComponent(actor.name)}`} 
+                                        to={actor.celebrity ? `/celebrities/${actor.celebrity.slug || actor.celebrity._id || actor.celebrity}` : `/actor/${encodeURIComponent(actor.name)}`} 
                                         className="group flex flex-col items-center gap-3 no-underline"
                                     >
                                             <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-xl overflow-hidden transition-transform group-hover:scale-110 duration-500 relative">
@@ -696,7 +753,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                         {movieArticles.map((article) => (
                                             <Link 
                                                 key={article._id} 
-                                                to={`/news/${article.slug || article._id}`}
+                                                to={`/latest-news/${article.slug || article._id}`}
                                                 className="group relative bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 flex flex-col h-full no-underline"
                                             >
                                                 <div className="aspect-video overflow-hidden relative">
@@ -748,18 +805,21 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                     <span className="w-2.5 h-2.5 bg-primary-red rounded-full"></span> Suggested For You
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {suggestedMovies.map(m => (
-                                        <Link key={m._id} to={`/movie/${m.slug || m._id}`} className="group flex flex-col gap-2 no-underline">
-                                            <div className="aspect-[2/3] rounded-lg overflow-hidden shadow-md border-2 border-white group-hover:border-primary-red transition-all duration-300 relative">
-                                                <img src={m.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
-                                                <div className="absolute bottom-0 inset-x-0 p-1 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <span className="text-[8px] font-black text-white uppercase block text-center truncate">{m.title}</span>
+                                    {suggestedMovies.map(m => {
+                                        const isReleased = m.releaseDate && new Date(m.releaseDate) <= new Date();
+                                        return (
+                                            <Link key={m._id} to={`${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${m.slug || m._id}`} className="group flex flex-col gap-2 no-underline">
+                                                <div className="aspect-[2/3] rounded-lg overflow-hidden shadow-md border-2 border-white group-hover:border-primary-red transition-all duration-300 relative">
+                                                    <img src={m.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                                                    <div className="absolute bottom-0 inset-x-0 p-1 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <span className="text-[8px] font-black text-white uppercase block text-center truncate">{m.title}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </Link>
-                                    ))}
+                                            </Link>
+                                        );
+                                    })}
                                 </div>
-                                <Link to="/movies" className="block w-full text-center mt-8 py-3 rounded-xl border-2 border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-colors">View All Movies</Link>
+                                <Link to="/latest-movies" className="block w-full text-center mt-8 py-3 rounded-xl border-2 border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-colors">View All Movies</Link>
                             </div>
                         </div>
                     </aside>

@@ -53,8 +53,10 @@ const ActorDetail = () => {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                    {actorMovies.map(movie => (
-                        <Link key={movie._id} to={`/movie/${movie._id}`} className="group no-underline">
+                    {actorMovies.map(movie => {
+                        const isReleased = movie.releaseDate && new Date(movie.releaseDate) <= new Date();
+                        return (
+                        <Link key={movie._id} to={`${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${movie.slug || movie._id}`} className="group no-underline">
                             <div className="relative aspect-[2/3] rounded-2xl overflow-hidden mb-4 shadow-lg border border-slate-100 group-hover:-translate-y-2 transition-transform duration-500">
                                 <img src={movie.image} alt={movie.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
@@ -64,7 +66,8 @@ const ActorDetail = () => {
                                 </div>
                             </div>
                         </Link>
-                    ))}
+                        );
+                    })}
                 </div>
             </main>
         </div>

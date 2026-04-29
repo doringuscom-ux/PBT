@@ -82,7 +82,7 @@ const HomeVideoMarquee = () => {
                         Movie <span className="text-red-600">Trailers</span>
                     </h2>
                   </div>
-                  <Link to="/videos" className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2">
+                  <Link to="/latest-viral-videos" className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2">
                     View All <i className="fas fa-arrow-right text-[10px]"></i>
                   </Link>
                 </div>
@@ -106,7 +106,7 @@ const HomeVideoMarquee = () => {
                         return (
                             <Link 
                                 key={`${video._id}-${idx}`} 
-                                to={isPlaying ? '#' : `/video/${video.slug || video._id}`} 
+                                to={isPlaying ? '#' : `/latest-viral-videos/${video.slug || video._id}`} 
                                 onClick={(e) => isPlaying && e.preventDefault()}
                                 className="w-[280px] shrink-0 group relative rounded-2xl overflow-hidden shadow-md block no-underline bg-black"
                             >

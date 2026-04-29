@@ -1,14 +1,29 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import FilterBar from '../components/FilterBar';
 
 const CelebList = () => {
   const { celebs } = useData();
-  const [filter, setFilter] = useState('ALL');
+  const params = useParams();
+  const param = params.param || params['*'];
+  const [filter, setFilter] = useState(param || 'ALL');
+  const [visibleCount, setVisibleCount] = useState(10);
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+    if (param) {
+      setFilter(param);
+    } else {
+      setFilter('ALL');
+    }
+    // Reset count when filter changes
+    setVisibleCount(10);
+  }, [param]);
 
   const industries = ['ALL', ...new Set(celebs.map(c => c.industry).filter(Boolean))];
   const filteredCelebs = filter === 'ALL' ? celebs : celebs.filter(c => c.industry === filter);
+  const displayedCelebs = filteredCelebs.slice(0, visibleCount);
 
   return (
     <div className="bg-[#050505] min-h-screen">
@@ -46,13 +61,14 @@ const CelebList = () => {
                     options={industries} 
                     activeFilter={filter} 
                     onFilterChange={setFilter} 
+                    linkGenerator={(opt) => opt === 'ALL' ? '/celebrities' : `/celebrities/${opt}`}
                     label="Industry" 
                 />
             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
-            {filteredCelebs.map((celeb) => (
-              <Link to={`/celeb/${celeb.slug || celeb._id}`} key={celeb._id} className="group relative block rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 shadow-2xl shadow-black/50 hover:shadow-primary-red/20 transition-all duration-500 hover:-translate-y-2">
+            {displayedCelebs.map((celeb) => (
+              <Link to={`/celebrities/${celeb.slug || celeb._id}`} key={celeb._id} className="group relative block rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 shadow-2xl shadow-black/50 hover:shadow-primary-red/20 transition-all duration-500 hover:-translate-y-2">
                 <div className="aspect-[3/4] relative">
                   <img src={celeb.image} alt={celeb.name} className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                   
@@ -74,6 +90,17 @@ const CelebList = () => {
                 </div>
               </Link>
             ))}
+
+            {visibleCount < filteredCelebs.length && (
+              <div className="col-span-full mt-12 text-center">
+                <button 
+                  onClick={() => setVisibleCount(prev => prev + 10)}
+                  className="px-10 py-4 bg-white/5 hover:bg-primary-red border border-white/10 rounded-full text-white text-xs font-black uppercase tracking-[0.2em] transition-all shadow-xl hover:shadow-primary-red/20 active:scale-95"
+                >
+                  View More Stars <i className="fas fa-chevron-down ml-2"></i>
+                </button>
+              </div>
+            )}
 
             {filteredCelebs.length === 0 && (
                 <div className="col-span-full py-20 text-center">

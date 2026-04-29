@@ -26,9 +26,9 @@ const ManageMovies = () => {
     title: '', image: '', coverImage: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
     overview: '', director: '', runtime: '', certification: '', 
     performance: { 
-        budget: '', day1: '', weekend: '', week1: '', indiaNet: '', indiaGross: '', overseas: '', worldwide: '', verdict: '', screens: '', status: 'Blockbuster' 
+        budget: '', day1: '', weekend: '', week1: '', indiaNet: '', indiaGross: '', overseas: '', worldwide: '', verdict: '', screens: '', status: 'Released' 
     }, industry: 'Bollywood',
-    fullStory: '', trailerUrl: '', trailerVideo: null, likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
+    fullStory: '', trailerUrl: '', trailerVideo: null, likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: [], youtubeLinks: []
   });
 
   const [showForm, setShowForm] = useState(false);
@@ -75,7 +75,7 @@ const ManageMovies = () => {
 
     Object.keys(formData).forEach(key => {
         if (!fieldsToExclude.includes(key)) {
-            if (key === 'performance' || key === 'cast' || key === 'photos') {
+            if (key === 'performance' || key === 'cast' || key === 'photos' || key === 'youtubeLinks') {
                 data.append(key, JSON.stringify(formData[key]));
             } else if (key === 'image') {
                 if (imageSource === 'url') data.append('image', formData[key]);
@@ -108,8 +108,8 @@ const ManageMovies = () => {
     setFormData({ 
       title: '', image: '', coverImage: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
       overview: '', director: '', runtime: '', certification: '', 
-      performance: { budget: '', day1: '', weekend: '', week1: '', indiaNet: '', indiaGross: '', overseas: '', worldwide: '', verdict: '', screens: '', status: 'Blockbuster' }, industry: 'Bollywood',
-      fullStory: '', trailerUrl: '', trailerVideo: null, likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
+      performance: { budget: '', day1: '', weekend: '', week1: '', indiaNet: '', indiaGross: '', overseas: '', worldwide: '', verdict: '', screens: '', status: 'Released' }, industry: 'Bollywood',
+      fullStory: '', trailerUrl: '', trailerVideo: null, likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: [], youtubeLinks: []
     });
     setSelectedFile(null);
     setImageSource('url');
@@ -126,11 +126,12 @@ const ManageMovies = () => {
     setEditingIndex(relIdx);
     setFormData({
       ...movie,
-      performance: movie.performance || { budget: '', day1: '', weekend: '', week1: '', indiaNet: '', indiaGross: '', overseas: '', worldwide: '', verdict: '', screens: '', status: 'Blockbuster' },
+      performance: movie.performance || { budget: '', day1: '', weekend: '', week1: '', indiaNet: '', indiaGross: '', overseas: '', worldwide: '', verdict: '', screens: '', status: 'Released' },
       cast: movie.cast || [],
       photos: Array.isArray(movie.photos) ? movie.photos : (typeof movie.photos === 'string' ? JSON.parse(movie.photos) : []),
       coverImage: movie.coverImage || '',
-      trailerVideo: movie.trailerVideo?._id || movie.trailerVideo || null
+      trailerVideo: movie.trailerVideo?._id || movie.trailerVideo || null,
+      youtubeLinks: Array.isArray(movie.youtubeLinks) ? movie.youtubeLinks : []
     });
     setIsCustomIndustry(movie.industry && !INDUSTRIES.includes(movie.industry));
     setShowForm(true);
@@ -373,6 +374,29 @@ const ManageMovies = () => {
                 </div>
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
                     <div className="flex justify-between items-center mb-4">
+                        <label className="text-[10px] font-black uppercase text-gray-400 flex items-center gap-2">
+                            <i className="fab fa-youtube text-red-600"></i> YouTube Ribbon Links
+                        </label>
+                        <button type="button" onClick={() => setFormData({...formData, youtubeLinks: [...formData.youtubeLinks, { title: '', url: '' }]})} className="bg-red-600 text-white p-2 rounded-lg text-xs"><i className="fas fa-plus"></i></button>
+                    </div>
+                    <div className="space-y-3">
+                        {formData.youtubeLinks?.map((link, lIdx) => (
+                            <div key={lIdx} className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-dashed relative group">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    <input placeholder="Video Title (e.g. Teaser 1)" className="p-2 border rounded-lg text-[10px] font-bold" value={link.title} onChange={e => { const nL = [...formData.youtubeLinks]; nL[lIdx].title = e.target.value; setFormData({...formData, youtubeLinks: nL}); }} />
+                                    <input placeholder="YouTube URL" className="p-2 border rounded-lg text-[10px]" value={link.url} onChange={e => { const nL = [...formData.youtubeLinks]; nL[lIdx].url = e.target.value; setFormData({...formData, youtubeLinks: nL}); }} />
+                                </div>
+                                <button type="button" onClick={() => setFormData({...formData, youtubeLinks: formData.youtubeLinks.filter((_, i) => i !== lIdx)})} className="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md"><i className="fas fa-times"></i></button>
+                            </div>
+                        ))}
+                        {formData.youtubeLinks?.length === 0 && (
+                            <p className="text-center py-4 text-[9px] text-gray-400 font-bold uppercase tracking-widest italic">No ribbon links added</p>
+                        )}
+                    </div>
+                </div>
+
+                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <div className="flex justify-between items-center mb-4">
                         <label className="text-[10px] font-black uppercase text-gray-400">Photos Gallery</label>
                         <button type="button" onClick={() => setFormData({...formData, photos: [...formData.photos, '']})} className="bg-slate-800 text-white p-2 rounded-lg text-xs"><i className="fas fa-plus"></i></button>
                     </div>
@@ -429,6 +453,18 @@ const ManageMovies = () => {
                         <input type="number" placeholder="Worldwide" className="p-3 border rounded-xl ring-2 ring-primary-red/10" value={formData.performance?.worldwide} onChange={e => setFormData({...formData, performance: {...formData.performance, worldwide: e.target.value}})} />
                     </div>
 
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Movie Status</label>
+                        <select className="p-3 border rounded-xl outline-none text-sm font-bold" value={formData.performance?.status} onChange={e => setFormData({...formData, performance: {...formData.performance, status: e.target.value}})}>
+                            <option value="Released">Released</option>
+                            <option value="Hit">Hit</option>
+                            <option value="Flop">Flop</option>
+                            <option value="Average">Average</option>
+                            <option value="Blockbuster">Blockbuster</option>
+                            <option value="Super Hit">Super Hit</option>
+                            <option value="Disaster">Disaster</option>
+                        </select>
+                    </div>
                     <div className="flex flex-col gap-1">
                         <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Final Verdict</label>
                         <select className="p-3 border rounded-xl outline-none text-sm font-bold" value={formData.performance?.verdict} onChange={e => setFormData({...formData, performance: {...formData.performance, verdict: e.target.value}})}>

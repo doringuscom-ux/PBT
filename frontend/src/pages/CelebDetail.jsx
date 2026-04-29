@@ -7,7 +7,7 @@ import UserAuthModal from '../components/UserAuthModal';
 
 const CelebDetail = () => {
     const params = useParams();
-    const id = params['*'];
+    const id = params.param || params['*'];
     const { celebs, news, movies, addCelebComment, likeCelebComment, updateCelebComment, deleteCelebComment, followCeleb, user } = useData();
     const [activeSection, setActiveSection] = useState('All');
     const [isBioExpanded, setIsBioExpanded] = useState(false);
@@ -41,6 +41,9 @@ const CelebDetail = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [id]);
+
+    const { isLoading } = useData();
+    if (isLoading) return <div className="min-h-screen bg-black flex items-center justify-center font-black uppercase tracking-widest text-slate-400 italic">Loading Profile...</div>;
 
     if (!celeb) return <div className="p-10 text-center font-bold">Celebrity not found</div>;
 
@@ -305,8 +308,10 @@ const CelebDetail = () => {
                                             <button onClick={() => setActiveSection('Filmography')} className="text-primary-red font-black uppercase text-[10px] tracking-widest group">See All Filmography <i className="fas fa-chevron-right ml-1 transition-transform group-hover:translate-x-1"></i></button>
                                         </div>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            {celebMovies.slice(0, 4).map((movie) => (
-                                                <Link key={movie._id} to={`/movie/${movie.slug || movie._id}`} className="group relative aspect-[2/3] rounded-xl overflow-hidden shadow-lg">
+                                            {celebMovies.slice(0, 4).map((movie) => {
+                                                const isReleased = movie.releaseDate && new Date(movie.releaseDate) <= new Date();
+                                                return (
+                                                <Link key={movie._id} to={`${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${movie.slug || movie._id}`} className="group relative aspect-[2/3] rounded-xl overflow-hidden shadow-lg">
                                                     <img src={movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
                                                     <div className="absolute bottom-0 left-0 p-4 w-full">
@@ -314,7 +319,8 @@ const CelebDetail = () => {
                                                         <p className="text-primary-red text-[8px] font-bold uppercase mt-1">View Details</p>
                                                     </div>
                                                 </Link>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     </section>
                                 )}
@@ -343,7 +349,7 @@ const CelebDetail = () => {
                                 {celebArticles.length > 0 ? (
                                     <div className="grid grid-cols-1 gap-6">
                                         {celebArticles.map(article => (
-                                            <Link key={article._id} to={`/news/${article.slug || article._id}`} className="flex gap-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all group no-underline">
+                                            <Link key={article._id} to={`/latest-news/${article.slug || article._id}`} className="flex gap-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all group no-underline">
                                                 <div className="w-32 md:w-48 aspect-[16/10] flex-shrink-0 rounded-xl overflow-hidden">
                                                     <img src={article.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
                                                 </div>
@@ -433,19 +439,22 @@ const CelebDetail = () => {
                                 <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 mb-8 border-l-4 border-primary-red pl-4">Full Filmography</h2>
                                 {celebMovies.length > 0 ? (
                                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-6">
-                                        {celebMovies.map(movie => (
-                                            <Link key={movie._id} to={`/movie/${movie.slug || movie._id}`} className="group no-underline shrink-0 block">
-                                                <div className="aspect-[2/3] rounded-2xl overflow-hidden relative shadow-lg group-hover:shadow-2xl transition-all duration-500">
-                                                    <img src={movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
-                                                    <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
-                                                        <span className="text-primary-red text-[10px] font-black uppercase tracking-tighter mb-1 block italic">
-                                                            { (movie.isReleaseDateConfirmed && movie.releaseDate) ? new Date(movie.releaseDate).getFullYear() : (movie.year || 'TBA') }
-                                                        </span>
-                                                        <h4 className="text-white text-xs font-black uppercase tracking-tighter italic leading-none line-clamp-2">{movie.title}</h4>
+                                        {celebMovies.map(movie => {
+                                            const isReleased = movie.releaseDate && new Date(movie.releaseDate) <= new Date();
+                                            return (
+                                                <Link key={movie._id} to={`${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${movie.slug || movie._id}`} className="group no-underline shrink-0 block">
+                                                    <div className="aspect-[2/3] rounded-2xl overflow-hidden relative shadow-lg group-hover:shadow-2xl transition-all duration-500">
+                                                        <img src={movie.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                                                        <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
+                                                            <span className="text-primary-red text-[10px] font-black uppercase tracking-tighter mb-1 block italic">
+                                                                { (movie.isReleaseDateConfirmed && movie.releaseDate) ? new Date(movie.releaseDate).getFullYear() : (movie.year || 'TBA') }
+                                                            </span>
+                                                            <h4 className="text-white text-xs font-black uppercase tracking-tighter italic leading-none line-clamp-2">{movie.title}</h4>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </Link>
-                                        ))}
+                                                </Link>
+                                            );
+                                        })}
                                     </div>
                                 ) : (
                                     <div className="py-20 text-center bg-gray-50 rounded-3xl">
@@ -479,7 +488,7 @@ const CelebDetail = () => {
                                 </h3>
                                 <div className="space-y-8 overflow-y-auto flex-1 pr-2 no-scrollbar">
                                     {news.slice(0, 10).map(item => (
-                                        <Link key={item._id} to={`/news/${item.slug || item._id}`} className="flex gap-4 group no-underline items-center">
+                                        <Link key={item._id} to={`/latest-news/${item.slug || item._id}`} className="flex gap-4 group no-underline items-center">
                                             <div className="w-24 h-24 lg:w-28 lg:h-24 flex-shrink-0 rounded-2xl overflow-hidden shadow-md relative">
                                                 <img src={item.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>

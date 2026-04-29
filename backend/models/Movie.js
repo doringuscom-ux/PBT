@@ -57,6 +57,10 @@ const MovieSchema = new mongoose.Schema({
     averageRating: { type: Number, default: 0 },
     totalRatings: { type: Number, default: 0 },
     photos: [{ type: String }],
+    youtubeLinks: [{
+        title: { type: String },
+        url: { type: String }
+    }],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 
