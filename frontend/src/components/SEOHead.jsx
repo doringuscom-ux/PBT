@@ -50,11 +50,21 @@ const SEOHead = () => {
         };
     }, [location.pathname, metadata, h1Title]);
 
-    const displayTitle = metadata?.title || (h1Title ? `${h1Title} | Pbtadka` : 'Pbtadka | Film News & Updates');
+    // Helper to generate a clean title from the URL path if metadata is missing
+    const generateFallbackTitle = () => {
+        const path = location.pathname.replace(/\/$/, '').split('/').pop();
+        if (!path || path === '') return 'Pbtadka | Latest News, Movies & Celebs';
+        
+        // Convert slug-style-path to Title Case
+        const title = path.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        return `${title} | Pbtadka`;
+    };
+
+    const displayTitle = metadata?.title || (h1Title ? `${h1Title} | Pbtadka` : generateFallbackTitle());
     const displayDescription = metadata?.description || 'Latest film news, movie reviews, celebrity updates, and more at Pbtadka.';
     
-    // Automatic Canonical URL to prevent duplicate content issues
-    const currentPath = location.pathname.replace(/\/$/, '') || '';
+    // Automatic Canonical URL - Force lowercase and remove trailing slash for indexing consistency
+    const currentPath = location.pathname.toLowerCase().replace(/\/$/, '') || '';
     const canonicalUrl = metadata?.canonical || `https://pbtadka.com${currentPath}`;
 
     return (
@@ -63,10 +73,10 @@ const SEOHead = () => {
             <meta name="description" content={displayDescription} />
             <meta name="keywords" content={metadata?.keywords || 'film news, movie reviews, bollywood, pollywood, celebrity updates'} />
             
-            {/* Robots Tag - Ensure it's never empty and defaults to index */}
+            {/* Robots Tag - Default to index, follow for SEO */}
             <meta name="robots" content={metadata?.robots || 'index, follow'} />
             
-            {/* Canonical Tag - Always present to help Google indexing */}
+            {/* Canonical Tag - CRITICAL for fixing duplicate content issues */}
             <link rel="canonical" href={canonicalUrl} />
 
             {/* Open Graph / Facebook */}

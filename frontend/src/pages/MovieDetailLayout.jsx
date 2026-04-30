@@ -110,8 +110,8 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-black/20"></div>
                 <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#f8f9fa] to-transparent z-[1]"></div>
 
-                <div className="page-container relative h-full flex items-end pb-8 md:pb-12 z-10">
-                    <div className="flex flex-col-reverse md:flex-row items-center md:items-end gap-5 md:gap-12 w-full pt-8 md:pt-0">
+                <div className="page-container relative h-full flex items-end pb-0 md:pb-12 z-10">
+                    <div className="flex flex-col-reverse md:flex-row items-center md:items-end gap-0 md:gap-12 w-full pt-0 md:pt-0">
                         
                         {/* Countdown Sidebar (Middle/Bottom on Mobile - Integrated here for alignment) */}
                         {isUpcoming && (
@@ -123,23 +123,23 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                         )}
 
                         {/* Floating Poster & Interaction */}
-                        <div className="flex flex-col items-center md:items-start gap-0 shrink-0">
+                        <div className="flex flex-col items-center md:items-start gap-0 shrink-0 z-20">
                             <div 
-                                className="relative w-48 md:w-56 aspect-[2/3] rounded-sm overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6)] border-2 border-white/20 transform md:-translate-y-4 cursor-zoom-in group/poster"
+                                className="relative w-64 md:w-56 aspect-[2/3] rounded-sm overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] border-2 border-white/20 transform md:-translate-y-4 cursor-zoom-in group/poster"
                                 onClick={() => setSelectedImage({ src: movie.image, title: movie.title })}
                             >
                                 <img src={movie.image} alt={movie.title} className="w-full h-full object-cover transition-transform duration-700 group-hover/poster:scale-105" />
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/poster:opacity-100 transition-opacity flex items-center justify-center">
                                     <i className="fas fa-expand-alt text-white text-xl"></i>
                                 </div>
-                                <div className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white border border-white/20 cursor-pointer hover:bg-primary-red transition-colors z-10" onClick={(e) => { e.stopPropagation(); /* Add to list logic here */ }}>
-                                    <i className="fas fa-plus"></i>
+                                <div className="absolute top-3 right-3 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white border border-white/20 cursor-pointer hover:bg-primary-red transition-colors z-10" onClick={(e) => { e.stopPropagation(); /* Add to list logic here */ }}>
+                                    <i className="fas fa-plus text-lg"></i>
                                 </div>
                             </div>
 
                             {/* Interaction: Voting (Upcoming) or Rating (Released) */}
                             {isUpcoming ? (
-                                <div className="w-48 md:w-56 bg-white shadow-2xl flex items-stretch border-t-4 border-primary-red overflow-hidden transform md:-translate-y-4">
+                                <div className="w-64 md:w-56 bg-white shadow-2xl flex items-stretch border-t-4 border-primary-red overflow-hidden transform md:-translate-y-4">
                                     <div className="bg-primary-red/5 px-4 flex flex-col items-center justify-center border-r border-gray-100 min-w-[50px]">
                                         <span className="text-2xl font-black text-primary-red italic">{watchScore}</span>
                                     </div>
@@ -159,7 +159,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="w-48 md:w-56 bg-white shadow-2xl p-3 border-t-4 border-primary-red transform md:-translate-y-4">
+                                <div className="w-64 md:w-56 bg-white shadow-2xl p-3 border-t-4 border-primary-red transform md:-translate-y-4">
                                     <div className="flex flex-col">
                                         <div className="flex flex-col items-center justify-between gap-3 mt-auto">
                                             <div className="w-full flex flex-col items-center gap-1 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
@@ -206,42 +206,143 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                     </div>
                                 </div>
                             )}
+
+                            {/* Mobile YouTube Links (Moved here to show after Rating) */}
+                            {movie.youtubeLinks?.length > 0 && (
+                                <div className="lg:hidden mt-6 flex flex-col gap-2 w-full max-w-sm mx-auto md:mx-0 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                                    <div className="flex items-center gap-2 mb-2 px-1">
+                                        <div className="w-8 h-8 rounded-full bg-primary-red flex items-center justify-center shadow-lg shadow-primary-red/20">
+                                            <i className="fab fa-youtube text-white text-xs"></i>
+                                        </div>
+                                        <span className="text-[10px] font-black text-white uppercase tracking-[0.2em] italic">Official Promos</span>
+                                    </div>
+                                    <div className="flex flex-col gap-3">
+                                        {movie.youtubeLinks.slice(0, 4).map((link, idx) => {
+                                             let videoId = '';
+                                             if (link.url.includes('v=')) {
+                                                 videoId = link.url.split('v=')[1].split('&')[0];
+                                             } else if (link.url.includes('youtu.be/')) {
+                                                 videoId = link.url.split('youtu.be/')[1].split('?')[0];
+                                             } else {
+                                                 videoId = link.url.split('/').pop().split('?')[0];
+                                             }
+                                             const thumbUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                                             return (
+                                                <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-black/40 backdrop-blur-md border border-white/10 p-2.5 rounded-2xl no-underline hover:bg-primary-red transition-all duration-300 group">
+                                                    <div className="w-24 aspect-video rounded-xl overflow-hidden shrink-0 relative shadow-lg group-hover:ring-2 ring-white/50">
+                                                        <img src={thumbUrl} className="w-full h-full object-cover" alt="" />
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                                            <i className="fas fa-play text-[10px] text-white"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-col min-w-0">
+                                                        <span className="text-[11px] font-black text-white italic truncate pr-2 leading-tight uppercase tracking-tight text-left">{link.title || 'Watch Video'}</span>
+                                                        <span className="text-[8px] font-bold text-white/40 uppercase tracking-widest group-hover:text-white/80 text-left">Play on YouTube</span>
+                                                    </div>
+                                                </a>
+                                             );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Title & Info (Top on Mobile) */}
-                        <div className="flex-1 w-full text-center md:text-left pb-4 md:pb-12">
-                            <div className="flex flex-col items-center md:items-start gap-2 mb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-[3px] bg-yellow-400"></div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-400 italic">
-                                        {isUpcoming ? 'UPCOMING BLOCKBUSTER' : 'NOW STREAMING'}
-                                    </span>
+                        <div className="flex-1 w-full text-center md:text-left pb-0 md:pb-12">
+                            <div className="flex flex-col items-center md:items-start gap-4 mb-6">
+                                {/* Production House (Mobile Focus) */}
+                                <div className="flex flex-col items-center md:items-start gap-1">
+                                    <span className="text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-[0.4em]">Pbtadka Productions</span>
+                                    <div className="flex items-center gap-3">
+                                        <div className="hidden md:block w-8 h-[3px] bg-yellow-400"></div>
+                                        <div className="md:hidden w-12 h-1 bg-yellow-400 rounded-full"></div>
+                                        <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-yellow-400 italic">
+                                            {isUpcoming ? 'COMING SOON' : 'NOW STREAMING'}
+                                        </span>
+                                    </div>
                                 </div>
-                                <h1 className="text-4xl md:text-7xl font-black italic tracking-tighter uppercase leading-[0.85] flex flex-wrap justify-center md:justify-start">
-                                    <span className="text-white">{titleFirst}</span>
-                                    <span className="text-yellow-400">{titleSecond}</span>
+                                
+                                {/* Metallic Cinematic Title */}
+                                <h1 className="text-5xl md:text-[4rem] font-black italic tracking-tighter uppercase leading-[0.8] drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                                    <span className="text-white bg-clip-text text-transparent bg-gradient-to-b from-white via-gray-300 to-gray-500">{titleFirst}</span>
+                                    <span className="text-yellow-400 bg-clip-text text-transparent bg-gradient-to-b from-yellow-300 via-yellow-500 to-yellow-700">{titleSecond}</span>
                                 </h1>
                             </div>
-                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-y-2 gap-x-4 text-white font-bold uppercase tracking-widest text-[9px] md:text-xs">
-                                <span className="text-yellow-400 font-black leading-tight">
-                                    RELEASE DATE: {
-                                        (movie.isReleaseDateConfirmed && movie.releaseDate) ? (
-                                            <span className="text-white opacity-90 font-bold">{new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
-                                        ) : (
-                                            <span className="text-white opacity-90 font-bold">{movie.estimatedRelease || 'TBA'}</span>
-                                        )
-                                    }
-                                </span>
-                                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"></span>
-                                <span className="text-yellow-400 font-black tracking-tight">{movie.industry}</span>
-                                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"></span>
-                                <span className="opacity-90">{movie.genre}</span>
+
+                            {/* Meta Info Bar (Centered Dots for Mobile) */}
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-y-3 gap-x-4 text-white font-black uppercase tracking-widest text-[9px] md:text-xs mb-2 md:mb-8">
+                                <span className="text-yellow-400">RELEASE DATE: <span className="text-white">
+                                    {(movie.isReleaseDateConfirmed && movie.releaseDate) ? 
+                                        new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) : 
+                                        (movie.estimatedRelease || 'TBA')}
+                                </span></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.5)]"></span>
+                                <span className="text-yellow-400">{movie.industry}</span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.5)]"></span>
+                                <span className="opacity-90">{movie.genre?.split(',')[0]}</span>
                             </div>
+
+                            {/* Action Buttons (Desktop Only) */}
+                            <div className="hidden md:flex flex-wrap items-center justify-start gap-4 px-0 mt-8">
+                                <button className="bg-yellow-400 hover:bg-yellow-500 text-black px-10 py-4 rounded-full font-black uppercase tracking-widest flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-yellow-400/20 group">
+                                    <i className="fas fa-play text-lg group-hover:animate-pulse"></i>
+                                    <span>Watch Now</span>
+                                </button>
+                                <button className="bg-white/5 hover:bg-white/10 text-white border-2 border-white/20 px-10 py-4 rounded-full font-black uppercase tracking-widest flex items-center gap-3 transition-all hover:scale-105 active:scale-95 backdrop-blur-md">
+                                    <i className="fas fa-plus"></i>
+                                    <span>Watchlist</span>
+                                </button>
+                                <button className="w-14 h-14 rounded-full border-2 border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all group">
+                                    <i className="fas fa-share-alt group-hover:rotate-12"></i>
+                                </button>
+                            </div>
+
                         </div>
+
+                        {/* Vertical YouTube Sidebar (Desktop Only) */}
+                        {movie.youtubeLinks?.length > 0 && (
+                            <div className="hidden lg:flex flex-col gap-3 absolute top-12 right-0 w-64 max-h-[400px] overflow-y-auto no-scrollbar pr-2 animate-in fade-in slide-in-from-right-8 duration-700">
+                                <div className="flex items-center gap-2 mb-2 px-1">
+                                    <i className="fab fa-youtube text-primary-red text-xl"></i>
+                                    <span className="text-[10px] font-black text-white uppercase tracking-[0.2em] italic">Official Videos</span>
+                                </div>
+                                {movie.youtubeLinks.map((link, idx) => {
+                                    let videoId = '';
+                                    if (link.url.includes('v=')) {
+                                        videoId = link.url.split('v=')[1].split('&')[0];
+                                    } else if (link.url.includes('youtu.be/')) {
+                                        videoId = link.url.split('youtu.be/')[1].split('?')[0];
+                                    } else {
+                                        videoId = link.url.split('/').pop().split('?')[0];
+                                    }
+                                    const thumbUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                                    return (
+                                        <a 
+                                            key={idx} 
+                                            href={link.url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="group/vlink flex items-center gap-4 bg-black/40 backdrop-blur-xl border border-white/10 p-3 rounded-2xl hover:bg-primary-red transition-all duration-300 no-underline shadow-2xl hover:-translate-x-3"
+                                        >
+                                            <div className="w-28 aspect-video rounded-xl overflow-hidden relative shrink-0 shadow-lg group-hover/vlink:ring-2 ring-white/50">
+                                                <img src={thumbUrl} className="w-full h-full object-cover" alt="" />
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover/vlink:bg-black/10">
+                                                    <i className="fas fa-play text-xs text-white"></i>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col min-w-0 pr-2">
+                                                <span className="text-[11px] font-black text-white italic tracking-tight uppercase line-clamp-2 leading-tight mb-1">{link.title || `Video ${idx + 1}`}</span>
+                                                <span className="text-[8px] font-bold text-white/50 uppercase tracking-widest group-hover/vlink:text-white transition-colors">Play Video</span>
+                                            </div>
+                                        </a>
+                                    );
+                                })}
+                            </div>
+                        )}
 
                         {/* Countdown Sidebar (Desktop/Tablet - Top Right) */}
                         {isUpcoming && (
-                            <div className="hidden md:block absolute top-12 right-0">
+                            <div className={`hidden md:block absolute right-0 ${movie.youtubeLinks?.length > 0 ? 'top-[440px]' : 'top-12'}`}>
                                 <CountdownTimer targetDate={movie.releaseDate} />
                             </div>
                         )}
@@ -270,63 +371,6 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                     <div className="lg:w-[65%] xl:w-[65%] space-y-12">
                         {activeTab === 'Timeline' && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-12">
-                                {/* YouTube Video Ribbon */}
-                                {movie.youtubeLinks?.length > 0 && (
-                                    <section className="relative overflow-hidden bg-slate-900 py-6 rounded-[2rem] shadow-xl border-b-4 border-primary-red group/ribbon">
-                                        <div className="absolute top-0 left-0 h-full w-20 bg-gradient-to-r from-slate-900 to-transparent z-10"></div>
-                                        <div className="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-slate-900 to-transparent z-10"></div>
-                                        
-                                        <div className="flex gap-6 animate-marquee whitespace-nowrap px-10 group-hover/ribbon:pause">
-                                            {/* Render twice for seamless loop */}
-                                            {[...movie.youtubeLinks, ...movie.youtubeLinks].map((link, idx) => {
-                                                let videoId = '';
-                                                if (link.url.includes('v=')) {
-                                                    videoId = link.url.split('v=')[1].split('&')[0];
-                                                } else if (link.url.includes('youtu.be/')) {
-                                                    videoId = link.url.split('youtu.be/')[1].split('?')[0];
-                                                } else {
-                                                    videoId = link.url.split('/').pop().split('?')[0];
-                                                }
-                                                const thumbUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-                                                return (
-                                                    <a 
-                                                        key={idx} 
-                                                        href={link.url} 
-                                                        target="_blank" 
-                                                        rel="noopener noreferrer"
-                                                        className="inline-flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/10 p-2 pr-6 rounded-2xl transition-all hover:scale-105 no-underline group/link"
-                                                    >
-                                                        <div className="w-20 aspect-video rounded-xl overflow-hidden relative shrink-0">
-                                                            <img src={thumbUrl} className="w-full h-full object-cover" alt="" />
-                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover/link:bg-black/20">
-                                                                <i className="fas fa-play text-white text-xs"></i>
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex flex-col">
-                                                            <span className="text-[10px] font-black text-primary-red uppercase tracking-widest leading-none mb-1">Watch Now</span>
-                                                            <span className="text-sm font-black text-white italic tracking-tight uppercase line-clamp-1">{link.title || 'Official Video'}</span>
-                                                        </div>
-                                                    </a>
-                                                );
-                                            })}
-                                        </div>
-
-                                        <style dangerouslySetInnerHTML={{ __html: `
-                                            @keyframes marquee {
-                                                0% { transform: translateX(0); }
-                                                100% { transform: translateX(-50%); }
-                                            }
-                                            .animate-marquee {
-                                                display: flex;
-                                                width: max-content;
-                                                animation: marquee 30s linear infinite;
-                                            }
-                                            .pause {
-                                                animation-play-state: paused;
-                                            }
-                                        `}} />
-                                    </section>
-                                )}
                                 <section>
                                     <div className="flex items-center gap-4 mb-8">
                                         <div className="h-10 w-1.5 bg-primary-red rounded-full"></div>

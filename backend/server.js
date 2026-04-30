@@ -8,6 +8,7 @@ const { startHeartbeat } = require('./utils/heartbeat');
 require('dotenv').config();
 
 const MongoStore = require('connect-mongo');
+const Redirect = require('./models/Redirect');
 const app = express();
 
 const startServer = async () => {
@@ -15,6 +16,30 @@ const startServer = async () => {
         // Connect Database
         await connectDB();
         startHeartbeat();
+
+        // 301 Redirect Middleware (Checks DB for custom redirects)
+        app.use(async (req, res, next) => {
+            try {
+                // Skip API and Static files
+                if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.includes('.')) {
+                    return next();
+                }
+
+                const path = req.path.toLowerCase().replace(/\/$/, '') || '/';
+                const redirect = await Redirect.findOne({ 
+                    fromPath: { $in: [path, path + '/'] },
+                    isActive: true 
+                });
+
+                if (redirect) {
+                    console.log(`[301 Redirect] ${req.path} -> ${redirect.toUrl}`);
+                    return res.redirect(301, redirect.toUrl);
+                }
+                next();
+            } catch (err) {
+                next();
+            }
+        });
 
         // Init Middleware
         app.set('trust proxy', 1); // Trust first proxy (Render, Heroku, etc.)
