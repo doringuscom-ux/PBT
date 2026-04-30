@@ -212,6 +212,23 @@ router.post('/auto-generate', async (req, res) => {
             }
         }
 
+        // Process Celebrity Industry Pages
+        const industries = [...new Set(celebs.map(c => c.industry).filter(Boolean))];
+        for (const ind of industries) {
+            const slugifiedInd = ind.toLowerCase().trim().replace(/\s+/g, '-');
+            const url = `/celebrities/${slugifiedInd}`;
+            const exists = await SEO.findOne({ url });
+            if (!exists) {
+                await SEO.create({
+                    url,
+                    title: `${ind} Film Industry | News & Celebs | Pbtadka`,
+                    description: `Latest news and updates from the ${ind} film industry.`,
+                    isAuto: true
+                });
+                createdCount++;
+            }
+        }
+
         // Process Videos
         for (const item of videos) {
             const url = `/latest-viral-videos/${item.slug || item._id}`.toLowerCase();

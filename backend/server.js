@@ -26,6 +26,16 @@ const startServer = async () => {
                 }
 
                 const path = req.path.toLowerCase().replace(/\/$/, '') || '/';
+                
+                // 1. Handle Automatic Space-to-Hyphen Redirects (e.g., %20 to -)
+                // This covers your request to move Telugu%20film%20industry -> telugu-film-industry
+                if (req.path.includes('%20') || req.path.includes(' ')) {
+                    const cleanPath = req.path.toLowerCase().replace(/%20|\s+/g, '-').replace(/\/$/, '');
+                    console.log(`[301 Auto-Slug] ${req.path} -> ${cleanPath}`);
+                    return res.redirect(301, cleanPath);
+                }
+
+                // 2. Database Redirects
                 const redirect = await Redirect.findOne({ 
                     fromPath: { $in: [path, path + '/'] },
                     isActive: true 

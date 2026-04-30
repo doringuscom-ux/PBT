@@ -6,6 +6,10 @@
   # This requires Map functionality which might not be on all shared hosts.
   # If it fails, we can skip it, but let's try the trailing slash fix first.
 
+  # 1. Handle spaces and %20 in URLs (Redirect to hyphenated version)
+  RewriteCond %{REQUEST_URI} ^(.*)(\s|%20)(.*)$
+  RewriteRule ^ %1-%3 [L,R=301]
+
   # 2. Remove trailing slashes from all URLs (except directories)
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_URI} (.+)/$

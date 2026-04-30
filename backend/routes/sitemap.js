@@ -90,7 +90,8 @@ router.get('/', async (req, res) => {
         // Add Celebrity Industry Pages
         const industries = [...new Set(celebs.map(c => c.industry).filter(Boolean))];
         industries.forEach(ind => {
-            const url = `${BASE_URL}/celebrities/${ind}`.toLowerCase().replace(/\/$/, '');
+            const slugifiedInd = ind.toLowerCase().trim().replace(/\s+/g, '-');
+            const url = `${BASE_URL}/celebrities/${slugifiedInd}`.replace(/\/$/, '');
             xml += `
   <url>
     <loc>${url}</loc>

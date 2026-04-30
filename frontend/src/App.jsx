@@ -71,7 +71,10 @@ const CelebrityPageWrapper = () => {
   const { celebs } = useData();
   
   const industries = [...new Set((celebs || []).map(c => c.industry).filter(Boolean))];
-  const isIndustry = industries.some(ind => ind.toLowerCase() === param?.toLowerCase());
+  const isIndustry = industries.some(ind => 
+    ind.toLowerCase() === param?.toLowerCase() || 
+    ind.toLowerCase().trim().replace(/\s+/g, '-') === param?.toLowerCase()
+  );
 
   if (isIndustry) {
     return <CelebList />;
