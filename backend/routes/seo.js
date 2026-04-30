@@ -99,6 +99,51 @@ router.post('/auto-generate', async (req, res) => {
         ]);
 
         let createdCount = 0;
+
+        // 1. Migration: Automatically update old URL patterns to new ones
+        const oldPatterns = [
+            { old: '/news/', new: '/latest-news/' },
+            { old: '/movie/', new: '/latest-movies/' },
+            { old: '/celeb/', new: '/celebrities/' },
+            { url: '/videos', new: '/latest-viral-videos' }, // Exact match fix
+            { old: '/video/', new: '/latest-viral-videos/' }
+        ];
+
+        for (const pattern of oldPatterns) {
+            const regex = pattern.old ? new RegExp('^' + pattern.old.replace(/\//g, '\\/'), 'i') : null;
+            
+            if (regex) {
+                // Bulk update all records starting with the old pattern
+                const entriesToUpdate = await SEO.find({ url: { $regex: regex } });
+                for (const entry of entriesToUpdate) {
+                    const newUrl = entry.url.replace(regex, pattern.new);
+                    // Check if new URL already exists before updating
+                    const exists = await SEO.findOne({ url: newUrl });
+                    if (!exists) {
+                        entry.url = newUrl;
+                        await entry.save();
+                        createdCount++;
+                    } else {
+                        // If new one exists, just delete the old duplicate
+                        await SEO.deleteOne({ _id: entry._id });
+                    }
+                }
+            } else if (pattern.url) {
+                // Exact match update
+                const entry = await SEO.findOne({ url: pattern.url });
+                if (entry) {
+                    const exists = await SEO.findOne({ url: pattern.new });
+                    if (!exists) {
+                        entry.url = pattern.new;
+                        await entry.save();
+                        createdCount++;
+                    } else {
+                        await SEO.deleteOne({ _id: entry._id });
+                    }
+                }
+            }
+        }
+
         const staticPages = [
             { url: '/', title: 'Pbtadka | Latest News, Movies & Celebrity Updates', description: 'Your premier destination for cinema news, reviews, trailers, and celebrity interviews.' },
             { url: '/latest-news', title: 'Latest News & Headlines | Pbtadka', description: 'Stay updated with the latest breaking news from the film industry.' },
@@ -182,7 +227,37 @@ router.post('/auto-generate', async (req, res) => {
             }
         }
 
-        res.json({ success: true, message: `Successfully generated ${createdCount} new SEO records.`, createdCount });
+        // 7. Cleanup: Delete SEO records for system pages that no longer exist
+        // First, build a Set of all valid system URLs we just processed/verified
+        const validSystemUrls = new Set([
+            ...staticPages.map(p => p.url),
+            ...news.map(item => `/latest-news/${item.slug || item._id}`.toLowerCase()),
+            ...movies.map(item => `/latest-movies/${item.slug || item._id}`.toLowerCase()),
+            ...celebs.map(item => `/celebrities/${item.slug || item._id}`.toLowerCase()),
+            ...videos.map(item => `/latest-viral-videos/${item.slug || item._id}`.toLowerCase())
+        ]);
+
+        // Find all SEO entries that start with our system prefixes but aren't in the valid set
+        const systemPrefixes = ['/latest-news/', '/latest-movies/', '/celebrities/', '/latest-viral-videos/'];
+        const allSeoEntries = await SEO.find({});
+        let deletedCount = 0;
+
+        for (const entry of allSeoEntries) {
+            const isSystemPage = systemPrefixes.some(p => entry.url.startsWith(p)) || 
+                                 staticPages.some(p => p.url === entry.url);
+            
+            if (isSystemPage && !validSystemUrls.has(entry.url)) {
+                await SEO.deleteOne({ _id: entry._id });
+                deletedCount++;
+            }
+        }
+
+        res.json({ 
+            success: true, 
+            message: `Successfully updated SEO. Migrated old URLs, added ${createdCount} new records, and cleaned up ${deletedCount} invalid entries.`,
+            createdCount,
+            deletedCount
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
