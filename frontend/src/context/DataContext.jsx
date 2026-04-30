@@ -26,7 +26,7 @@ export const DataProvider = ({ children }) => {
   const fetchData = async () => {
     setIsLoading(true);
     setLoadingProgress(0);
-    const totalRequests = 6;
+    const totalRequests = 7;
     let completed = 0;
 
     const increment = () => {
@@ -51,19 +51,18 @@ export const DataProvider = ({ children }) => {
         api.getNews().finally(increment),
         api.getTodayNews().finally(increment),
         api.getCelebrities().finally(increment),
-        api.getVideos().finally(increment)
+        api.getVideos().finally(increment),
+        api.getAnnouncements().finally(increment)
       ]);
 
-      const [moviesRes, newsRes, todayNewsRes, celebsRes, videosRes] = results;
+      const [moviesRes, newsRes, todayNewsRes, celebsRes, videosRes, annRes] = results;
 
       setMovies(moviesRes.data.sort((a, b) => new Date(b.createdAt || b.year) - new Date(a.createdAt || a.year)));
       setNews(newsRes.data.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)));
       setTodayNews(todayNewsRes.data.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)));
       setCelebs(celebsRes.data);
       setVideos(videosRes.data);
-      
-      const savedAnn = localStorage.getItem('pbt_announcements');
-      setAnnouncements(savedAnn ? JSON.parse(savedAnn) : []);
+      setAnnouncements(annRes.data || []);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -409,17 +408,32 @@ export const DataProvider = ({ children }) => {
   };
 
 
-  const updateAnnouncements = (newAnns) => {
-    setAnnouncements(newAnns);
-    localStorage.setItem('pbt_announcements', JSON.stringify(newAnns));
+  const addAnnouncement = async (text) => {
+    try {
+      const res = await api.addAnnouncement({ text });
+      setAnnouncements([res.data, ...announcements]);
+      return { success: true };
+    } catch (err) { 
+      console.error(err); 
+      return { success: false, error: err.message };
+    }
   };
 
-  const combinedAnnouncements = [
-      ...announcements.map(text => ({ text, link: null })),
-      ...news
-        .filter(item => item.category?.toUpperCase().includes('BREAKING'))
-        .map(item => ({ text: item.title, link: `/news/${item._id}` }))
-    ];
+  const deleteAnnouncement = async (id) => {
+    try {
+      await api.deleteAnnouncement(id);
+      setAnnouncements(announcements.filter(a => a._id !== id));
+      return { success: true };
+    } catch (err) { 
+      console.error(err); 
+      return { success: false, error: err.message };
+    }
+  };
+
+  const combinedAnnouncements = announcements.map(ann => ({ 
+    text: ann.text, 
+    link: ann.link || null 
+  }));
 
     // if (combinedAnnouncements.length === 0) {
     //   combinedAnnouncements.push({ text: "Stay tuned for the latest film updates!", link: null });
@@ -436,7 +450,7 @@ export const DataProvider = ({ children }) => {
         addComment, deleteComment, likeComment, reportComment, updateComment,
         announcements: combinedAnnouncements,
         manualAnnouncements: announcements,
-        updateAnnouncements,
+        addAnnouncement, deleteAnnouncement,
         user, setUser, logout,
         refreshData: fetchData,
         addMovieComment, deleteMovieComment, likeMovieComment, updateMovieComment, rateMovie,

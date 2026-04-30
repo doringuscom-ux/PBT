@@ -74,6 +74,10 @@ export const submitInquiry = (data) => api.post('/inquiries', data);
 export const deleteInquiry = (id) => api.delete(`/inquiries/${id}`);
 export const updateInquiry = (id, data) => api.put(`/inquiries/${id}`, data);
 
+export const getAnnouncements = () => api.get('/announcements');
+export const addAnnouncement = (data) => api.post('/announcements', data);
+export const deleteAnnouncement = (id) => api.delete(`/announcements/${id}`);
+
 export const getWidgets = (params) => widgetApi.get('/widgets', { params });
 
 export default api;

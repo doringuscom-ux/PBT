@@ -46,7 +46,7 @@ const AnnouncementBar = () => {
             {/* Breaking Tag */}
             <div className="bg-gradient-to-r from-black to-slate-900 shadow-[20px_0_40px_rgba(0,0,0,0.5)] text-white px-4 md:px-10 h-full flex items-center gap-2 md:gap-3 shrink-0 z-30 relative">
                 <span className="w-1.5 h-1.5 md:w-2.5 md:h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_10px_rgba(255,255,255,1)]"></span>
-                <span className="font-black text-[10px] md:text-[14px] uppercase tracking-[0.2em] md:tracking-[0.3em] italic text-yellow-400">Breaking</span>
+                <span className="font-black text-[10px] md:text-[14px] uppercase tracking-[0.2em] md:tracking-[0.3em] italic text-yellow-400">Announcement</span>
                 {/* Slanted edge effect */}
                 <div className="absolute top-0 -right-4 h-full w-8 bg-slate-900 -skew-x-[20deg] border-r border-white/5 z-0"></div>
             </div>

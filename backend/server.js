@@ -101,6 +101,7 @@ const startServer = async () => {
         app.use('/api/news', require('./routes/news'));
         app.use('/api/celebrities', require('./routes/celebrities'));
         app.use('/api/videos', require('./routes/videos'));
+        app.use('/api/announcements', require('./routes/announcements'));
         app.use('/api/users', require('./routes/users'));
         app.use('/api/subscribers', require('./routes/subscribers'));
         app.use('/api/inquiries', require('./routes/inquiries'));

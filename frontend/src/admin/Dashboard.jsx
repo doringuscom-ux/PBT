@@ -5,19 +5,18 @@ import SlugMigrator from '../components/SlugMigrator';
 import * as api from '../api';
 
 const Dashboard = () => {
-  const { movies, news, celebs, videos, user, manualAnnouncements: announcements, updateAnnouncements } = useData();
+  const { movies, news, celebs, videos, user, manualAnnouncements: announcements, addAnnouncement, deleteAnnouncement } = useData();
   const [newAnn, setNewAnn] = useState('');
 
-  const handleAddAnn = (e) => {
+  const handleAddAnn = async (e) => {
     e.preventDefault();
     if (!newAnn.trim()) return;
-    updateAnnouncements([newAnn.trim(), ...announcements]);
+    await addAnnouncement(newAnn.trim());
     setNewAnn('');
   };
 
-  const handleRemoveAnn = (index) => {
-    const updated = announcements.filter((_, i) => i !== index);
-    updateAnnouncements(updated);
+  const handleRemoveAnn = async (id) => {
+    await deleteAnnouncement(id);
   };
 
   const [subStats, setSubStats] = useState({ total: 0 });
@@ -99,8 +98,8 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h3 className="font-bold mb-4 flex items-center gap-2 text-primary-red">
-            <i className="fas fa-bullhorn"></i> Site Announcements
+          <h3 className="font-bold mb-4 flex items-center gap-2 text-primary-red uppercase tracking-widest text-xs italic">
+            <i className="fas fa-bullhorn animate-bounce"></i> Announcement Bar Manager
           </h3>
           <form onSubmit={handleAddAnn} className="flex gap-2 mb-4">
             <input 
@@ -113,10 +112,10 @@ const Dashboard = () => {
             <button type="submit" className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red">Add</button>
           </form>
           <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
-            {announcements.map((ann, i) => (
-              <div key={i} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg text-sm group">
-                <span className="text-text-dark flex-1 italic">"{ann}"</span>
-                <button onClick={() => handleRemoveAnn(i)} className="text-gray-400 hover:text-red-500 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            {announcements.map((ann) => (
+              <div key={ann._id} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg text-sm group">
+                <span className="text-text-dark flex-1 italic">"{ann.text}"</span>
+                <button onClick={() => handleRemoveAnn(ann._id)} className="text-gray-400 hover:text-red-500 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <i className="fas fa-times"></i>
                 </button>
               </div>
