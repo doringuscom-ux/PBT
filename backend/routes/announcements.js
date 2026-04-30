@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Announcement = require('../models/Announcement');
-const auth = require('../middleware/auth');
 
 // @route   GET /api/announcements
 // @desc    Get all active announcements
@@ -18,10 +17,11 @@ router.get('/', async (req, res) => {
 // @route   POST /api/announcements
 // @desc    Add an announcement
 // @access  Private (Admin/Sub-admin)
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        // Only admin and sub-admin can add announcements
-        if (req.user.role !== 'admin' && req.user.role !== 'sub-admin') {
+        // Use session-based auth like other routes
+        const user = req.session.user;
+        if (!user || (user.role !== 'admin' && user.role !== 'sub-admin')) {
             return res.status(403).json({ msg: 'Authorization denied' });
         }
 
@@ -37,10 +37,11 @@ router.post('/', auth, async (req, res) => {
 // @route   DELETE /api/announcements/:id
 // @desc    Delete an announcement
 // @access  Private (Admin/Sub-admin)
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
-        // Only admin and sub-admin can delete announcements
-        if (req.user.role !== 'admin' && req.user.role !== 'sub-admin') {
+        // Use session-based auth like other routes
+        const user = req.session.user;
+        if (!user || (user.role !== 'admin' && user.role !== 'sub-admin')) {
             return res.status(403).json({ msg: 'Authorization denied' });
         }
 
