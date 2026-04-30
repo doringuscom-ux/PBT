@@ -101,14 +101,15 @@ router.post('/auto-generate', async (req, res) => {
         let createdCount = 0;
         const staticPages = [
             { url: '/', title: 'Pbtadka | Latest News, Movies & Celebrity Updates', description: 'Your premier destination for cinema news, reviews, trailers, and celebrity interviews.' },
-            { url: '/news', title: 'Latest News & Headlines | Pbtadka', description: 'Stay updated with the latest breaking news from the film industry.' },
-            { url: '/movies', title: 'Movies Vault | Reviews & Releases | Pbtadka', description: 'Explore our complete database of movies, reviews, and release dates.' },
-            { url: '/celebs', title: 'Celebrities Profiles & Interviews | Pbtadka', description: 'Detailed profiles and exclusive interviews with your favorite stars.' },
-            { url: '/videos', title: 'Latest Movie Trailers & Videos | Pbtadka', description: 'Watch the latest trailers, teasers, and exclusive video content.' },
-            { url: '/upcoming', title: 'Upcoming Movies & Releases | Pbtadka', description: 'Plan your cinema visits with our list of upcoming movie releases.' },
-            { url: '/sports', title: 'Sports News & Updates | Pbtadka', description: 'Latest updates and actions from the world of sports.' },
+            { url: '/latest-news', title: 'Latest News & Headlines | Pbtadka', description: 'Stay updated with the latest breaking news from the film industry.' },
+            { url: '/latest-movies', title: 'Movies Vault | Reviews & Releases | Pbtadka', description: 'Explore our complete database of movies, reviews, and release dates.' },
+            { url: '/celebrities', title: 'Celebrities Profiles & Interviews | Pbtadka', description: 'Detailed profiles and exclusive interviews with your favorite stars.' },
+            { url: '/latest-viral-videos', title: 'Latest Movie Trailers & Videos | Pbtadka', description: 'Watch the latest trailers, teasers, and exclusive video content.' },
+            { url: '/latest-movies/upcoming', title: 'Upcoming Movies & Releases | Pbtadka', description: 'Plan your cinema visits with our list of upcoming movie releases.' },
+            { url: '/latest-news/sports', title: 'Sports News & Updates | Pbtadka', description: 'Latest updates and actions from the world of sports.' },
+            { url: '/latest-news/today', title: 'Today\'s Breaking News | Pbtadka', description: 'Freshly posted news from the last 24 hours.' },
             { url: '/contact-us', title: 'Contact Us | Pbtadka', description: 'Get in touch with the Pbtadka team for inquiries and feedback.' },
-            { url: '/box-office', title: 'Box Office Collections & Reports | Pbtadka', description: 'Track the latest box office performance of movies.' }
+            { url: '/movie-box-office', title: 'Box Office Collections & Reports | Pbtadka', description: 'Track the latest box office performance of movies.' }
         ];
 
         // Process Static Pages
@@ -122,7 +123,7 @@ router.post('/auto-generate', async (req, res) => {
 
         // Process News
         for (const item of news) {
-            const url = `/news/${item.slug || item._id}`.toLowerCase().replace(/\/$/, '');
+            const url = `/latest-news/${item.slug || item._id}`.toLowerCase().replace(/\/$/, '');
             const exists = await SEO.findOne({ url });
             if (!exists) {
                 await SEO.create({
@@ -138,7 +139,7 @@ router.post('/auto-generate', async (req, res) => {
 
         // Process Movies
         for (const item of movies) {
-            const url = `/movie/${item.slug || item._id}`.toLowerCase();
+            const url = `/latest-movies/${item.slug || item._id}`.toLowerCase();
             const exists = await SEO.findOne({ url });
             if (!exists) {
                 await SEO.create({
@@ -153,7 +154,7 @@ router.post('/auto-generate', async (req, res) => {
 
         // Process Celebs
         for (const item of celebs) {
-            const url = `/celeb/${item.slug || item._id}`.toLowerCase();
+            const url = `/celebrities/${item.slug || item._id}`.toLowerCase();
             const exists = await SEO.findOne({ url });
             if (!exists) {
                 await SEO.create({
@@ -168,7 +169,7 @@ router.post('/auto-generate', async (req, res) => {
 
         // Process Videos
         for (const item of videos) {
-            const url = `/video/${item.slug || item._id}`.toLowerCase();
+            const url = `/latest-viral-videos/${item.slug || item._id}`.toLowerCase();
             const exists = await SEO.findOne({ url });
             if (!exists) {
                 await SEO.create({
@@ -177,6 +178,7 @@ router.post('/auto-generate', async (req, res) => {
                     description: (item.description || '').substring(0, 160).trim(),
                     isAuto: true
                 });
+                createdCount++;
             }
         }
 
