@@ -22,7 +22,13 @@ const CelebList = () => {
   }, [param]);
 
   const industries = ['ALL', ...new Set(celebs.map(c => c.industry).filter(Boolean))];
-  const filteredCelebs = filter === 'ALL' ? celebs : celebs.filter(c => c.industry === filter);
+  
+  // Find the original industry name from the slugified param
+  const activeIndustry = industries.find(ind => 
+    ind.toLowerCase().trim().replace(/\s+/g, '-') === param?.toLowerCase()
+  ) || 'ALL';
+
+  const filteredCelebs = activeIndustry === 'ALL' ? celebs : celebs.filter(c => c.industry === activeIndustry);
   const displayedCelebs = filteredCelebs.slice(0, visibleCount);
 
   return (
@@ -59,9 +65,9 @@ const CelebList = () => {
             <div className="p-4 md:p-[18px] mb-4 border-b border-white/10">
                 <FilterBar 
                     options={industries} 
-                    activeFilter={filter} 
+                    activeFilter={activeIndustry} 
                     onFilterChange={setFilter} 
-                    linkGenerator={(opt) => opt === 'ALL' ? '/celebrities' : `/celebrities/${opt}`}
+                    linkGenerator={(opt) => opt === 'ALL' ? '/celebrities' : `/celebrities/${opt.toLowerCase().trim().replace(/\s+/g, '-')}`}
                     label="Industry" 
                 />
             </div>

@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import FilterBar from '../components/FilterBar';
 import MovieCard from '../components/MovieCard';
 
 const UpcomingList = () => {
   const { movies } = useData();
-  const [filter, setFilter] = useState('ALL');
+  const params = useParams();
+  const param = params.param || params['*'];
 
-  const industries = ['ALL', ...new Set(movies.filter(m => m.industry).map(m => m.industry.trim().toUpperCase()))];
+  const industries = ['ALL', ...new Set(movies.filter(m => m.industry).map(m => m.industry.trim()))];
   
+  // Find the original industry name from the slugified param
+  const activeIndustry = industries.find(ind => 
+    ind.toLowerCase().trim().replace(/\s+/g, '-') === param?.toLowerCase()
+  ) || 'ALL';
+
   const upcomingMovies = movies.filter(m => {
     const today = new Date();
     const isReleased = m.releaseDate && new Date(m.releaseDate) <= today;
@@ -30,9 +36,9 @@ const UpcomingList = () => {
     return 0;
   });
 
-  const filteredMovies = filter === 'ALL' 
+  const filteredMovies = activeIndustry === 'ALL' 
     ? upcomingMovies 
-    : upcomingMovies.filter(m => m.industry?.trim().toUpperCase() === filter);
+    : upcomingMovies.filter(m => m.industry?.trim() === activeIndustry);
 
   return (
     <div className="bg-[#050505] min-h-screen">
@@ -68,8 +74,8 @@ const UpcomingList = () => {
             <div className="p-4 md:p-[18px] mb-4 border-b border-white/10">
                 <FilterBar 
                     options={industries} 
-                    activeFilter={filter} 
-                    onFilterChange={setFilter} 
+                    activeFilter={activeIndustry} 
+                    linkGenerator={(opt) => opt === 'ALL' ? '/latest-movies/upcoming' : `/latest-movies/upcoming/${opt.toLowerCase().trim().replace(/\s+/g, '-')}`}
                     label="Industry" 
                 />
             </div>

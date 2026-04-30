@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import FilterBar from '../components/FilterBar';
 import MovieCard from '../components/MovieCard';
 
 const MovieList = () => {
   const { movies } = useData();
-  const [filter, setFilter] = useState('ALL');
+  const params = useParams();
+  const param = params.param || params['*'];
 
-  const industries = ['ALL', ...new Set(movies.filter(m => m.industry).map(m => m.industry.trim().toUpperCase()))];
+  const industries = ['ALL', ...new Set(movies.filter(m => m.industry).map(m => m.industry.trim()))];
   
+  // Find the original industry name from the slugified param
+  const activeIndustry = industries.find(ind => 
+    ind.toLowerCase().trim().replace(/\s+/g, '-') === param?.toLowerCase()
+  ) || 'ALL';
+
   const releasedMovies = movies.filter(m => {
     const today = new Date();
     
@@ -22,7 +28,7 @@ const MovieList = () => {
   });
 
   const filteredMovies = releasedMovies.filter(m => {
-    return filter === 'ALL' || m.industry?.trim().toUpperCase() === filter;
+    return activeIndustry === 'ALL' || m.industry?.trim() === activeIndustry;
   });
 
   return (
@@ -59,8 +65,8 @@ const MovieList = () => {
             <div className="p-4 md:p-[18px] mb-4 border-b border-white/10">
                 <FilterBar 
                     options={industries} 
-                    activeFilter={filter} 
-                    onFilterChange={setFilter} 
+                    activeFilter={activeIndustry} 
+                    linkGenerator={(opt) => opt === 'ALL' ? '/latest-movies' : `/latest-movies/${opt.toLowerCase().trim().replace(/\s+/g, '-')}`}
                     label="Industry" 
                 />
             </div>

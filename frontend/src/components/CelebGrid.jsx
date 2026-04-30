@@ -75,7 +75,7 @@ const CelebGrid = ({ industry }) => {
             </h2>
           </div>
           <Link 
-            to={industry ? `/celebrities/${industry}` : "/celebrities"} 
+            to={industry ? `/celebrities/${industry.toLowerCase().trim().replace(/\s+/g, '-')}` : "/celebrities"} 
             className="text-slate-900 font-black no-underline text-[10px] lg:text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors flex items-center gap-2 mb-2"
           >
             View More <i className="fas fa-arrow-right text-[10px]"></i>

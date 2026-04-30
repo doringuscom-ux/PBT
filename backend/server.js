@@ -28,10 +28,17 @@ const startServer = async () => {
                 const path = req.path.toLowerCase().replace(/\/$/, '') || '/';
                 
                 // 1. Handle Automatic Space-to-Hyphen Redirects (e.g., %20 to -)
-                // This covers your request to move Telugu%20film%20industry -> telugu-film-industry
                 if (req.path.includes('%20') || req.path.includes(' ')) {
                     const cleanPath = req.path.toLowerCase().replace(/%20|\s+/g, '-').replace(/\/$/, '');
                     console.log(`[301 Auto-Slug] ${req.path} -> ${cleanPath}`);
+                    return res.redirect(301, cleanPath);
+                }
+
+                // 2. Handle '/industry/' removal from Movies/Upcoming URLs
+                // If someone visits /latest-movies/upcoming/industry/bollywood -> redirect to /latest-movies/upcoming/bollywood
+                if (req.path.includes('/industry/')) {
+                    const cleanPath = req.path.replace('/industry/', '/').replace(/\/$/, '');
+                    console.log(`[301 Path-Cleanup] ${req.path} -> ${cleanPath}`);
                     return res.redirect(301, cleanPath);
                 }
 

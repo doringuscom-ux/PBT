@@ -64,19 +64,69 @@ const ProtectedRoute = ({ children }) => {
   return isAdmin ? children : <Navigate to="/admin/login" replace />;
 };
 
-// Wrapper to decide between Industry List and Celeb Detail
+// Wrapper to decide between Movie Industry and Movie Detail
+const MoviePageWrapper = () => {
+  const params = useParams();
+  const param = params['*'];
+  const { movies } = useData();
+  
+  const industries = [...new Set((movies || []).map(m => m.industry).filter(Boolean))];
+  const matchedIndustry = industries.find(ind => 
+    ind.toLowerCase() === param?.toLowerCase() || 
+    ind.toLowerCase().trim().replace(/\s+/g, '-') === param?.toLowerCase()
+  );
+
+  if (matchedIndustry) {
+    const slugified = matchedIndustry.toLowerCase().trim().replace(/\s+/g, '-');
+    // Redirect if current param is not already slugified (e.g. /Bollywood -> /bollywood)
+    if (param !== slugified) {
+      return <Navigate to={`/latest-movies/${slugified}`} replace />;
+    }
+    return <MovieList />;
+  }
+  return <MovieDetail />;
+};
+
+// Wrapper to decide between Upcoming Industry and Movie Detail
+const UpcomingPageWrapper = () => {
+  const params = useParams();
+  const param = params['*'];
+  const { movies } = useData();
+  
+  const industries = [...new Set((movies || []).map(m => m.industry).filter(Boolean))];
+  const matchedIndustry = industries.find(ind => 
+    ind.toLowerCase() === param?.toLowerCase() || 
+    ind.toLowerCase().trim().replace(/\s+/g, '-') === param?.toLowerCase()
+  );
+
+  if (matchedIndustry) {
+    const slugified = matchedIndustry.toLowerCase().trim().replace(/\s+/g, '-');
+    // Redirect if current param is not already slugified
+    if (param !== slugified) {
+      return <Navigate to={`/latest-movies/upcoming/${slugified}`} replace />;
+    }
+    return <UpcomingList />;
+  }
+  return <MovieDetail />;
+};
+
 const CelebrityPageWrapper = () => {
   const params = useParams();
   const param = params['*'];
   const { celebs } = useData();
   
   const industries = [...new Set((celebs || []).map(c => c.industry).filter(Boolean))];
-  const isIndustry = industries.some(ind => 
+  const matchedIndustry = industries.find(ind => 
     ind.toLowerCase() === param?.toLowerCase() || 
     ind.toLowerCase().trim().replace(/\s+/g, '-') === param?.toLowerCase()
   );
 
-  if (isIndustry) {
+  if (matchedIndustry) {
+    const slugified = matchedIndustry.toLowerCase().trim().replace(/\s+/g, '-');
+    // Redirect if current param is not already slugified
+    if (param !== slugified) {
+      return <Navigate to={`/celebrities/${slugified}`} replace />;
+    }
     return <CelebList />;
   }
   return <CelebDetail />;
@@ -135,8 +185,8 @@ function App() {
               <Route path="/latest-news/*" element={<NewsDetail />} />
               <Route path="/latest-movies" element={<MovieList />} />
               <Route path="/latest-movies/upcoming" element={<UpcomingList />} />
-              <Route path="/latest-movies/*" element={<MovieDetail />} />
-              <Route path="/latest-movies/upcoming/*" element={<MovieDetail />} />
+              <Route path="/latest-movies/upcoming/*" element={<UpcomingPageWrapper />} />
+              <Route path="/latest-movies/*" element={<MoviePageWrapper />} />
               <Route path="/actor/:name" element={<ActorDetail />} />
               <Route path="/celebrities" element={<CelebList />} />
               <Route path="/celebrities/*" element={<CelebrityPageWrapper />} />
