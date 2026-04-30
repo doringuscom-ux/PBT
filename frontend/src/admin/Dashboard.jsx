@@ -98,7 +98,7 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h3 className="font-bold mb-4 flex items-center gap-2 text-primary-red uppercase tracking-widest text-xs italic">
+          <h3 className="font-bold mb-4 flex items-center gap-2 text-primary-red uppercase tracking-wider text-xs italic">
             <i className="fas fa-bullhorn animate-bounce"></i> Announcement Bar Manager
           </h3>
           <form onSubmit={handleAddAnn} className="flex gap-2 mb-4">

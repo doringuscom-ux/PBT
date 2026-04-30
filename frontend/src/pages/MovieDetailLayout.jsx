@@ -40,6 +40,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
     const [watchScore, setWatchScore] = useState(64);
     const [selectedImage, setSelectedImage] = useState(null);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showFullPlayer, setShowFullPlayer] = useState(false);
     const isUpcoming = movie.releaseDate && new Date(movie.releaseDate) > new Date();
     const tabs = ['Timeline', 'Cast & Crew', 'Photos', 'Articles'];
     if (!isUpcoming) {
@@ -159,12 +160,12 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="w-64 md:w-56 bg-white shadow-2xl p-3 border-t-4 border-primary-red transform md:-translate-y-4">
+                                <div className="w-64 md:w-56 bg-slate-950 shadow-2xl p-3 border-t-4 border-primary-red transform md:-translate-y-4 rounded-b-2xl">
                                     <div className="flex flex-col">
                                         <div className="flex flex-col items-center justify-between gap-3 mt-auto">
-                                            <div className="w-full flex flex-col items-center gap-1 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
-                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Rate this movie</span>
-                                                <div className="flex gap-2 text-base">
+                                            <div className="w-full flex flex-col items-center gap-1 bg-slate-900 px-3 py-3 rounded-xl border border-white/10 shadow-xl">
+                                                <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] mb-1">Rate this movie</span>
+                                                <div className="flex gap-3 text-lg">
                                                     {[1, 2, 3, 4, 5].map((star) => (
                                                         <button 
                                                             key={star}
@@ -178,7 +179,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                                             }}
                                                             className="hover:scale-125 transition-transform active:scale-95"
                                                         >
-                                                            <i className={`fas fa-star ${star <= tempRating ? 'text-yellow-400' : 'text-slate-200'}`}></i>
+                                                            <i className={`fas fa-star ${star <= tempRating ? 'text-yellow-400' : 'text-white/10 hover:text-white/30'}`}></i>
                                                         </button>
                                                     ))}
                                                 </div>
@@ -193,8 +194,8 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                             <div className="absolute inset-0 bg-primary-red/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                             
                                             <div className="relative z-10 flex flex-col">
-                                                <span className="text-[8px] font-black text-white/40 uppercase tracking-widest leading-none mb-1 text-left">Community</span>
-                                                <span className="text-[8px] font-black text-white uppercase tracking-widest leading-none text-left">
+                                                <span className="text-[10px] font-black text-white/60 uppercase tracking-[0.1em] leading-none mb-1 text-left">Community</span>
+                                                <span className="text-[11px] font-black text-white uppercase tracking-tight leading-none text-left">
                                                     {movie.totalRatings || 0} Ratings
                                                 </span>
                                             </div>
@@ -284,7 +285,10 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
 
                             {/* Action Buttons (Desktop Only) */}
                             <div className="hidden md:flex flex-wrap items-center justify-start gap-4 px-0 mt-8">
-                                <button className="bg-yellow-400 hover:bg-yellow-500 text-black px-10 py-4 rounded-full font-black uppercase tracking-widest flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-yellow-400/20 group">
+                                <button 
+                                    onClick={() => (movie.trailerUrl || movie.trailerVideo) && setShowFullPlayer(true)}
+                                    className="bg-yellow-400 hover:bg-yellow-500 text-black px-10 py-4 rounded-full font-black uppercase tracking-widest flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-yellow-400/20 group"
+                                >
                                     <i className="fas fa-play text-lg group-hover:animate-pulse"></i>
                                     <span>Watch Now</span>
                                 </button>
@@ -881,6 +885,56 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                 isOpen={showAuthModal} 
                 onClose={() => setShowAuthModal(false)}
         />
+
+        {/* Full Screen Trailer Modal */}
+        {showFullPlayer && (movie.trailerUrl || movie.trailerVideo) && (
+            <div className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300">
+                {/* Background Click to Close */}
+                <div className="absolute inset-0 z-0" onClick={() => setShowFullPlayer(false)}></div>
+                
+                <div className="w-full max-w-5xl aspect-video relative z-10 shadow-[0_0_100px_rgba(0,0,0,0.8)] border-4 border-white/10 bg-black rounded-[2rem] overflow-hidden flex flex-col">
+                    {/* Player Header */}
+                    <div className="bg-slate-900 px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <i className="fab fa-youtube text-primary-red text-xl"></i>
+                            <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-widest italic">{movie.title} - Official Trailer</span>
+                        </div>
+                        <button 
+                            onClick={() => setShowFullPlayer(false)}
+                            className="text-white/40 hover:text-primary-red transition-colors text-sm uppercase font-black tracking-widest flex items-center gap-2"
+                        >
+                            <span>Close</span>
+                            <i className="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div className="flex-1 w-full bg-black">
+                        {(() => {
+                            const url = movie.trailerVideo?.videoUrl || movie.trailerUrl;
+                            if (url?.includes('youtube.com') || url?.includes('youtu.be')) {
+                                const vid = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
+                                return (
+                                    <iframe 
+                                        src={`https://www.youtube.com/embed/${vid}?autoplay=1&rel=0`} 
+                                        className="w-full h-full" 
+                                        allowFullScreen 
+                                        allow="autoplay; encrypted-media"
+                                    ></iframe>
+                                );
+                            }
+                            return (
+                                <video 
+                                    src={url} 
+                                    controls 
+                                    autoPlay 
+                                    className="w-full h-full object-contain"
+                                ></video>
+                            );
+                        })()}
+                    </div>
+                </div>
+            </div>
+        )}
         </>
     );
 };
