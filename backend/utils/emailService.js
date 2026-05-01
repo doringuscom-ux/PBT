@@ -1,39 +1,14 @@
 const nodemailer = require('nodemailer');
-const dns = require('dns');
 require('dotenv').config();
 
-// Force IPv4 for email connection to fix ENETUNREACH issues
-dns.setDefaultResultOrder('ipv4first');
-
-
-// Create a transporter using Gmail SMTP
+// Simple Gmail Transporter - Using the setup that worked previously
 const transporter = nodemailer.createTransport({
-    host: '142.251.10.108', // smtp.gmail.com IPv4 address
-    port: 587,
-    secure: false, // use STARTTLS
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
-    },
-    // Force IPv4 explicitly at the DNS lookup level
-    lookup: (hostname, options, callback) => {
-        return dns.lookup(hostname, { family: 4 }, callback);
     }
 });
-
-// Verify connection configuration
-transporter.verify(function (error, success) {
-    if (error) {
-        console.log("[Email Service] Connection Error:", error);
-    } else {
-        console.log("[Email Service] Server is ready to take our messages");
-    }
-});
-
-const axios = require('axios');
 
 /**
  * PB Tadka - Send OTP Email
@@ -61,49 +36,25 @@ const sendOtpEmail = async (to, otp) => {
 
     try {
         await transporter.sendMail(mailOptions);
-        console.log(`[Email Service] OTP sent successfully to ${to} via SMTP`);
+        console.log(`[Email Service] OTP sent successfully to ${to}`);
         return true;
     } catch (err) {
-        console.error('[Email Service] SMTP Error, attempting Proxy Fallback:', err.message);
-        
-        // Fallback to PHP Proxy if SMTP fails (Common on restricted hosts like Render/Hostinger)
-        try {
-            const proxyResponse = await axios.post('https://pbtadka.com/send-otp.php', {
-                email: to,
-                otp: otp,
-                secret: 'PBTadka_Secret_2026_Email_Key'
-            });
-
-            if (proxyResponse.data.success) {
-                console.log(`[Email Service] OTP sent successfully to ${to} via Proxy`);
-                return true;
-            } else {
-                throw new Error(proxyResponse.data.message || 'Proxy rejected request');
-            }
-        } catch (proxyErr) {
-            console.error('[Email Service] Proxy Fallback failed:', proxyErr.message);
-            return false;
-        }
+        console.error('[Email Service] Error sending OTP:', err.message);
+        return false;
     }
 };
-
 
 const EmailLog = require('../models/EmailLog');
 
 /**
- * PB Tadka - Send Notification to Subscribers when a new post is created
- * Now sends individually for granular tracking!
+ * PB Tadka - Send Notification to Subscribers
  */
 const sendPostNotification = async (post, subscribers) => {
     if (!subscribers || subscribers.length === 0) return;
 
-    console.log(`[Email Service] Starting individual notifications for ${subscribers.length} subscribers...`);
-
-    // Handle different post types for the UI
     const postType = post.category ? 'News' : (post.trailerUrl ? 'Movie' : 'Video');
     const postLink = `${process.env.FRONTEND_URL || 'https://pbtadka.com'}/${postType.toLowerCase()}/${post.slug || post._id}`;
 
-    // Loop through each subscriber to send individually
     for (const sub of subscribers) {
         const mailOptions = {
             from: `"PB Tadka" <${process.env.EMAIL_USER}>`,
@@ -140,7 +91,6 @@ const sendPostNotification = async (post, subscribers) => {
 
         try {
             await transporter.sendMail(mailOptions);
-            // Log success
             await EmailLog.create({
                 postTitle: post.title,
                 postType: postType,
@@ -149,7 +99,6 @@ const sendPostNotification = async (post, subscribers) => {
             });
         } catch (err) {
             console.error(`[Email Service] Failed to send to ${sub.email}:`, err.message);
-            // Log failure
             await EmailLog.create({
                 postTitle: post.title,
                 postType: postType,
@@ -159,8 +108,6 @@ const sendPostNotification = async (post, subscribers) => {
             });
         }
     }
-
-    console.log(`[Email Service] Finished notifications for ${post.title}`);
     return true;
 };
 
