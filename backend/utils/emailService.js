@@ -1,14 +1,35 @@
 const nodemailer = require('nodemailer');
+const dns = require('dns');
 require('dotenv').config();
+
+// Force IPv4 for email connection to fix ENETUNREACH issues
+dns.setDefaultResultOrder('ipv4first');
+
 
 // Create a transporter using Gmail SMTP
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // use STARTTLS
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 });
+
+// Verify connection configuration
+transporter.verify(function (error, success) {
+    if (error) {
+        console.log("[Email Service] Connection Error:", error);
+    } else {
+        console.log("[Email Service] Server is ready to take our messages");
+    }
+});
+
+const axios = require('axios');
 
 /**
  * PB Tadka - Send OTP Email
@@ -36,11 +57,29 @@ const sendOtpEmail = async (to, otp) => {
 
     try {
         await transporter.sendMail(mailOptions);
-        console.log(`[Email Service] OTP sent successfully to ${to}`);
+        console.log(`[Email Service] OTP sent successfully to ${to} via SMTP`);
         return true;
     } catch (err) {
-        console.error('[Email Service] Error sending OTP:', err.message);
-        return false;
+        console.error('[Email Service] SMTP Error, attempting Proxy Fallback:', err.message);
+        
+        // Fallback to PHP Proxy if SMTP fails (Common on restricted hosts like Render/Hostinger)
+        try {
+            const proxyResponse = await axios.post('https://pbtadka.com/send-otp.php', {
+                email: to,
+                otp: otp,
+                secret: 'PBTadka_Secret_2026_Email_Key'
+            });
+
+            if (proxyResponse.data.success) {
+                console.log(`[Email Service] OTP sent successfully to ${to} via Proxy`);
+                return true;
+            } else {
+                throw new Error(proxyResponse.data.message || 'Proxy rejected request');
+            }
+        } catch (proxyErr) {
+            console.error('[Email Service] Proxy Fallback failed:', proxyErr.message);
+            return false;
+        }
     }
 };
 
