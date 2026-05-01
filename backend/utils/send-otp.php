@@ -69,12 +69,19 @@ $message = '
 $headers = "MIME-Version: 1.0" . "\r\n";
 $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 $headers .= "From: " . $from_name . " <" . $from . ">" . "\r\n";
+$headers .= "Reply-To: " . $from . "\r\n";
+$headers .= "X-Mailer: PHP/" . phpversion();
 
 // --- SENDING ---
 if (mail($email, $subject, $message, $headers)) {
-    echo json_encode(["success" => true, "message" => "Email sent successfully via Hostinger"]);
+    echo json_encode(["success" => true, "message" => "Email sent successfully via Hostinger Proxy"]);
 } else {
+    $error = error_get_last();
     http_response_code(500);
-    echo json_encode(["success" => false, "message" => "PHP mail() function failed. Check Hostinger mail server settings."]);
+    echo json_encode([
+        "success" => false, 
+        "message" => "PHP mail() function failed.",
+        "details" => $error ? $error['message'] : "Possible domain verification issue. Ensure noreply@pbtadka.com exists."
+    ]);
 }
 ?>
