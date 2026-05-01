@@ -99,6 +99,32 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
 
     const suggestedMovies = getSuggestions();
 
+    // Combined Gallery for Modal
+    const galleryImages = [
+        ...(movie.photos?.length > 0 ? movie.photos : [movie.image, movie.coverImage || movie.image]).map((p, i) => ({ 
+            src: p, 
+            title: `${movie.title} - Photo ${i + 1}` 
+        }))
+    ];
+
+    const handleNext = () => {
+        const currentIndex = galleryImages.findIndex(img => img.src === selectedImage?.src);
+        if (currentIndex < galleryImages.length - 1) {
+            setSelectedImage(galleryImages[currentIndex + 1]);
+        } else {
+            setSelectedImage(galleryImages[0]);
+        }
+    };
+
+    const handlePrev = () => {
+        const currentIndex = galleryImages.findIndex(img => img.src === selectedImage?.src);
+        if (currentIndex > 0) {
+            setSelectedImage(galleryImages[currentIndex - 1]);
+        } else {
+            setSelectedImage(galleryImages[galleryImages.length - 1]);
+        }
+    };
+
     return (
         <>
             <div className="bg-[#f8f9fa] min-h-screen">
@@ -495,7 +521,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
 
                                 <section id="photos">
                                     <div className="flex justify-between items-center mb-6">
-                                        <h3 className="text-xl font-black uppercase italic text-slate-900">Photos <span className="text-gray-300 ml-1">({movie.photos?.length || 0})</span></h3>
+                                        <h3 className="text-xl font-black uppercase italic text-slate-900">Photos <span className="text-gray-300 ml-1">({galleryImages.length})</span></h3>
                                         <button onClick={() => setActiveTab('Photos')} className="text-primary-red font-black uppercase text-[10px] tracking-widest group">View All <i className="fas fa-chevron-right ml-1 transition-transform group-hover:translate-x-1"></i></button>
                                     </div>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -503,7 +529,10 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                             <div 
                                                 key={i} 
                                                 className={`rounded-xl overflow-hidden aspect-[16/10] shadow-md border-2 border-white cursor-zoom-in group/thumb relative ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
-                                                onClick={() => setSelectedImage({ src: p, title: `${movie.title} - Photo ${i + 1}` })}
+                                                onClick={() => {
+                                                    const img = galleryImages.find(img => img.src === p);
+                                                    setSelectedImage(img);
+                                                }}
                                             >
                                                 <img src={p} className="w-full h-full object-cover group-hover/thumb:scale-110 transition-transform duration-700" alt="" />
                                                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
@@ -787,6 +816,36 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                             </div>
                         )}
 
+                        {activeTab === 'Photos' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
+                                <div className="flex items-center gap-4 mb-2">
+                                    <div className="h-10 w-1.5 bg-primary-red rounded-full"></div>
+                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 leading-none">
+                                        Official Movie <span className="text-primary-red">Gallery</span>
+                                    </h2>
+                                </div>
+                                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    {galleryImages.map((img, idx) => (
+                                        <div 
+                                            key={`gallery-full-${idx}`} 
+                                            className="rounded-2xl overflow-hidden aspect-[4/3] shadow-md hover:shadow-2xl transition-all group cursor-zoom-in relative border-4 border-white"
+                                            onClick={() => setSelectedImage(img)}
+                                        >
+                                            <img src={img.src} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+                                                    <i className="fas fa-search-plus text-xl"></i>
+                                                </div>
+                                            </div>
+                                            <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <p className="text-[8px] font-black text-white uppercase tracking-widest truncate">{img.title}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {activeTab === 'Articles' && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
                                 <div className="flex items-center gap-4 mb-2">
@@ -880,6 +939,8 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                 onClose={() => setSelectedImage(null)} 
                 imageSrc={selectedImage?.src} 
                 altText={selectedImage?.title} 
+                onNext={handleNext}
+                onPrev={handlePrev}
         />
         <UserAuthModal 
                 isOpen={showAuthModal} 

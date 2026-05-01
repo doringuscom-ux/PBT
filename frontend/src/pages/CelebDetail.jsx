@@ -62,11 +62,36 @@ const CelebDetail = () => {
         )
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+    // Combined Gallery for Modal
+    const galleryImages = [
+        { src: celeb.image, title: celeb.name },
+        ...(celeb.photos?.filter(p => p).map((p, idx) => ({ src: p, title: `${celeb.name} - Official Photo ${idx + 1}` })) || []),
+        ...celebMovies.map(m => ({ src: m.image, title: `Movie Still: ${m.title}` }))
+    ];
+
+    const handleNext = () => {
+        const currentIndex = galleryImages.findIndex(img => img.src === selectedImage?.src);
+        if (currentIndex < galleryImages.length - 1) {
+            setSelectedImage(galleryImages[currentIndex + 1]);
+        } else {
+            setSelectedImage(galleryImages[0]); // Loop back
+        }
+    };
+
+    const handlePrev = () => {
+        const currentIndex = galleryImages.findIndex(img => img.src === selectedImage?.src);
+        if (currentIndex > 0) {
+            setSelectedImage(galleryImages[currentIndex - 1]);
+        } else {
+            setSelectedImage(galleryImages[galleryImages.length - 1]); // Loop to end
+        }
+    };
+
     const tabs = [
         { id: 'All', label: 'All', count: null },
         { id: 'Articles', label: 'Articles', count: celebArticles.length },
         { id: 'Videos', label: 'Videos', count: celeb.videos?.filter(v => v).length || 0 },
-        { id: 'Photos', label: 'Photos', count: (celeb.photos?.filter(p => p).length || 0) + (celebMovies.length > 0 ? 4 : 0) },
+        { id: 'Photos', label: 'Photos', count: galleryImages.length },
         { id: 'Filmography', label: 'Filmography', count: celebMovies.length },
     ].filter(tab => tab.id === 'All' || tab.count > 0);
 
@@ -87,7 +112,7 @@ const CelebDetail = () => {
                         <div className="w-64 lg:w-80 flex-shrink-0">
                             <div 
                                 className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 relative group cursor-zoom-in"
-                                onClick={() => setSelectedImage({ src: celeb.image, title: celeb.name })}
+                                onClick={() => setSelectedImage(galleryImages[0])}
                             >
                                 <img src={celeb.image} alt={celeb.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -201,7 +226,10 @@ const CelebDetail = () => {
                                         <div 
                                             key={i} 
                                             className="rounded-2xl overflow-hidden aspect-[4/5] border border-white/10 shadow-xl group cursor-zoom-in relative" 
-                                            onClick={() => setSelectedImage({ src: p, title: `${celeb.name} - Featured` })}
+                                            onClick={() => {
+                                                const img = galleryImages.find(img => img.src === p);
+                                                setSelectedImage(img || { src: p, title: `${celeb.name} - Featured` });
+                                            }}
                                         >
                                             <img src={p} className="w-full h-full object-cover object-[center_top] group-hover:scale-110 transition-transform duration-700" alt="" />
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -382,7 +410,10 @@ const CelebDetail = () => {
                                         <div 
                                             key={`photo-${idx}`} 
                                             className="rounded-2xl overflow-hidden aspect-[4/5] shadow-md hover:shadow-xl transition-all group cursor-zoom-in relative"
-                                            onClick={() => setSelectedImage({ src: p, title: `${celeb.name} - Official Photo ${idx + 1}` })}
+                                            onClick={() => {
+                                                const img = galleryImages.find(img => img.src === p);
+                                                setSelectedImage(img);
+                                            }}
                                         >
                                             <img src={p} className="w-full h-full object-cover object-[center_top] group-hover:scale-110 transition-transform duration-700" alt="" />
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -394,7 +425,10 @@ const CelebDetail = () => {
                                         <div 
                                             key={`movie-photo-${idx}`} 
                                             className="rounded-2xl overflow-hidden aspect-[4/5] shadow-md hover:shadow-xl transition-all group relative cursor-zoom-in"
-                                            onClick={() => setSelectedImage({ src: m.image, title: `Movie Still: ${m.title}` })}
+                                            onClick={() => {
+                                                const img = galleryImages.find(img => img.src === m.image);
+                                                setSelectedImage(img);
+                                            }}
                                         >
                                             <img src={m.image} className="w-full h-full object-cover object-[center_top] group-hover:scale-110 transition-transform duration-700" alt="" />
                                             <div className="absolute top-2 right-2 bg-black/60 text-white text-[8px] font-bold px-2 py-1 rounded-full uppercase tracking-widest backdrop-blur-sm z-10">Movie Still</div>
@@ -513,6 +547,8 @@ const CelebDetail = () => {
                 onClose={() => setSelectedImage(null)} 
                 imageSrc={selectedImage?.src} 
                 altText={selectedImage?.title} 
+                onNext={handleNext}
+                onPrev={handlePrev}
             />
 
             <UserAuthModal 

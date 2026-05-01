@@ -121,4 +121,71 @@ const sendPostNotification = async (post, subscribers) => {
     return true;
 };
 
-module.exports = { sendOtpEmail, sendPostNotification };
+/**
+ * PB Tadka - Send Admin Notification for new Inquiry/Submission
+ */
+const sendInquiryNotification = async (inquiry) => {
+    const adminEmail = 'shivsarsa@gmail.com';
+    const mailOptions = {
+        from: `"PB Tadka Inquiries" <${process.env.EMAIL_USER}>`,
+        to: adminEmail,
+        subject: `📩 New ${inquiry.type} Submission from ${inquiry.name}`,
+        html: `
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; padding: 40px 20px; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #e11d48; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px;">New Inquiry Received</h1>
+                    <p style="color: #64748b; font-size: 14px;">Someone submitted a form on PB Tadka</p>
+                </div>
+                
+                <div style="background: #ffffff; border-radius: 8px; padding: 25px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    <div style="margin-bottom: 20px;">
+                        <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #e11d48; letter-spacing: 1px;">Submission Details</span>
+                        <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 10px 0;">
+                    </div>
+                    
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px 0; color: #64748b; font-size: 13px; width: 100px;"><strong>Name:</strong></td>
+                            <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-weight: 600;">${inquiry.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Email:</strong></td>
+                            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">${inquiry.email || 'Not provided'}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Phone:</strong></td>
+                            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">${inquiry.phone || 'Not provided'}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Type:</strong></td>
+                            <td style="padding: 8px 0; color: #1e293b; font-size: 14px;"><span style="background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">${inquiry.type}</span></td>
+                        </tr>
+                    </table>
+                    
+                    <div style="margin-top: 25px;">
+                        <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 1px;">Message</span>
+                        <div style="margin-top: 10px; padding: 15px; background: #f8fafc; border-radius: 6px; border-left: 4px solid #e11d48; color: #334155; font-size: 14px; line-height: 1.6; font-style: italic;">
+                            "${inquiry.message}"
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px; color: #94a3b8; font-size: 11px;">
+                    <p>This is an automated notification from the PB Tadka website.</p>
+                    <p>&copy; 2026 PB Tadka. All rights reserved.</p>
+                </div>
+            </div>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`[Email Service] Inquiry notification sent to ${adminEmail}`);
+        return true;
+    } catch (err) {
+        console.error('[Email Service] Inquiry Notification Error:', err.message);
+        return false;
+    }
+};
+
+module.exports = { sendOtpEmail, sendPostNotification, sendInquiryNotification };
