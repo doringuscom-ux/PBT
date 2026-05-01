@@ -16,7 +16,7 @@ const isAdmin = (req, res, next) => {
 // @desc    Submit a new inquiry (Public)
 router.post('/', async (req, res) => {
     const { name, email, phone, type, message } = req.body;
-    
+
     if (!name || (!email && !phone)) {
         return res.status(400).json({ message: 'Please provide name and at least one contact method (email or phone)' });
     }
@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
         const inquiryData = { name, email, phone, type, message };
         const inquiry = new Inquiry(inquiryData);
         await inquiry.save();
-        
+
         // Sync to Google Sheets (Background)
         // WhatsApp submissions go to the "Old" sheet, others go to the "Ads" sheet
         const sheetId = type === 'WhatsApp' ? process.env.GOOGLE_SHEET_ID_WHATSAPP : process.env.GOOGLE_SHEET_ID_ADS;
@@ -55,7 +55,7 @@ router.delete('/:id', isAdmin, async (req, res) => {
     try {
         const inquiry = await Inquiry.findById(req.params.id);
         if (!inquiry) return res.status(404).json({ message: 'Inquiry not found' });
-        
+
         await Inquiry.findByIdAndDelete(req.params.id);
         res.json({ message: 'Inquiry removed' });
     } catch (err) {

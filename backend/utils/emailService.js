@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-// Simple Gmail Transporter - Using the setup that worked previously
+// Create a transporter using Gmail SMTP
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -44,17 +44,23 @@ const sendOtpEmail = async (to, otp) => {
     }
 };
 
+
 const EmailLog = require('../models/EmailLog');
 
 /**
- * PB Tadka - Send Notification to Subscribers
+ * PB Tadka - Send Notification to Subscribers when a new post is created
+ * Now sends individually for granular tracking!
  */
 const sendPostNotification = async (post, subscribers) => {
     if (!subscribers || subscribers.length === 0) return;
 
+    console.log(`[Email Service] Starting individual notifications for ${subscribers.length} subscribers...`);
+
+    // Handle different post types for the UI
     const postType = post.category ? 'News' : (post.trailerUrl ? 'Movie' : 'Video');
     const postLink = `${process.env.FRONTEND_URL || 'https://pbtadka.com'}/${postType.toLowerCase()}/${post.slug || post._id}`;
 
+    // Loop through each subscriber to send individually
     for (const sub of subscribers) {
         const mailOptions = {
             from: `"PB Tadka" <${process.env.EMAIL_USER}>`,
@@ -91,6 +97,7 @@ const sendPostNotification = async (post, subscribers) => {
 
         try {
             await transporter.sendMail(mailOptions);
+            // Log success
             await EmailLog.create({
                 postTitle: post.title,
                 postType: postType,
@@ -99,6 +106,7 @@ const sendPostNotification = async (post, subscribers) => {
             });
         } catch (err) {
             console.error(`[Email Service] Failed to send to ${sub.email}:`, err.message);
+            // Log failure
             await EmailLog.create({
                 postTitle: post.title,
                 postType: postType,
@@ -108,6 +116,8 @@ const sendPostNotification = async (post, subscribers) => {
             });
         }
     }
+
+    console.log(`[Email Service] Finished notifications for ${post.title}`);
     return true;
 };
 
