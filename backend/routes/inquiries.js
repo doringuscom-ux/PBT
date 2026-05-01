@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Inquiry = require('../models/Inquiry');
 const { appendToSheet } = require('../utils/googleSheetService');
-const { sendInquiryNotification } = require('../utils/emailService');
 
 // Helper to check admin
 const isAdmin = (req, res, next) => {
@@ -31,9 +30,6 @@ router.post('/', async (req, res) => {
         // WhatsApp submissions go to the "Old" sheet, others go to the "Ads" sheet
         const sheetId = type === 'WhatsApp' ? process.env.GOOGLE_SHEET_ID_WHATSAPP : process.env.GOOGLE_SHEET_ID_ADS;
         appendToSheet(inquiry, sheetId);
-
-        // Send Email Notification to Admin (Background)
-        sendInquiryNotification(inquiry);
 
         res.status(201).json({ success: true, message: 'Inquiry submitted successfully!' });
     } catch (err) {
