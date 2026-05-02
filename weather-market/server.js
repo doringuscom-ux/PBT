@@ -25,7 +25,7 @@ const startServer = async () => {
             try {
                 const { lat, lon } = req.query;
                 const widgets = await Widget.find();
-                
+
                 let widgetData = widgets.reduce((acc, widget) => {
                     acc[widget.type] = widget.data;
                     return acc;

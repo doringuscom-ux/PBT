@@ -1,12 +1,18 @@
 import axios from 'axios';
 
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+    baseURL: isLocal 
+        ? import.meta.env.VITE_API_URL_LOCAL 
+        : import.meta.env.VITE_API_URL_PROD,
     withCredentials: true
 });
 
 const widgetApi = axios.create({
-    baseURL: import.meta.env.VITE_WIDGET_API_URL || 'http://localhost:5001/api'
+    baseURL: isLocal 
+        ? import.meta.env.VITE_WIDGET_API_URL_LOCAL 
+        : import.meta.env.VITE_WIDGET_API_URL_PROD
 });
 
 export const getMe = () => api.get('/auth/me');
