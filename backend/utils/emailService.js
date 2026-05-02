@@ -65,7 +65,7 @@ const sendPostNotification = async (post, subscribers) => {
 
     const postType = post.category ? 'News' : (post.trailerUrl ? 'Movie' : 'Video');
     const postLink = `${process.env.FRONTEND_URL || 'https://pbtadka.com'}/${postType.toLowerCase()}/${post.slug || post._id}`;
-    const subject = `🔥 New ${postType}: ${post.title}`;
+    const subject = `New ${postType}: ${post.title}`;
 
     for (const sub of subscribers) {
         const htmlContent = `
@@ -109,7 +109,7 @@ const sendPostNotification = async (post, subscribers) => {
  */
 const sendAdminNotification = async (type, data) => {
     const adminEmail = 'shivsarsa@gmail.com';
-    const subject = `🔔 New ${type} on PB Tadka`;
+    const subject = `Alert: New ${type} on PB Tadka`;
     
     // Create a nice table for the data
     let dataRows = '';
