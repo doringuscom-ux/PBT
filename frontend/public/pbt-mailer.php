@@ -22,10 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $headers = "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-    $headers .= 'From: PB Tadka <pbtadka.com@gmail.com>' . "\r\n";
+    $headers .= 'From: PB Tadka <noreply@pbtadka.com>' . "\r\n";
 
-    // Send email using PHP mail()
-    if(mail($to, $subject, $message, $headers)) {
+    // Send email using PHP mail() with -f flag (Required by Hostinger)
+    if(mail($to, $subject, $message, $headers, "-f noreply@pbtadka.com")) {
         echo json_encode(["success" => true]);
     } else {
         echo json_encode(["success" => false, "error" => "PHP mail() function failed. Check server logs."]);
