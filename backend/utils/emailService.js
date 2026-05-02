@@ -1,22 +1,34 @@
 const axios = require('axios');
-const nodemailer = require('nodemailer');
 require('dotenv').config();
+const EmailLog = require('../models/EmailLog');
 
-// Create a transporter using Gmail SMTP (For Local Testing)
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
-
-const PHP_PROXY_URL = 'https://pbtadka.com/pbt-mailer.php';
+// The "Unblockable" Google Apps Script Proxy URL
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGCzXqAmSlZjX6jMUdKTN2Ow5pbswDiCvCH2Ctxju_LSoso2wMN0JJku2vFeDJeeWc/exec';
 
 /**
- * PB Tadka - Send OTP Email (Using Proxy for Production/Render)
+ * PB Tadka - Generic Send via Google Proxy
+ */
+const sendViaProxy = async (to, subject, htmlContent) => {
+    try {
+        const response = await axios.post(GOOGLE_SCRIPT_URL, null, {
+            params: {
+                to: to,
+                subject: subject,
+                message: htmlContent
+            }
+        });
+
+        if (response.data && response.data.success) {
+            return { success: true };
+        }
+        return { success: false, error: response.data?.error || 'Unknown proxy error' };
+    } catch (err) {
+        return { success: false, error: err.message };
+    }
+};
+
+/**
+ * PB Tadka - Send OTP Email
  */
 const sendOtpEmail = async (to, otp) => {
     const subject = 'Verification Code for PB Tadka';
@@ -35,113 +47,60 @@ const sendOtpEmail = async (to, otp) => {
         </div>
     `;
 
-    // Try sending via PHP Proxy (Reliable for Render)
-    try {
-        const formData = new URLSearchParams();
-        formData.append('to', to);
-        formData.append('subject', subject);
-        formData.append('message', htmlContent);
-
-        const response = await axios.post(PHP_PROXY_URL, formData);
-        
-        if (response.data.success) {
-            console.log(`[Email Service] OTP sent via Proxy to ${to}`);
-            return true;
-        }
-        throw new Error(response.data.error || 'Proxy failed');
-    } catch (err) {
-        console.error('[Email Service] Proxy failed, trying SMTP fallback:', err.message);
-        
-        // Fallback to SMTP (Works locally)
-        try {
-            await transporter.sendMail({
-                from: `"PB Tadka" <${process.env.EMAIL_USER}>`,
-                to: to,
-                subject: subject,
-                html: htmlContent
-            });
-            return true;
-        } catch (smtpErr) {
-            console.error('[Email Service] SMTP also failed:', smtpErr.message);
-            return false;
-        }
+    const result = await sendViaProxy(to, subject, htmlContent);
+    if (result.success) {
+        console.log(`[Email Service] OTP sent successfully to ${to}`);
+        return true;
+    } else {
+        console.error(`[Email Service] OTP failed for ${to}:`, result.error);
+        return false;
     }
 };
 
-
-const EmailLog = require('../models/EmailLog');
-
 /**
- * PB Tadka - Send Notification to Subscribers when a new post is created
- * Now sends individually for granular tracking!
+ * PB Tadka - Send Notification to Subscribers
  */
 const sendPostNotification = async (post, subscribers) => {
     if (!subscribers || subscribers.length === 0) return;
 
-    console.log(`[Email Service] Starting individual notifications for ${subscribers.length} subscribers...`);
-
-    // Handle different post types for the UI
     const postType = post.category ? 'News' : (post.trailerUrl ? 'Movie' : 'Video');
     const postLink = `${process.env.FRONTEND_URL || 'https://pbtadka.com'}/${postType.toLowerCase()}/${post.slug || post._id}`;
+    const subject = `🔥 New ${postType}: ${post.title}`;
 
-    // Loop through each subscriber to send individually
     for (const sub of subscribers) {
-        const mailOptions = {
-            from: `"PB Tadka" <${process.env.EMAIL_USER}>`,
-            to: sub.email,
-            subject: `🔥 New ${postType}: ${post.title}`,
-            html: `
-                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #ffffff; padding: 40px 20px; border-radius: 15px; max-width: 600px; margin: auto;">
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="color: #e11d48; margin: 0; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">PB TADKA</h1>
-                        <p style="color: #94a3b8; font-size: 14px;">Latest from the world of Punjabi Cinema</p>
-                    </div>
-                    
-                    <div style="background: #1e293b; border-radius: 12px; overflow: hidden; border: 1px solid #334155;">
-                        ${post.image ? `<img src="${post.image}" alt="${post.title}" style="width: 100%; height: auto; display: block;">` : ''}
-                        <div style="padding: 25px;">
-                            <span style="background: #e11d48; color: white; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase;">${postType} Notification</span>
-                            <h2 style="margin: 15px 0; font-size: 22px; line-height: 1.4;">${post.title}</h2>
-                            <p style="color: #cbd5e1; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
-                                ${post.excerpt || post.fullStory?.substring(0, 150) || 'Check out the latest update on PB Tadka!'}...
-                            </p>
-                            <a href="${postLink}" style="display: inline-block; background: #e11d48; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3);">
-                                READ FULL STORY
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 30px; color: #64748b; font-size: 12px;">
-                        <p>You received this because you subscribed to PB Tadka updates.</p>
-                        <p>&copy; 2026 PB Tadka. All rights reserved.</p>
+        const htmlContent = `
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #ffffff; padding: 40px 20px; border-radius: 15px; max-width: 600px; margin: auto;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #e11d48; margin: 0; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">PB TADKA</h1>
+                </div>
+                <div style="background: #1e293b; border-radius: 12px; overflow: hidden; border: 1px solid #334155;">
+                    ${post.image ? `<img src="${post.image}" alt="${post.title}" style="width: 100%; height: auto; display: block;">` : ''}
+                    <div style="padding: 25px;">
+                        <h2 style="margin: 15px 0; font-size: 22px; line-height: 1.4;">${post.title}</h2>
+                        <a href="${postLink}" style="display: inline-block; background: #e11d48; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                            READ FULL STORY
+                        </a>
                     </div>
                 </div>
-            `
-        };
+            </div>
+        `;
 
-        try {
-            await transporter.sendMail(mailOptions);
-            // Log success
-            await EmailLog.create({
-                postTitle: post.title,
-                postType: postType,
-                recipientEmail: sub.email,
-                status: 'success'
-            });
-        } catch (err) {
-            console.error(`[Email Service] Failed to send to ${sub.email}:`, err.message);
-            // Log failure
-            await EmailLog.create({
-                postTitle: post.title,
-                postType: postType,
-                recipientEmail: sub.email,
-                status: 'failed',
-                error: err.message
-            });
+        const result = await sendViaProxy(sub.email, subject, htmlContent);
+        
+        await EmailLog.create({
+            postTitle: post.title,
+            postType: postType,
+            recipientEmail: sub.email,
+            status: result.success ? 'success' : 'failed',
+            error: result.success ? null : result.error
+        });
+
+        if (result.success) {
+            console.log(`[Email Service] Notified ${sub.email}`);
+        } else {
+            console.error(`[Email Service] Failed for ${sub.email}:`, result.error);
         }
     }
-
-    console.log(`[Email Service] Finished notifications for ${post.title}`);
     return true;
 };
 
