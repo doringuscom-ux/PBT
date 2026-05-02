@@ -104,4 +104,42 @@ const sendPostNotification = async (post, subscribers) => {
     return true;
 };
 
-module.exports = { sendOtpEmail, sendPostNotification };
+/**
+ * PB Tadka - Send Admin Notification (For New Inquiries/Content)
+ */
+const sendAdminNotification = async (type, data) => {
+    const adminEmail = 'shivsarsa@gmail.com';
+    const subject = `🔔 New ${type} on PB Tadka`;
+    
+    // Create a nice table for the data
+    let dataRows = '';
+    for (const [key, value] of Object.entries(data)) {
+        dataRows += `
+            <tr>
+                <td style="padding: 10px; border: 1px solid #eee; font-weight: bold; text-transform: capitalize;">${key}</td>
+                <td style="padding: 10px; border: 1px solid #eee;">${value}</td>
+            </tr>
+        `;
+    }
+
+    const htmlContent = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 600px; margin: auto;">
+            <h2 style="color: #e11d48; text-align: center;">New ${type} Received</h2>
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                ${dataRows}
+            </table>
+            <p style="font-size: 12px; color: #666; text-align: center;">You can manage this from your Admin Dashboard.</p>
+        </div>
+    `;
+
+    const result = await sendViaProxy(adminEmail, subject, htmlContent);
+    if (result.success) {
+        console.log(`[Email Service] Admin notified of new ${type}`);
+        return true;
+    } else {
+        console.error(`[Email Service] Admin notification failed:`, result.error);
+        return false;
+    }
+};
+
+module.exports = { sendOtpEmail, sendPostNotification, sendAdminNotification };

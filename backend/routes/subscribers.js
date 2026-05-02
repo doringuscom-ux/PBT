@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Subscriber = require('../models/Subscriber');
 const EmailLog = require('../models/EmailLog');
+const { sendAdminNotification } = require('../utils/emailService');
 
 // Helper to check admin
 const isAdmin = (req, res, next) => {
@@ -28,6 +29,14 @@ router.post('/subscribe', async (req, res) => {
         }
         subscriber = new Subscriber({ email });
         await subscriber.save();
+
+        // Notify Admin via Email
+        sendAdminNotification('Newsletter Subscription', {
+            Email: email,
+            Action: 'New Signup',
+            Status: 'Active'
+        });
+
         res.status(201).json({ message: 'Perfect! You are now subscribed to our newsletter.' });
     } catch (err) {
         console.error('Subscription Error:', err);
