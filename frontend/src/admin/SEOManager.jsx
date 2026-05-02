@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import SEOModal from '../components/SEOModal';
 
 const SEOManager = () => {
@@ -13,12 +13,12 @@ const SEOManager = () => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    
 
     const handleAutoGenerate = async () => {
         setIsGenerating(true);
         try {
-            const res = await axios.post(`${apiUrl}/seo/auto-generate`);
+            const res = await api.post('/seo/auto-generate');
             alert(res.data.message);
             fetchEntries();
             fetchStats();
@@ -33,7 +33,7 @@ const SEOManager = () => {
         if (!window.confirm('This will move all external images (Google links) to Cloudinary. It may take a minute. Continue?')) return;
         setIsSyncing(true);
         try {
-            const res = await axios.post(`${apiUrl}/seo/sync-images`);
+            const res = await api.post('/seo/sync-images');
             alert(res.data.message);
         } catch (err) {
             alert('Sync failed: ' + (err.response?.data?.message || err.message));
@@ -44,7 +44,7 @@ const SEOManager = () => {
 
     const fetchStats = async () => {
         try {
-            const res = await axios.get(`${apiUrl}/seo/stats`);
+            const res = await api.get('/seo/stats');
             setStats(res.data);
         } catch (err) {
             console.error("Error fetching SEO stats:", err);
@@ -54,7 +54,7 @@ const SEOManager = () => {
     const fetchEntries = async () => {
         setIsLoading(true);
         try {
-            const res = await axios.get(`${apiUrl}/seo`);
+            const res = await api.get('/seo');
             setSeoEntries(res.data);
         } catch (err) {
             console.error("Error fetching SEO entries:", err);
@@ -71,7 +71,7 @@ const SEOManager = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this SEO record?')) return;
         try {
-            await axios.delete(`${apiUrl}/seo/${id}`);
+            await api.delete(`/seo/${id}`);
             fetchEntries();
             fetchStats();
         } catch (err) {

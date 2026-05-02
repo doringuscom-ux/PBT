@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 const GlobalRedirector = ({ children }) => {
     const location = useLocation();
     const [isChecking, setIsChecking] = useState(true);
     const [hasRedirected, setHasRedirected] = useState(false);
     
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    
 
     useEffect(() => {
         const checkRedirect = async () => {
             try {
                 // Use the new efficient check endpoint
-                const res = await axios.get(`${apiUrl}/redirects/check`, {
+                const res = await api.get('/redirects/check', {
                     params: { path: location.pathname }
                 });
                 
@@ -30,7 +30,7 @@ const GlobalRedirector = ({ children }) => {
         };
 
         checkRedirect();
-    }, [location.pathname, apiUrl]);
+    }, [location.pathname]);
 
     // During the initial check, return null or a minimal loader to prevent flash
     if (isChecking || hasRedirected) {

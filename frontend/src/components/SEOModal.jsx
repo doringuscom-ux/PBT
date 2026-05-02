@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import Modal from './Modal';
 
 const SEOModal = ({ isOpen, onClose, entry, onRefresh }) => {
@@ -14,7 +14,7 @@ const SEOModal = ({ isOpen, onClose, entry, onRefresh }) => {
     });
     const [isLoading, setIsLoading] = useState(false);
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    
 
     useEffect(() => {
         if (entry) {
@@ -48,7 +48,7 @@ const SEOModal = ({ isOpen, onClose, entry, onRefresh }) => {
 
         setIsLoading(true);
         try {
-            await axios.post(`${apiUrl}/seo`, formData);
+            await api.post('/seo', formData);
             onRefresh();
             onClose();
         } catch (err) {

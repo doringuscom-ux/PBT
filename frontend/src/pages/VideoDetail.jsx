@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import CommentSection from '../components/CommentSection';
+import { API_BASE_URL } from '../api';
 
 const VideoDetail = () => {
     const params = useParams();
     const id = params['*'];
     const { videos, news, addVideoComment, likeVideoComment, updateVideoComment, deleteVideoComment } = useData();
     const [video, setVideo] = useState(null);
-    const baseUrl = 'http://localhost:5000';
+    const baseUrl = API_BASE_URL;
 
     useEffect(() => {
         const found = videos.find(v => v._id === id || v.slug === id);

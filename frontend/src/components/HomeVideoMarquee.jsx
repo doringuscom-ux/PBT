@@ -2,12 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import VideoPlayer from './VideoPlayer';
+import { API_BASE_URL } from '../api';
 
 const HomeVideoMarquee = () => {
     const { videos } = useData();
     const [playingInlineId, setPlayingInlineId] = useState(null);
     const latestVideos = videos?.slice(0, 20) || [];
-    const baseUrl = 'http://localhost:5000';
+    const baseUrl = API_BASE_URL;
 
     const getYoutubeEmbedUrl = (url) => {
         let videoId = '';

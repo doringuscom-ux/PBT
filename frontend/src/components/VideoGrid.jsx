@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { API_BASE_URL } from '../api';
 
 const VideoGrid = () => {
   const { videos } = useData();
-  const baseUrl = 'http://localhost:5000';
+  const baseUrl = API_BASE_URL;
 
   return (
     <div className="mb-12">

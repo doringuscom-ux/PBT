@@ -4,15 +4,16 @@ require('dotenv').config();
 // Create a transporter using Gmail SMTP (Optimized for Render)
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // Use SSL
+    port: 587,
+    secure: false, // Use STARTTLS
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
-    // Required for some hosting environments like Render
     tls: {
-        rejectUnauthorized: false
+        // Required for some hosting environments like Render to avoid timeout/reject
+        rejectUnauthorized: false,
+        minVersion: "TLSv1.2"
     }
 });
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 const ManageRedirects = () => {
     const [redirects, setRedirects] = useState([]);
@@ -7,7 +7,7 @@ const ManageRedirects = () => {
     const [formData, setFormData] = useState({ id: null, fromPath: '', toUrl: '', isActive: true });
     const [isEditing, setIsEditing] = useState(false);
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    
 
     useEffect(() => {
         fetchRedirects();
@@ -16,7 +16,7 @@ const ManageRedirects = () => {
     const fetchRedirects = async () => {
         setIsLoading(true);
         try {
-            const res = await axios.get(`${apiUrl}/redirects`, { withCredentials: true });
+            const res = await api.get('/redirects');
             setRedirects(res.data);
         } catch (err) {
             console.error('Error fetching redirects:', err);
@@ -37,10 +37,10 @@ const ManageRedirects = () => {
         e.preventDefault();
         try {
             if (isEditing) {
-                await axios.put(`${apiUrl}/redirects/${formData.id}`, formData, { withCredentials: true });
+                await api.put(`/redirects/${formData.id}`, formData);
                 alert('Redirect updated successfully!');
             } else {
-                await axios.post(`${apiUrl}/redirects`, formData, { withCredentials: true });
+                await api.post('/redirects', formData);
                 alert('Redirect added successfully!');
             }
             resetForm();
@@ -64,7 +64,7 @@ const ManageRedirects = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this redirect?')) return;
         try {
-            await axios.delete(`${apiUrl}/redirects/${id}`, { withCredentials: true });
+            await api.delete(`/redirects/${id}`);
             fetchRedirects();
         } catch (err) {
             alert('Error deleting redirect: ' + err.message);

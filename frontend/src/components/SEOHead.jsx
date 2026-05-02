@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 const SEOHead = () => {
     const location = useLocation();
     const [metadata, setMetadata] = useState(null);
     const [h1Title, setH1Title] = useState('');
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    
 
     useEffect(() => {
         const fetchMetadata = async () => {
             setMetadata(null); // Reset metadata on each navigation
             setH1Title('');   // Reset H1 title to allow fresh scraping
             try {
-                const res = await axios.get(`${apiUrl}/seo/metadata`, {
+                const res = await api.get('/seo/metadata', {
                     params: { url: location.pathname }
                 });
                 setMetadata(res.data);
@@ -24,7 +24,7 @@ const SEOHead = () => {
         };
 
         fetchMetadata();
-    }, [location.pathname, apiUrl]);
+    }, [location.pathname]);
 
     // MutationObserver to catch the <h1> from the page content automatically
     useEffect(() => {

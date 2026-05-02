@@ -1,4 +1,5 @@
 import React from 'react';
+import { API_BASE_URL } from '../api';
 
 const VideoPlayer = ({ video, onClose }) => {
     if (!video) return null;
@@ -16,7 +17,7 @@ const VideoPlayer = ({ video, onClose }) => {
     };
 
     const isYoutube = video.videoType === 'youtube' || video.videoUrl.includes('youtube.com') || video.videoUrl.includes('youtu.be');
-    const baseUrl = 'http://localhost:5000';
+    const baseUrl = API_BASE_URL;
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 md:p-10">
