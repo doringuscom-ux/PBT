@@ -407,6 +407,16 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const autoGenerateCelebSEO = async () => {
+    try {
+      const res = await api.autoGenerateCelebSEO();
+      return { success: true, message: res.data.message };
+    } catch (err) {
+      console.error(err);
+      return { success: false, error: err.response?.data?.message || err.message };
+    }
+  };
+
 
   const addAnnouncement = async (text) => {
     try {
@@ -455,7 +465,7 @@ export const DataProvider = ({ children }) => {
         refreshData: fetchData,
         addMovieComment, deleteMovieComment, likeMovieComment, updateMovieComment, rateMovie,
         addVideoComment, deleteVideoComment, likeVideoComment, updateVideoComment,
-        addCelebComment, deleteCelebComment, likeCelebComment, updateCelebComment, followCeleb
+        addCelebComment, deleteCelebComment, likeCelebComment, updateCelebComment, followCeleb, autoGenerateCelebSEO
       }}>
       {children}
     </DataContext.Provider>

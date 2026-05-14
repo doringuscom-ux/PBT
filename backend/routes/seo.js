@@ -342,4 +342,38 @@ router.post('/sync-images', async (req, res) => {
     }
 });
 
+// Auto-generate SEO records ONLY for Celebrities with specific template
+router.post('/auto-generate-celebs', async (req, res) => {
+    try {
+        const celebs = await Celebrity.find({}, 'name slug');
+        let updatedCount = 0;
+
+        for (const item of celebs) {
+            const url = `/celebrities/${item.slug || item._id}`.toLowerCase();
+            const title = `${item.name} Latest News & Video Today | ${item.name} Aaj ki News | ${item.name} Profile`;
+            const description = `Get the ${item.name} latest news, ${item.name} videos, biography, career updates, Profile, ${item.name} today’s trending stories & ${item.name} News in Hindi & English.`;
+
+            await SEO.findOneAndUpdate(
+                { url },
+                { 
+                    title, 
+                    description, 
+                    isAuto: true,
+                    robots: 'index, follow'
+                },
+                { upsert: true, new: true }
+            );
+            updatedCount++;
+        }
+
+        res.json({ 
+            success: true, 
+            message: `Successfully updated SEO for ${updatedCount} celebrities.`,
+            count: updatedCount
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 module.exports = router;

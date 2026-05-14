@@ -88,4 +88,6 @@ export const deleteAnnouncement = (id) => api.delete(`/announcements/${id}`);
 
 export const getWidgets = (params) => widgetApi.get('/widgets', { params });
 
+export const autoGenerateCelebSEO = () => api.post('/seo/auto-generate-celebs');
+
 export default api;

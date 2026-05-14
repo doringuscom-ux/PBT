@@ -6,7 +6,7 @@ import Modal from '../components/Modal';
 import { slugify } from '../utils/slugify';
 
 const ManageCelebs = () => {
-  const { user, celebs, addCeleb, updateCeleb, deleteCeleb, deleteCelebComment, updateCelebComment } = useData();
+  const { user, celebs, addCeleb, updateCeleb, deleteCeleb, deleteCelebComment, updateCelebComment, autoGenerateCelebSEO } = useData();
 
   const quillModules = {
     toolbar: [
@@ -124,6 +124,21 @@ const ManageCelebs = () => {
     setShowForm(true);
   };
 
+  const [isSeoLoading, setIsSeoLoading] = useState(false);
+  const handleAutoSEO = async () => {
+    if (!window.confirm("Are you sure you want to auto-generate SEO for ALL celebrities? This will overwrite existing Meta Titles and Descriptions for their profile pages.")) return;
+    
+    setIsSeoLoading(true);
+    const res = await autoGenerateCelebSEO();
+    setIsSeoLoading(false);
+    
+    if (res.success) {
+      alert(res.message);
+    } else {
+      alert("Error: " + res.error);
+    }
+  };
+
   return (
     <div className="space-y-6 relative">
       <div className="sticky top-0 z-30 bg-gray-100/80 backdrop-blur-md pb-4 pt-2 -mt-2">
@@ -140,6 +155,14 @@ const ManageCelebs = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+            <button 
+              onClick={handleAutoSEO}
+              disabled={isSeoLoading}
+              className={`bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-bold hover:from-purple-700 hover:to-indigo-700 transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-purple-500/20 text-xs border border-purple-400/30 ${isSeoLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <i className={`fas ${isSeoLoading ? 'fa-spinner fa-spin' : 'fa-magic'}`}></i> 
+              <span className="hidden sm:inline">{isSeoLoading ? 'Processing...' : 'Auto SEO'}</span>
+            </button>
             <button 
               onClick={() => { 
                 setShowForm(true); 
