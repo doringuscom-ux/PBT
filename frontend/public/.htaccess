@@ -15,8 +15,8 @@
   RewriteCond %{REQUEST_URI} (.+)/$
   RewriteRule ^ %1 [L,R=301]
 
-  # 3. Redirect sitemap requests to backend
-  RewriteRule ^sitemap\.xml$ https://backend-mcbv.onrender.com/sitemap.xml [L,R=301]
+  # 3. Serve sitemap via PHP proxy (keeps URL as pbtadka.com/sitemap.xml)
+  RewriteRule ^sitemap\.xml$ sitemap-proxy.php [L]
 
   # 4. Standard React SPA Routing
   RewriteRule ^index\.html$ - [L]
