@@ -7,6 +7,15 @@ const path = require('path');
 const { startHeartbeat } = require('./utils/heartbeat');
 require('dotenv').config();
 
+// Global error handlers to prevent background library errors from crashing the server
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('[Unhandled Rejection] Reason:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+    console.error('[Uncaught Exception] Error:', error);
+});
+
 const MongoStore = require('connect-mongo');
 const Redirect = require('./models/Redirect');
 const app = express();
@@ -15,7 +24,9 @@ const startServer = async () => {
     try {
         // Connect Database
         await connectDB();
-        startHeartbeat();
+        if (!process.env.VERCEL) {
+            startHeartbeat();
+        }
 
         // 301 Redirect Middleware (Checks DB for custom redirects)
         app.use(async (req, res, next) => {
@@ -79,18 +90,22 @@ const startServer = async () => {
         app.use(express.json());
 
         // Session Middleware
-        const store = (typeof MongoStore.create === 'function')
-            ? MongoStore.create({ mongoUrl: process.env.MONGO_URI, ttl: 14 * 24 * 60 * 60 })
-            : MongoStore.default && typeof MongoStore.default.create === 'function'
-                ? MongoStore.default.create({ mongoUrl: process.env.MONGO_URI, ttl: 14 * 24 * 60 * 60 })
-                : new MongoStore({ mongoUrl: process.env.MONGO_URI, ttl: 14 * 24 * 60 * 60 });
+        let store;
+        if (process.env.MONGO_URI) {
+            store = (typeof MongoStore.create === 'function')
+                ? MongoStore.create({ mongoUrl: process.env.MONGO_URI, ttl: 14 * 24 * 60 * 60 })
+                : MongoStore.default && typeof MongoStore.default.create === 'function'
+                    ? MongoStore.default.create({ mongoUrl: process.env.MONGO_URI, ttl: 14 * 24 * 60 * 60 })
+                    : new MongoStore({ mongoUrl: process.env.MONGO_URI, ttl: 14 * 24 * 60 * 60 });
+        } else {
+            console.warn('[Session] MONGO_URI not found. Using default memory store (sessions will not persist).');
+        }
 
-        app.use(session({
+        const sessionConfig = {
             name: 'pbtadka.sid', // Custom name to avoid generic sid
             secret: process.env.SESSION_SECRET || 'punjabi-film-news-secret-123',
             resave: false,
             saveUninitialized: false,
-            store: store,
             proxy: true, // Required for secure cookies behind proxies
             cookie: {
                 secure: process.env.NODE_ENV === 'production',
@@ -98,7 +113,13 @@ const startServer = async () => {
                 sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site cookies in prod
                 maxAge: 24 * 60 * 60 * 1000
             }
-        }));
+        };
+
+        if (store) {
+            sessionConfig.store = store;
+        }
+
+        app.use(session(sessionConfig));
 
 
         // Static folder for uploads
@@ -121,11 +142,19 @@ const startServer = async () => {
         app.use('/api/redirects', require('./routes/redirects'));
 
         const PORT = process.env.PORT || 5000;
-        app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+        if (!process.env.VERCEL) {
+            app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+        } else {
+            console.log('Server initialized in Vercel serverless mode.');
+        }
     } catch (err) {
         console.error('Failed to start server:', err.message);
-        process.exit(1);
+        if (!process.env.VERCEL) {
+            process.exit(1);
+        }
     }
 };
 
 startServer();
+
+module.exports = app;
