@@ -9,7 +9,7 @@
 header('Content-Type: application/xml; charset=utf-8');
 
 // The live backend sitemap URL
-$backendSitemapUrl = 'https://backend-mcbv.onrender.com/sitemap.xml';
+$backendSitemapUrl = 'https://pbt-orcin.vercel.app/sitemap.xml';
 
 // Initialize cURL
 $ch = curl_init();

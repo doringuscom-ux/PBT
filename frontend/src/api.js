@@ -4,7 +4,7 @@ const isLocal = window.location.hostname === 'localhost' || window.location.host
 
 export const API_BASE_URL = isLocal 
     ? (import.meta.env.VITE_API_URL_LOCAL || 'http://localhost:5005/api').replace('/api', '')
-    : (import.meta.env.VITE_API_URL_PROD || 'https://backend-mcbv.onrender.com/api').replace('/api', '');
+    : (import.meta.env.VITE_API_URL_PROD || 'https://pbt-orcin.vercel.app/api').replace('/api', '');
 
 const api = axios.create({
     baseURL: `${API_BASE_URL}/api`,
