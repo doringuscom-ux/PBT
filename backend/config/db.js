@@ -18,10 +18,7 @@ const connectDB = async () => {
         console.log('Connecting to MongoDB...');
         if (!process.env.MONGO_URI) {
             console.error('[Database] MONGO_URI is not set in environment variables.');
-            if (process.env.VERCEL) {
-                return; // Let Mongoose fail gracefully on requests instead of crashing server startup
-            }
-            process.exit(1);
+            return; // Let Mongoose fail gracefully on requests instead of crashing server startup
         }
         await mongoose.connect(process.env.MONGO_URI);
         isConnected = true;
@@ -29,9 +26,6 @@ const connectDB = async () => {
     } catch (err) {
         console.error('Error connecting to MongoDB:', err.message);
         console.error('Stack trace:', err.stack);
-        if (!process.env.VERCEL) {
-            process.exit(1);
-        }
     }
 };
 

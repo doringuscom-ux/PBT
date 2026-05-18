@@ -166,9 +166,6 @@ const startServer = async () => {
         }
     } catch (err) {
         console.error('Failed to start server:', err.message);
-        if (!process.env.VERCEL) {
-            process.exit(1);
-        }
     }
 };
 
