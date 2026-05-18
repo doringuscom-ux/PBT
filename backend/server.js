@@ -126,6 +126,7 @@ const startServer = async () => {
         app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
         app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+        app.get('/', (req, res) => res.send('PBTadka Backend API is running successfully.'));
         app.use('/sitemap.xml', require('./routes/sitemap'));
 
         // Define Routes
