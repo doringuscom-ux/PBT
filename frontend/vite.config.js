@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/sitemap.xml': {
-        target: 'https://pbt-orcin.vercel.app',
+        target: 'https://backend-mcbv.onrender.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/sitemap.xml/, '/sitemap.xml')
       }
