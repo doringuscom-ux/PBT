@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
-import { submitInquiry } from '../api';
+import { submitInquiry, getSettings } from '../api';
 
 const InquiryPopup = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -24,8 +24,15 @@ const InquiryPopup = () => {
             return;
         }
 
-        // Show on every refresh
-        setIsOpen(true);
+        // Check settings to see if it's enabled
+        getSettings().then(res => {
+            if (res.data.whatsappPopupEnabled !== false) { // Default to true if undefined
+                setIsOpen(true);
+            }
+        }).catch(err => {
+            console.error("Error checking popup status:", err);
+            setIsOpen(true); // Fallback
+        });
     }, []);
 
     const handleChange = (e) => {

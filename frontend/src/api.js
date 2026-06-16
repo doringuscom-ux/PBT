@@ -90,4 +90,7 @@ export const getWidgets = (params) => widgetApi.get('/widgets', { params });
 
 export const autoGenerateCelebSEO = () => api.post('/seo/auto-generate-celebs');
 
+export const getSettings = () => api.get('/settings');
+export const updateSetting = (key, value) => api.put(`/settings/${key}`, { value });
+
 export default api;

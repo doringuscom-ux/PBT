@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getInquiries, deleteInquiry, updateInquiry } from '../api';
+import { getInquiries, deleteInquiry, updateInquiry, getSettings, updateSetting } from '../api';
 import Modal from '../components/Modal';
 
 const ManageInquiries = ({ mode = 'promotions' }) => {
@@ -9,6 +9,25 @@ const ManageInquiries = ({ mode = 'promotions' }) => {
     const [error, setError] = useState(null);
     const [selectedInquiry, setSelectedInquiry] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [isPopupEnabled, setIsPopupEnabled] = useState(true);
+
+    useEffect(() => {
+        if (mode === 'whatsapp') {
+            getSettings().then(res => {
+                setIsPopupEnabled(res.data.whatsappPopupEnabled ?? true);
+            }).catch(err => console.error("Error fetching settings:", err));
+        }
+    }, [mode]);
+
+    const togglePopup = async () => {
+        try {
+            const newValue = !isPopupEnabled;
+            await updateSetting('whatsappPopupEnabled', newValue);
+            setIsPopupEnabled(newValue);
+        } catch (err) {
+            alert('Failed to update setting: ' + err.message);
+        }
+    };
 
     const fetchInquiries = async () => {
         try {
@@ -84,13 +103,32 @@ const ManageInquiries = ({ mode = 'promotions' }) => {
                     <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic">{title.split(' ')[0]} <span className={accentColor}>{title.split(' ')[1]}</span></h2>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">{subTitle}</p>
                 </div>
-                <div className="bg-white border border-slate-100 rounded-2xl px-6 py-3 shadow-sm flex items-center gap-4">
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Counts</span>
-                        <span className="text-xl font-black text-slate-900">{filteredInquiries.length}</span>
-                    </div>
-                    <div className={`w-10 h-10 ${accentBg} rounded-xl flex items-center justify-center ${accentColor}`}>
-                        <i className={accentIcon}></i>
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                    {mode === 'whatsapp' && (
+                        <div 
+                            onClick={togglePopup}
+                            className="bg-white border border-slate-100 rounded-2xl px-6 py-3 shadow-sm flex items-center gap-4 cursor-pointer hover:border-slate-300 transition-all active:scale-95"
+                            title="Enable or disable the WhatsApp popup on the main site"
+                        >
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Popup Status</span>
+                                <span className={`text-xl font-black ${isPopupEnabled ? 'text-green-500' : 'text-slate-400'}`}>
+                                    {isPopupEnabled ? 'ENABLED' : 'DISABLED'}
+                                </span>
+                            </div>
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPopupEnabled ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' : 'bg-slate-100 text-slate-400'}`}>
+                                <i className={`fas fa-power-off`}></i>
+                            </div>
+                        </div>
+                    )}
+                    <div className="bg-white border border-slate-100 rounded-2xl px-6 py-3 shadow-sm flex items-center gap-4">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Counts</span>
+                            <span className="text-xl font-black text-slate-900">{filteredInquiries.length}</span>
+                        </div>
+                        <div className={`w-10 h-10 ${accentBg} rounded-xl flex items-center justify-center ${accentColor}`}>
+                            <i className={accentIcon}></i>
+                        </div>
                     </div>
                 </div>
             </header>
