@@ -1,4 +1,3 @@
-const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library');
 require('dotenv').config();
 
@@ -7,6 +6,7 @@ require('dotenv').config();
  */
 const appendToSheet = async (data, spreadsheetId = null) => {
     try {
+        const { GoogleSpreadsheet } = await import('google-spreadsheet');
         const targetId = spreadsheetId || process.env.GOOGLE_SHEET_ID_ADS;
         const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
         const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
