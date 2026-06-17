@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/sitemap.xml",
-      "destination": "https://backend-mcbv.onrender.com/sitemap.xml"
+      "destination": "https://pbt-liart.vercel.app/sitemap.xml"
     },
     {
       "source": "/(.*)",

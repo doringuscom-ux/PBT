@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-export const API_BASE_URL = isLocal 
+export const API_BASE_URL = isLocal
     ? (import.meta.env.VITE_API_URL_LOCAL || 'http://localhost:5005/api').replace('/api', '')
-    : (import.meta.env.VITE_API_URL_PROD || 'https://backend-mcbv.onrender.com/api').replace('/api', '');
+    : (import.meta.env.VITE_API_URL_PROD || 'https://pbt-liart.vercel.app/api').replace('/api', '');
 
 const api = axios.create({
     baseURL: `${API_BASE_URL}/api`,
@@ -12,8 +12,8 @@ const api = axios.create({
 });
 
 const widgetApi = axios.create({
-    baseURL: isLocal 
-        ? import.meta.env.VITE_WIDGET_API_URL_LOCAL 
+    baseURL: isLocal
+        ? import.meta.env.VITE_WIDGET_API_URL_LOCAL
         : import.meta.env.VITE_WIDGET_API_URL_PROD
 });
 
