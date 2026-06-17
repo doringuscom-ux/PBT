@@ -9,7 +9,7 @@
 header('Content-Type: application/xml; charset=utf-8');
 
 // The live backend sitemap URL
-$backendSitemapUrl = 'https://pbt-orcin.vercel.app/sitemap.xml';
+$backendSitemapUrl = 'https://backend-mcbv.onrender.com/sitemap.xml';
 
 // Initialize cURL
 $ch = curl_init();
@@ -26,8 +26,8 @@ curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Bypass SSL verification if b
 $sitemap = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-curl_close($ch);
-
+// In PHP 8.0+, curl handles are automatically closed when they go out of scope.
+// curl_close() is deprecated in PHP 8.5.
 if ($sitemap === false || $httpCode !== 200) {
     // If fetch fails, return a minimal sitemap or log error
     echo '<?xml version="1.0" encoding="UTF-8"?>';

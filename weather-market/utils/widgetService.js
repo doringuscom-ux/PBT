@@ -124,4 +124,4 @@ const startWidgetService = () => {
     cron.schedule('*/5 * * * *', updateMarket);
 };
 
-module.exports = { startWidgetService, fetchWeatherForCoords };
+module.exports = { startWidgetService, fetchWeatherForCoords, updateWeather, updateMarket };

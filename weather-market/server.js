@@ -64,6 +64,20 @@ app.get('/api/widgets', async (req, res) => {
     }
 });
 
+// Vercel Cron Endpoint for updating weather and market data
+app.get('/api/cron/update-widgets', async (req, res) => {
+    try {
+        const { updateWeather, updateMarket } = require('./utils/widgetService');
+        await Promise.all([
+            updateWeather(),
+            updateMarket()
+        ]);
+        res.json({ message: 'Widgets updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 app.get('/', (req, res) => res.send('PBTadka Weather & Market API is running successfully.'));
 
