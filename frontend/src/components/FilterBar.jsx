@@ -3,6 +3,23 @@ import { Link } from 'react-router-dom';
 
 const FilterBar = ({ options, activeFilter, onFilterChange, label = "Filter By", theme = "dark", linkGenerator }) => {
   const isLight = theme === 'light';
+  const scrollRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (el) {
+      const onWheel = (e) => {
+        if (e.deltaY === 0) return;
+        e.preventDefault();
+        el.scrollTo({
+          left: el.scrollLeft + e.deltaY * 1.5, // 1.5 multiplier for smoother scroll
+          behavior: 'auto'
+        });
+      };
+      el.addEventListener('wheel', onWheel, { passive: false });
+      return () => el.removeEventListener('wheel', onWheel);
+    }
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-4 overflow-hidden">
@@ -11,7 +28,7 @@ const FilterBar = ({ options, activeFilter, onFilterChange, label = "Filter By",
         <span className={`text-[10px] md:text-[9px] font-black uppercase tracking-[0.3em] italic ${isLight ? 'text-gray-400' : 'text-white'}`}>{label}</span>
       </div>
       
-      <div className="flex flex-nowrap overflow-x-auto gap-3 pb-2 md:pb-0 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+      <div ref={scrollRef} className="flex flex-nowrap overflow-x-auto gap-3 pb-2 md:pb-0 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth">
         {options.map((option) => {
           const content = (
             <span className="relative z-10">{option}</span>

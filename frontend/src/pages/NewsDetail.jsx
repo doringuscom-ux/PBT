@@ -14,6 +14,15 @@ const NewsDetail = () => {
         window.scrollTo(0, 0);
     }, [id]);
 
+    useEffect(() => {
+        if (article) {
+            try {
+                (window.adsbygoogle = window.adsbygoogle || []).push({}); // For In-Article Ad
+                (window.adsbygoogle = window.adsbygoogle || []).push({}); // For Multiplex Ad
+            } catch (err) {}
+        }
+    }, [article]);
+
     const formatDate = (dateString) => {
         if (!dateString) return 'Just Now';
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -85,6 +94,16 @@ const NewsDetail = () => {
                             />
                         </div>
 
+                        {/* In-Article Ad */}
+                        <div className="w-full text-center my-8 overflow-hidden flex justify-center">
+                            <ins className="adsbygoogle w-full"
+                                 style={{ display: 'block', textAlign: 'center' }}
+                                 data-ad-layout="in-article"
+                                 data-ad-format="fluid"
+                                 data-ad-client="ca-pub-6214614018313479"
+                                 data-ad-slot="1175600423"></ins>
+                        </div>
+
                         {/* Comment Section */}
                         <CommentSection 
                             itemId={article._id}
@@ -95,6 +114,15 @@ const NewsDetail = () => {
                             onUpdate={updateComment}
                             onDelete={deleteComment}
                         />
+
+                        {/* Multiplex (Autorelaxed) Ad */}
+                        <div className="w-full text-center mt-12 mb-8 overflow-hidden">
+                            <ins className="adsbygoogle w-full"
+                                 style={{ display: 'block' }}
+                                 data-ad-format="autorelaxed"
+                                 data-ad-client="ca-pub-6214614018313479"
+                                 data-ad-slot="5601509136"></ins>
+                        </div>
                     </div>
 
                     <aside className="lg:w-[35%] xl:w-[35%] relative">

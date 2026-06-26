@@ -84,6 +84,17 @@ const MoviePageWrapper = () => {
     }
     return <MovieList />;
   }
+
+  // Check if it's a specific movie and handle auto-redirection based on release date
+  const movie = (movies || []).find(m => m.slug === param || m._id === param);
+  if (movie) {
+    const isReleased = movie.releaseDate && new Date(movie.releaseDate) <= new Date();
+    if (!isReleased && movie.releaseDate) {
+      // Movie is upcoming, redirect to upcoming URL
+      return <Navigate to={`/latest-movies/upcoming/${param}`} replace />;
+    }
+  }
+
   return <MovieDetail />;
 };
 
@@ -107,6 +118,17 @@ const UpcomingPageWrapper = () => {
     }
     return <UpcomingList />;
   }
+
+  // Check if it's a specific movie and handle auto-redirection based on release date
+  const movie = (movies || []).find(m => m.slug === param || m._id === param);
+  if (movie) {
+    const isReleased = movie.releaseDate && new Date(movie.releaseDate) <= new Date();
+    if (isReleased) {
+      // Movie is released, redirect to latest movies URL
+      return <Navigate to={`/latest-movies/${param}`} replace />;
+    }
+  }
+
   return <MovieDetail />;
 };
 

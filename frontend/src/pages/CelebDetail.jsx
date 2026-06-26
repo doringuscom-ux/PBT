@@ -42,6 +42,15 @@ const CelebDetail = () => {
         window.scrollTo(0, 0);
     }, [id]);
 
+    useEffect(() => {
+        if (celeb) {
+            try {
+                (window.adsbygoogle = window.adsbygoogle || []).push({}); // For In-Article Ad
+                (window.adsbygoogle = window.adsbygoogle || []).push({}); // For Multiplex Ad
+            } catch (err) {}
+        }
+    }, [celeb]);
+
     const { isLoading } = useData();
     if (isLoading) return <div className="min-h-screen bg-black flex items-center justify-center font-black uppercase tracking-widest text-slate-400 italic">Loading Profile...</div>;
 
@@ -499,15 +508,35 @@ const CelebDetail = () => {
                             </div>
                         )}
 
+                        {/* In-Article Ad */}
+                        <div className="w-full text-center my-8 overflow-hidden flex justify-center">
+                            <ins className="adsbygoogle w-full"
+                                 style={{ display: 'block', textAlign: 'center' }}
+                                 data-ad-layout="in-article"
+                                 data-ad-format="fluid"
+                                 data-ad-client="ca-pub-6214614018313479"
+                                 data-ad-slot="1175600423"></ins>
+                        </div>
+
                         <div className=" border-gray-100">
                              <CommentSection 
                                 itemId={celeb._id}
+                                itemType="celeb"
                                 comments={celeb.comments}
                                 onAdd={addCelebComment}
                                 onLike={likeCelebComment}
                                 onUpdate={updateCelebComment}
                                 onDelete={deleteCelebComment}
                             />
+                        </div>
+
+                        {/* Multiplex (Autorelaxed) Ad */}
+                        <div className="w-full text-center mt-12 mb-8 overflow-hidden">
+                            <ins className="adsbygoogle w-full"
+                                 style={{ display: 'block' }}
+                                 data-ad-format="autorelaxed"
+                                 data-ad-client="ca-pub-6214614018313479"
+                                 data-ad-slot="5601509136"></ins>
                         </div>
 
                     </div>
