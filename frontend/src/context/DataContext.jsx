@@ -584,7 +584,7 @@ export const DataProvider = ({ children }) => {
         addCelebComment, deleteCelebComment, likeCelebComment, updateCelebComment, followCeleb, autoGenerateCelebSEO,
         isLoading, loadingProgress
       }}>
-      {children}
+      {isLoading ? <Loading progress={loadingProgress} /> : children}
     </DataContext.Provider>
   );
 };
