@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { optimizeImage } from '../utils/imageUtils';
 
 const CelebGrid = ({ industry }) => {
   const { celebs } = useData();
@@ -98,7 +99,7 @@ const CelebGrid = ({ industry }) => {
             <Link to={`/celebrities/${celeb.slug || celeb._id}`} key={`${celeb._id}-${idx}`} className="w-[200px] shrink-0 bg-white rounded-xl shadow-md text-center hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 group no-underline text-inherit block overflow-hidden">
               <div className="relative w-full pt-[125%] overflow-hidden bg-slate-100">
                 <img 
-                  src={celeb.image} 
+                  src={optimizeImage(celeb.image, 300)} 
                   alt={celeb.name} 
                   loading="lazy"
                   className="absolute top-0 left-0 w-full h-full object-cover object-[center_top] transition-transform duration-700 group-hover:scale-110"

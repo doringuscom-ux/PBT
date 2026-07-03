@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import FilterBar from '../components/FilterBar';
+import { optimizeImage } from '../utils/imageUtils';
 
 const NewsList = () => {
   const { news, fetchMoreNews, newsHasMore } = useData();
@@ -51,7 +52,7 @@ const NewsList = () => {
                   <Link to={`/latest-news/${article.slug || article._id}`} className="group flex flex-col bg-white rounded-[16px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full">
                     <article className="h-full flex flex-col">
                       <div className="relative h-[200px] overflow-hidden">
-                        <img src={article.image} alt={article.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <img src={optimizeImage(article.image, 400)} alt={article.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div className="absolute top-3 left-3 bg-slate-900 text-white px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-xl border border-white/10">
                           {article.category}

@@ -2,6 +2,7 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 const connectDB = require('./config/db');
 const path = require('path');
 const { startHeartbeat } = require('./utils/heartbeat');
@@ -65,6 +66,7 @@ app.use(async (req, res, next) => {
 
 // Init Middleware
 app.set('trust proxy', 1); // Trust first proxy (Render, Heroku, etc.)
+app.use(compression());
 
 // Logging middleware
 app.use((req, res, next) => {

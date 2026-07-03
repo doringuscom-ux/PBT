@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { optimizeImage } from '../utils/imageUtils';
 
 const MovieCard = ({ movie, isUpcoming = false }) => {
   const isReleased = movie.releaseDate && new Date(movie.releaseDate) <= new Date();
@@ -13,7 +14,7 @@ const MovieCard = ({ movie, isUpcoming = false }) => {
         className="relative aspect-[2/3] rounded-[1.5rem] overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.1)] group-hover:shadow-[0_20px_60px_rgba(230,57,70,0.25)] transition-all duration-500 border border-white/10 group-hover:border-primary-red/30"
       >
         <img 
-          src={movie.image} 
+          src={optimizeImage(movie.image, 400)} 
           alt={movie.title} 
           loading="lazy"
           className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 ease-out"

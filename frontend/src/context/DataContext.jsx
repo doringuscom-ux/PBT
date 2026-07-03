@@ -20,6 +20,10 @@ export const DataProvider = ({ children }) => {
   const [videos, setVideos] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [user, setUser] = useState(null); // New user state for session
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+
   const [moviesPage, setMoviesPage] = useState(1);
   const [newsPage, setNewsPage] = useState(1);
   const [celebsPage, setCelebsPage] = useState(1);
@@ -146,6 +150,43 @@ export const DataProvider = ({ children }) => {
           }
       } catch (err) { console.error(err); }
   };
+
+  // Progressive background loading
+  useEffect(() => {
+    if (isLoading) return;
+    let timerId;
+    if (moviesHasMore) {
+      timerId = setTimeout(() => { fetchMoreMovies(); }, 800);
+    }
+    return () => clearTimeout(timerId);
+  }, [isLoading, moviesHasMore, moviesPage]);
+
+  useEffect(() => {
+    if (isLoading) return;
+    let timerId;
+    if (newsHasMore) {
+      timerId = setTimeout(() => { fetchMoreNews(); }, 900);
+    }
+    return () => clearTimeout(timerId);
+  }, [isLoading, newsHasMore, newsPage]);
+
+  useEffect(() => {
+    if (isLoading) return;
+    let timerId;
+    if (celebsHasMore) {
+      timerId = setTimeout(() => { fetchMoreCelebs(); }, 1000);
+    }
+    return () => clearTimeout(timerId);
+  }, [isLoading, celebsHasMore, celebsPage]);
+
+  useEffect(() => {
+    if (isLoading) return;
+    let timerId;
+    if (videosHasMore) {
+      timerId = setTimeout(() => { fetchMoreVideos(); }, 1100);
+    }
+    return () => clearTimeout(timerId);
+  }, [isLoading, videosHasMore, videosPage]);
 
   const logout = async () => {
     try {
@@ -540,7 +581,8 @@ export const DataProvider = ({ children }) => {
         refreshData: fetchData,
         addMovieComment, deleteMovieComment, likeMovieComment, updateMovieComment, rateMovie,
         addVideoComment, deleteVideoComment, likeVideoComment, updateVideoComment,
-        addCelebComment, deleteCelebComment, likeCelebComment, updateCelebComment, followCeleb, autoGenerateCelebSEO
+        addCelebComment, deleteCelebComment, likeCelebComment, updateCelebComment, followCeleb, autoGenerateCelebSEO,
+        isLoading, loadingProgress
       }}>
       {children}
     </DataContext.Provider>
