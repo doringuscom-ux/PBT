@@ -1,15 +1,16 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import * as api from '../api';
 
 const MovieCalendar = () => {
-  const { movies } = useData();
   const scrollRef = useRef(null);
+  const [upcomingMovies, setUpcomingMovies] = useState([]);
 
-  // Filter for movies with a release date in the future
-  const upcomingMovies = movies
-    .filter(movie => movie.releaseDate && new Date(movie.releaseDate) > new Date())
-    .sort((a, b) => new Date(a.releaseDate) - new Date(b.releaseDate));
+  useEffect(() => {
+      api.getUpcomingMovies().then(res => {
+          setUpcomingMovies(res.data);
+      }).catch(err => console.error(err));
+  }, []);
 
   const scroll = (direction) => {
     const { current } = scrollRef;

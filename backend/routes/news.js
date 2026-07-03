@@ -88,17 +88,35 @@ const normalizeNewsData = (data) => {
     return newsData;
 };
 
-router.get('/', async (req, res) => {
+// Get all news
+router.get('/', cacheMiddleware(300), async (req, res) => {
     try {
         const isAdmin = req.session.user && (req.session.user.role === 'admin' || req.session.user.role === 'sub-admin');
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+
         let query = News.find();
         
         if (isAdmin) {
             query = query.populate('createdBy', 'username employeeId fullName');
         }
         
-        const news = await query.populate('relatedMovie', 'title slug').populate('relatedCelebrities', 'name image role industry slug').sort({ createdAt: -1 });
-        res.json(enrichNews(news, req.session.user));
+        query = query.populate('relatedMovie', 'title slug').populate('relatedCelebrities', 'name image role industry slug').sort({ createdAt: -1 });
+        
+        if (page && limit) {
+            const skip = (page - 1) * limit;
+            const news = await query.skip(skip).limit(limit);
+            const totalItems = await News.countDocuments();
+            res.json({
+                data: enrichNews(news, req.session.user),
+                currentPage: page,
+                totalPages: Math.ceil(totalItems / limit),
+                totalItems
+            });
+        } else {
+            const news = await query;
+            res.json(enrichNews(news, req.session.user));
+        }
     } catch (err) {
         console.error("News GET Error:", err);
         res.status(500).json({ message: err.message });

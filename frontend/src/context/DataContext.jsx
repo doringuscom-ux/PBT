@@ -20,8 +20,15 @@ export const DataProvider = ({ children }) => {
   const [videos, setVideos] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [user, setUser] = useState(null); // New user state for session
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [moviesPage, setMoviesPage] = useState(1);
+  const [newsPage, setNewsPage] = useState(1);
+  const [celebsPage, setCelebsPage] = useState(1);
+  const [videosPage, setVideosPage] = useState(1);
+  
+  const [moviesHasMore, setMoviesHasMore] = useState(true);
+  const [newsHasMore, setNewsHasMore] = useState(true);
+  const [celebsHasMore, setCelebsHasMore] = useState(true);
+  const [videosHasMore, setVideosHasMore] = useState(true);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -47,27 +54,97 @@ export const DataProvider = ({ children }) => {
 
       // Parallel requests (5 more)
       const results = await Promise.all([
-        api.getMovies().finally(increment),
-        api.getNews().finally(increment),
+        api.getMovies(1, 15).finally(increment),
+        api.getNews(1, 15).finally(increment),
         api.getTodayNews().finally(increment),
-        api.getCelebrities().finally(increment),
-        api.getVideos().finally(increment),
+        api.getCelebrities(1, 15).finally(increment),
+        api.getVideos(1, 15).finally(increment),
         api.getAnnouncements().finally(increment)
       ]);
 
       const [moviesRes, newsRes, todayNewsRes, celebsRes, videosRes, annRes] = results;
 
-      setMovies(moviesRes.data.sort((a, b) => new Date(b.createdAt || b.year) - new Date(a.createdAt || a.year)));
-      setNews(newsRes.data.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)));
+      setMovies(moviesRes.data.data.sort((a, b) => new Date(b.createdAt || b.year) - new Date(a.createdAt || a.year)));
+      setNews(newsRes.data.data.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)));
       setTodayNews(todayNewsRes.data.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)));
-      setCelebs(celebsRes.data);
-      setVideos(videosRes.data);
+      setCelebs(celebsRes.data.data);
+      setVideos(videosRes.data.data);
       setAnnouncements(annRes.data || []);
+      
+      setMoviesPage(1);
+      setNewsPage(1);
+      setCelebsPage(1);
+      setVideosPage(1);
+      
+      setMoviesHasMore(moviesRes.data.totalPages > 1);
+      setNewsHasMore(newsRes.data.totalPages > 1);
+      setCelebsHasMore(celebsRes.data.totalPages > 1);
+      setVideosHasMore(videosRes.data.totalPages > 1);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const fetchMoreMovies = async () => {
+      if (!moviesHasMore) return;
+      try {
+          const nextPage = moviesPage + 1;
+          const res = await api.getMovies(nextPage, 15);
+          if (res.data.data.length === 0) {
+              setMoviesHasMore(false);
+          } else {
+              setMovies(prev => [...prev, ...res.data.data].sort((a, b) => new Date(b.createdAt || b.year) - new Date(a.createdAt || a.year)));
+              setMoviesPage(nextPage);
+              setMoviesHasMore(nextPage < res.data.totalPages);
+          }
+      } catch (err) { console.error(err); }
+  };
+
+  const fetchMoreNews = async () => {
+      if (!newsHasMore) return;
+      try {
+          const nextPage = newsPage + 1;
+          const res = await api.getNews(nextPage, 15);
+          if (res.data.data.length === 0) {
+              setNewsHasMore(false);
+          } else {
+              setNews(prev => [...prev, ...res.data.data].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)));
+              setNewsPage(nextPage);
+              setNewsHasMore(nextPage < res.data.totalPages);
+          }
+      } catch (err) { console.error(err); }
+  };
+
+  const fetchMoreCelebs = async () => {
+      if (!celebsHasMore) return;
+      try {
+          const nextPage = celebsPage + 1;
+          const res = await api.getCelebrities(nextPage, 15);
+          if (res.data.data.length === 0) {
+              setCelebsHasMore(false);
+          } else {
+              setCelebs(prev => [...prev, ...res.data.data]);
+              setCelebsPage(nextPage);
+              setCelebsHasMore(nextPage < res.data.totalPages);
+          }
+      } catch (err) { console.error(err); }
+  };
+
+  const fetchMoreVideos = async () => {
+      if (!videosHasMore) return;
+      try {
+          const nextPage = videosPage + 1;
+          const res = await api.getVideos(nextPage, 15);
+          if (res.data.data.length === 0) {
+              setVideosHasMore(false);
+          } else {
+              setVideos(prev => [...prev, ...res.data.data]);
+              setVideosPage(nextPage);
+              setVideosHasMore(nextPage < res.data.totalPages);
+          }
+      } catch (err) { console.error(err); }
   };
 
   const logout = async () => {
@@ -451,10 +528,10 @@ export const DataProvider = ({ children }) => {
 
     return (
       <DataContext.Provider value={{
-        movies, addMovie, updateMovie, deleteMovie,
-        news, todayNews, addNews, updateNews, deleteNews,
-        celebs, addCeleb, updateCeleb, deleteCeleb,
-        videos, addVideo, updateVideo, deleteVideo,
+        movies, addMovie, updateMovie, deleteMovie, fetchMoreMovies, moviesHasMore,
+        news, todayNews, addNews, updateNews, deleteNews, fetchMoreNews, newsHasMore,
+        celebs, addCeleb, updateCeleb, deleteCeleb, fetchMoreCelebs, celebsHasMore,
+        videos, addVideo, updateVideo, deleteVideo, fetchMoreVideos, videosHasMore,
         addComment, deleteComment, likeComment, reportComment, updateComment,
         announcements: combinedAnnouncements,
         manualAnnouncements: announcements,

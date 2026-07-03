@@ -31,14 +31,31 @@ const enrich = (items, sessionUser) => {
 router.get('/', cacheMiddleware(300), async (req, res) => {
     try {
         const isAdmin = req.session.user && (req.session.user.role === 'admin' || req.session.user.role === 'sub-admin');
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+
         let query = Video.find();
         
         if (isAdmin) {
             query = query.populate('createdBy', 'username employeeId fullName');
         }
         
-        const videos = await query.sort({ createdAt: -1 });
-        res.json(enrich(videos, req.session.user));
+        query = query.sort({ createdAt: -1 });
+
+        if (page && limit) {
+            const skip = (page - 1) * limit;
+            const videos = await query.skip(skip).limit(limit);
+            const totalItems = await Video.countDocuments();
+            res.json({
+                data: enrich(videos, req.session.user),
+                currentPage: page,
+                totalPages: Math.ceil(totalItems / limit),
+                totalItems
+            });
+        } else {
+            const videos = await query;
+            res.json(enrich(videos, req.session.user));
+        }
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useRef, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import FilterBar from '../components/FilterBar';
 import MovieCard from '../components/MovieCard';
 
 const MovieList = () => {
-  const { movies } = useData();
+  const { movies, fetchMoreMovies, moviesHasMore } = useData();
   const params = useParams();
+  const observer = useRef();
+
+  const lastElementRef = useCallback(node => {
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver(entries => {
+          if (entries[0].isIntersecting && moviesHasMore) {
+              fetchMoreMovies();
+          }
+      });
+      if (node) observer.current.observe(node);
+  }, [moviesHasMore, fetchMoreMovies]);
   const param = params.param || params['*'];
 
   const industries = ['ALL', ...new Set(movies.filter(m => m.industry).map(m => m.industry.trim()))];
@@ -73,11 +84,26 @@ const MovieList = () => {
             
             {/* Movie Grid */}
             {filteredMovies.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 md:gap-10">
-                    {filteredMovies.map((movie) => (
-                        <MovieCard key={movie._id} movie={movie} />
-                    ))}
-                </div>
+                <>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 md:gap-10">
+                        {filteredMovies.map((movie, index) => {
+                            if (filteredMovies.length === index + 1) {
+                                return (
+                                    <div ref={lastElementRef} key={movie._id} className="h-full">
+                                        <MovieCard movie={movie} />
+                                    </div>
+                                );
+                            } else {
+                                return <MovieCard key={movie._id} movie={movie} />;
+                            }
+                        })}
+                    </div>
+                    {moviesHasMore && (
+                        <div className="text-center text-white/50 py-10 mt-4 animate-pulse uppercase tracking-widest font-black text-sm">
+                            Loading More...
+                        </div>
+                    )}
+                </>
             ) : (
                 <div className="glass-panel py-32 rounded-[3rem] text-center border-2 border-dashed border-white/5">
                     <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8 text-white/20 text-4xl">

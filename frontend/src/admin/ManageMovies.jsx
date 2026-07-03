@@ -10,7 +10,7 @@ import ImageCropperModal from '../components/ImageCropperModal';
 const INDUSTRIES = ["Bollywood", "Hollywood", "Tollywood", "Kollywood", "Mollywood", "Sandalwood", "South Indian", "Haryanvi", "Bhojpuri", "Pollywood"];
 
 const ManageMovies = () => {
-  const { user, movies, celebs, addMovie, updateMovie, deleteMovie, deleteMovieComment, updateMovieComment } = useData();
+  const { user, movies, celebs, addMovie, updateMovie, deleteMovie, deleteMovieComment, updateMovieComment, fetchMoreMovies, moviesHasMore } = useData();
 
   const quillModules = {
     toolbar: [
@@ -703,6 +703,17 @@ const ManageMovies = () => {
             ))}
           </tbody>
         </table>
+        
+        {moviesHasMore && (
+            <div className="flex justify-center mt-8 pb-4">
+                <button 
+                    onClick={fetchMoreMovies} 
+                    className="bg-white border-2 border-gray-200 text-gray-700 px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:border-primary-red hover:text-primary-red transition-all shadow-sm"
+                >
+                    Load Older Movies
+                </button>
+            </div>
+        )}
       </div>
     </div>
   );

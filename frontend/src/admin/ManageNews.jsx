@@ -6,7 +6,7 @@ import Modal from '../components/Modal';
 import { slugify } from '../utils/slugify';
 
 const ManageNews = () => {
-  const { user, celebs, movies, news, addNews, updateNews, deleteNews, deleteComment, updateComment } = useData();
+  const { user, celebs, movies, news, addNews, updateNews, deleteNews, deleteComment, updateComment, fetchMoreNews, newsHasMore } = useData();
 
   const quillModules = {
     toolbar: [
@@ -490,6 +490,17 @@ const ManageNews = () => {
             ))}
           </tbody>
         </table>
+
+        {newsHasMore && (
+            <div className="flex justify-center mt-8 pb-4">
+                <button 
+                    onClick={fetchMoreNews} 
+                    className="bg-white border-2 border-gray-200 text-gray-700 px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:border-primary-red hover:text-primary-red transition-all shadow-sm"
+                >
+                    Load Older News
+                </button>
+            </div>
+        )}
       </div>
     </div>
   );
