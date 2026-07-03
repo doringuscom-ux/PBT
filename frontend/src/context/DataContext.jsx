@@ -154,6 +154,17 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const deleteMovieRating = async (id) => {
+    try {
+      const res = await api.deleteMovieRating(id);
+      setMovies(movies.map(m => m._id === id ? res.data : m));
+      return { success: true };
+    } catch (err) {
+      console.error(err);
+      return { success: false, error: err.response?.data?.message || err.message };
+    }
+  };
+
   const updateMovieComment = async (id, commentId, data) => {
     try {
       if (!id || !commentId) throw new Error("Missing id or commentId");
@@ -463,7 +474,7 @@ export const DataProvider = ({ children }) => {
         addAnnouncement, deleteAnnouncement,
         user, setUser, logout,
         refreshData: fetchData,
-        addMovieComment, deleteMovieComment, likeMovieComment, updateMovieComment, rateMovie,
+        addMovieComment, deleteMovieComment, likeMovieComment, updateMovieComment, rateMovie, deleteMovieRating,
         addVideoComment, deleteVideoComment, likeVideoComment, updateVideoComment,
         addCelebComment, deleteCelebComment, likeCelebComment, updateCelebComment, followCeleb, autoGenerateCelebSEO
       }}>

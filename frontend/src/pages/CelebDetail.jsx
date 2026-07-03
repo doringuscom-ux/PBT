@@ -18,17 +18,19 @@ const CelebDetail = () => {
  
     const splitText = (text) => {
         if (!text) return { first: '', second: '' };
-        const parts = text.split(' ');
+        const parts = text.trim().split(' ');
         if (parts.length > 1) {
-            return { first: parts[0], second: text.slice(parts[0].length) };
+            return { first: parts[0], second: text.slice(parts[0].length).trim() };
         }
-        const mid = Math.ceil(text.length / 2);
-        return { first: text.slice(0, mid), second: text.slice(mid) };
+        return { first: text, second: '' };
     };
  
     const { first: firstName, second: lastName } = splitText(celeb?.name);
 
     const formatCount = (num) => {
+        if (num >= 1000000000) {
+            return (num / 1000000000).toFixed(1) + 'B';
+        }
         if (num >= 1000000) {
             return (num / 1000000).toFixed(1) + 'M';
         }
@@ -37,6 +39,17 @@ const CelebDetail = () => {
         }
         return num;
     };
+
+    const getBaseFollowers = (id) => {
+        if (!id) return 25400;
+        // Generate a stable 4-5 digit base (10,000 to 99,999)
+        const num = parseInt(id.toString().slice(-6), 16) || 0;
+        return (num % 90000) + 10000;
+    };
+
+    const originalFans = (celeb?.followers?.length || 0) + (celeb?.bonusFollowers || 0);
+    // Add the stable base to the actual/bonus fans to keep the old hierarchy perfectly intact
+    const displayFollowers = getBaseFollowers(celeb?._id) + originalFans;
     
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -135,56 +148,79 @@ const CelebDetail = () => {
                         {/* Middle: Name & Biography */}
                         <div className="flex-1 space-y-8 py-4">
                             <div>
-                                <div className="flex flex-col items-center lg:items-start gap-2 mb-4">
+                                <div className="flex flex-col items-center lg:items-start gap-2 mb-1">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-[3px] bg-yellow-400"></div>
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-yellow-400 italic">
                                             {celeb.industry === 'Sports' ? 'SPORTS STAR' : celeb.industry === 'Business' ? 'BUSINESS LEADER' : 'CINEMA STAR'}
                                         </span>
                                     </div>
-                                    <h1 className="text-4xl md:text-6xl font-black italic tracking-[0.15em] leading-[0.9] flex flex-wrap justify-center lg:justify-start gap-4">
+                                    <h1 className="text-3xl md:text-5xl font-black italic tracking-[0.10em] leading-[0.9] flex justify-center lg:justify-start gap-3 whitespace-nowrap overflow-hidden text-ellipsis">
                                         <span className="text-white uppercase">{firstName}</span>
-                                        <span className="text-yellow-400 uppercase">{lastName}</span>
+                                        {lastName && <span className="text-yellow-400 uppercase">{lastName}</span>}
                                     </h1>
                                 </div>
-                                <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-4 gap-y-2 text-sm font-bold text-slate-400 uppercase tracking-wide italic">
-                                    <span className="text-yellow-400 not-italic font-black border-r border-white/10 pr-4">{celeb.role}</span>
-                                    <span>Official Profile</span>
-                                    {celeb.industry && <span className="border-l border-white/10 pl-4">Industry: {celeb.industry}</span>}
-                                </div>
+                                {celeb.role && (
+                                    <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-3 gap-y-2 text-sm font-black uppercase tracking-wide mb-1">
+                                        {celeb.role.split(',').map((r, i) => (
+                                            <React.Fragment key={i}>
+                                                <span className={i % 2 === 0 ? "text-yellow-400" : "text-white"}>{r.trim()}</span>
+                                                {i < celeb.role.split(',').length - 1 && (
+                                                    <span className="text-white/30 font-light">|</span>
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+                                    </div>
+                                )}
                                 
-                                { (celeb.birthDate || celeb.birthPlace) && (
-                                    <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-6 gap-y-2 text-[10px] font-black uppercase tracking-[0.15em] text-white py-1">
-                                        {celeb.birthDate && (
-                                            <div className="flex items-center gap-2">
+                                <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-3 gap-y-2 text-[11px] md:text-xs font-black uppercase tracking-[0.15em] text-white py-1">
+                                    <span className="text-slate-400 italic">Official Profile</span>
+                                    
+                                    {celeb.industry && (
+                                        <>
+                                            <span className="text-white/20">|</span>
+                                            <span className="text-slate-400 italic">Industry: <span className="text-white not-italic">{celeb.industry}</span></span>
+                                        </>
+                                    )}
+                                    
+                                    {celeb.birthDate && (
+                                        <>
+                                            <span className="text-white/20">|</span>
+                                            <div className="flex items-center gap-1.5">
                                                 <i className="fas fa-calendar-alt text-yellow-400 text-[11px]"></i>
-                                                <span>Born: <span className="text-slate-200">{celeb.birthDate}</span></span>
+                                                <span className="text-slate-400 italic">Born: <span className="text-slate-200 not-italic">{celeb.birthDate}</span></span>
                                             </div>
-                                        )}
-                                        {celeb.birthPlace && (
-                                            <div className="flex items-center gap-2 border-l border-white/20 pl-6">
+                                        </>
+                                    )}
+                                    
+                                    {celeb.birthPlace && (
+                                        <>
+                                            <span className="text-white/20">|</span>
+                                            <div className="flex items-center gap-1.5">
                                                 <i className="fas fa-map-marker-alt text-yellow-400 text-[11px]"></i>
                                                 <span className="text-slate-200">{celeb.birthPlace}</span>
                                             </div>
-                                        )}
-                                    </div>
-                                )}
+                                        </>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="space-y-8 max-w-3xl mx-auto lg:mx-0">
-                                <p className="text-slate-300 leading-relaxed text-xl italic font-medium pl-8 border-l-4 border-yellow-400 py-2 relative">
-                                    "{celeb.bio ? (celeb.bio.split(' ').length > 25 && !isBioExpanded ? celeb.bio.split(' ').slice(0, 25).join(' ') + '...' : celeb.bio) : ''}"
-                                    {celeb.bio && celeb.bio.split(' ').length > 25 && (
+                                <div className="pl-8 border-l-4 border-yellow-400 py-2 relative">
+                                    <p className={`text-slate-300 leading-relaxed text-xl italic font-medium transition-all duration-300 ${!isBioExpanded ? 'line-clamp-2' : ''}`}>
+                                        "{celeb.bio}"
+                                    </p>
+                                    {celeb.bio && celeb.bio.length > 80 && (
                                         <button 
                                             onClick={() => setIsBioExpanded(!isBioExpanded)}
-                                            className="text-[10px] font-black uppercase tracking-widest text-yellow-400 hover:text-white transition-colors ml-2 not-italic"
+                                            className="text-[10px] font-black uppercase tracking-widest text-yellow-400 hover:text-white transition-colors mt-2 not-italic"
                                         >
                                             {isBioExpanded ? 'View Less' : 'View More'}
                                         </button>
                                     )}
-                                </p>
+                                </div>
                                 
-                                <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
+                                <div className="flex items-center justify-start lg:justify-start gap-3 pt-4 overflow-x-auto no-scrollbar pb-2">
                                     <button 
                                         onClick={() => {
                                             if (user) {
@@ -195,19 +231,18 @@ const CelebDetail = () => {
                                                 }
                                             }
                                         }}
-                                  className={`${celeb.isFollowing ? 'bg-white/20 border-white/40 text-white' : 'bg-yellow-400 text-slate-950 border-yellow-400 shadow-yellow-400/20'} px-8 md:px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl flex items-center justify-center gap-2 border w-full sm:w-auto shrink-0`}
+                                        className={`${celeb.isFollowing ? 'bg-white/20 border-white/40 text-white' : 'bg-yellow-400 text-slate-950 border-yellow-400 shadow-yellow-400/20'} px-6 md:px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-xl flex items-center justify-center gap-2 border shrink-0`}
                                     >
                                         <i className={`fas ${celeb.isFollowing ? 'fa-check' : 'fa-plus'}`}></i> {celeb.isFollowing ? 'Following' : 'Follow'}
                                     </button>
                                     
-                                    <div className="flex gap-4 w-full sm:w-auto">
-                                        <button className="flex-1 sm:flex-none bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 md:px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:bg-white/20 transition-all shadow-lg whitespace-nowrap">
-                                            Add to Collection
-                                        </button>
-                                        <button className="w-14 h-14 shrink-0 rounded-full bg-white/5 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/60 hover:text-primary-red hover:border-primary-red transition-all shadow-xl">
-                                            <i className="fas fa-share-alt"></i>
-                                        </button>
-                                    </div>
+                                    <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 md:px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-white/20 transition-all shadow-lg shrink-0 whitespace-nowrap">
+                                        Add to Collection
+                                    </button>
+                                    
+                                    <button className="w-[46px] h-[46px] shrink-0 rounded-full bg-white/5 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/60 hover:text-primary-red hover:border-primary-red transition-all shadow-xl">
+                                        <i className="fas fa-share-alt"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -251,7 +286,7 @@ const CelebDetail = () => {
                                 <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 flex justify-between items-center text-center">
                                     <div className="flex-1">
                                         <p className="text-3xl font-black text-white italic tracking-tighter leading-none mb-2">
-                                            {formatCount((celeb.followers?.length || 0) + (celeb.bonusFollowers || 0))}
+                                            {formatCount(displayFollowers)}
                                         </p>
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Fans</p>
                                     </div>
@@ -276,7 +311,7 @@ const CelebDetail = () => {
                             <div className="grid grid-cols-3 gap-1 pt-8 mt-4 border-t border-white/10">
                                 <div className="text-center group">
                                     <p className="text-2xl font-black text-white leading-none group-hover:text-yellow-400 transition-colors">
-                                        {formatCount((celeb.followers?.length || 0) + (celeb.bonusFollowers || 0))}
+                                        {formatCount(displayFollowers)}
                                     </p>
                                     <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">Fans</p>
                                 </div>

@@ -108,7 +108,7 @@ const CelebGrid = ({ industry }) => {
                 <div className="font-black text-[13px] mb-1 group-hover:text-primary-red transition-colors line-clamp-1 italic tracking-tight">{celeb.name}</div>
                 <div className="flex justify-center">
                     <span className="bg-primary-red text-white text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider inline-block shadow-sm border border-white/10">
-                        {celeb.role?.replace(/,/g, '').split(' ').slice(0, 2).join(' ')}
+                        {celeb.category || celeb.role}
                     </span>
                 </div>
               </div>

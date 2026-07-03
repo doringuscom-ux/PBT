@@ -301,5 +301,31 @@ router.post('/:id/rate', async (req, res) => {
         res.json(enrich([movie], req.session.user)[0]);
     } catch (err) { res.status(500).json({ message: err.message }); }
 });
+
+// Delete a user's movie rating/review
+router.delete('/:id/rate', async (req, res) => {
+    try {
+        const movie = await Movie.findById(req.params.id);
+        if (!movie) return res.status(404).json({ message: 'Movie not found' });
+        
+        const user = req.session.user;
+        if (!user) return res.status(401).json({ message: 'Unauthorized' });
+
+        const existingRatingIndex = movie.userRatings.findIndex(r => r.user?.toString() === user.id);
+        if (existingRatingIndex > -1) {
+            movie.userRatings.splice(existingRatingIndex, 1);
+            
+            // Recalculate average
+            movie.totalRatings = movie.userRatings.length;
+            const sum = movie.userRatings.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
+            movie.averageRating = movie.totalRatings > 0 ? sum / movie.totalRatings : 0;
+            
+            await movie.save();
+            res.json(enrich([movie], req.session.user)[0]);
+        } else {
+            res.status(404).json({ message: 'Review not found' });
+        }
+    } catch (err) { res.status(500).json({ message: err.message }); }
+});
  
 module.exports = router;

@@ -154,7 +154,7 @@ app.use('/api/settings', require('./routes/settings'));
 
 const PORT = process.env.PORT || 5000;
 if (!process.env.VERCEL) {
-    app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+    app.listen(PORT, '0.0.0.0', () => console.log(`Server started on port ${PORT}`));
     startHeartbeat();
 } else {
     console.log('Server initialized in Vercel serverless mode.');

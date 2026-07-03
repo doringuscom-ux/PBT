@@ -84,7 +84,7 @@ const CelebList = () => {
                   {/* Content Container */}
                   <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                     <span className="bg-primary-red text-white text-[8px] md:text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider mb-2.5 inline-block shadow-lg border border-white/10">
-                        {celeb.role?.replace(/,/g, '').split(' ').slice(0, 2).join(' ')}
+                        {celeb.category || celeb.role}
                     </span>
                     <h3 className="text-lg md:text-2xl font-black text-white group-hover:text-primary-red transition-colors duration-300 drop-shadow-lg leading-tight">{celeb.name}</h3>
                   </div>

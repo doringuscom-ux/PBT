@@ -57,7 +57,7 @@ const Header = () => {
                 <li key={item.name} className="relative group/nav">
                   <Link
                     to={item.path}
-                    className={`flex items-center px-4 lg:px-6 py-2.5 rounded-full transition-all duration-100 text-[10px] lg:text-[11px] font-black uppercase tracking-widest no-underline relative group overflow-hidden ${item.name === 'Lets PROMOTE'
+                    className={`flex items-center px-2 xl:px-3 2xl:px-5 py-2.5 rounded-full transition-all duration-100 text-[9px] 2xl:text-[11px] font-black uppercase tracking-widest no-underline relative group overflow-hidden ${item.name === 'Lets PROMOTE'
                       ? 'bg-gradient-to-r from-red-600 via-primary-red to-red-600 text-white shadow-[0_5px_0_rgb(153,27,27)] hover:shadow-[0_6px_0_rgb(153,27,27)] active:shadow-[0_2px_0_rgb(153,27,27)] active:translate-y-[3px] hover:-translate-y-[1px]'
                       : isActive
                         ? 'bg-accent-gold text-black shadow-xl shadow-accent-gold/20'

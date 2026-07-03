@@ -3,7 +3,7 @@ import axios from 'axios';
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 export const API_BASE_URL = isLocal
-    ? (import.meta.env.VITE_API_URL_LOCAL || 'http://localhost:5005/api').replace('/api', '')
+    ? (import.meta.env.VITE_API_URL_LOCAL || 'http://localhost:5000/api').replace('/api', '')
     : (import.meta.env.VITE_API_URL_PROD || 'https://pbt-liart.vercel.app/api').replace('/api', '');
 
 const api = axios.create({
@@ -32,6 +32,7 @@ export const deleteMovieComment = (id, commentId) => api.delete(`/movies/${id}/c
 export const likeMovieComment = (id, commentId) => api.post(`/movies/${id}/comments/${commentId}/like`);
 export const updateMovieComment = (id, commentId, data) => api.put(`/movies/${id}/comments/${commentId}`, data);
 export const rateMovie = (id, rating, review) => api.post(`/movies/${id}/rate`, { rating, review });
+export const deleteMovieRating = (id) => api.delete(`/movies/${id}/rate`);
 
 export const getNews = () => api.get('/news');
 export const getTodayNews = () => api.get('/news/today');
