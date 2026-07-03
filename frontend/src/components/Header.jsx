@@ -41,7 +41,7 @@ const Header = () => {
   const isAdmin = user?.role === 'admin' || user?.role === 'sub-admin';
 
   return (
-    <header className="relative z-[150] bg-slate-950 border-b border-white/5 shadow-2xl">
+    <header className="relative z-[150] bg-black border-b border-white/5 shadow-2xl">
       <div className="page-container flex justify-between items-center py-2 md:py-3 gap-2 md:gap-4 lg:gap-8">
         {/* Logo */}
         <Link to="/" className="no-underline group shrink-0 relative z-30" aria-label="Pbtadka Home">
@@ -137,8 +137,8 @@ const Header = () => {
       </div>
 
       {/* Mobile Navigation Overlay - Solid Dark and Opaque */}
-      <nav className={`xl:hidden fixed inset-0 top-[48px] md:top-[60px] lg:top-[80px] bg-slate-950 z-[140] transition-transform duration-500 overflow-y-auto ${isMenuOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'}`}>
-        <div className="page-container py-8 flex flex-col gap-6 bg-slate-950 min-h-[calc(100vh-48px)]">
+      <nav className={`xl:hidden fixed inset-0 top-[48px] md:top-[60px] lg:top-[80px] bg-black z-[140] transition-transform duration-500 overflow-y-auto ${isMenuOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'}`}>
+        <div className="page-container py-8 flex flex-col gap-6 bg-black min-h-[calc(100vh-48px)]">
           <ul className="flex flex-col gap-2 list-none p-0 m-0">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;

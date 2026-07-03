@@ -31,7 +31,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-slate-950 text-white pt-16 pb-8 relative overflow-hidden border-t-4 border-primary-red">
+    <footer className="bg-black text-white pt-16 pb-8 relative overflow-hidden border-t-4 border-primary-red">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-red/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none translate-y-1/2 -translate-x-1/2"></div>
       
@@ -39,14 +39,14 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 mb-16">
           
           {/* Brand Column */}
-          <div className="col-span-2 lg:col-span-4 flex flex-col items-center md:items-start">
+          <div className="col-span-2 lg:col-span-4 flex flex-col items-center">
             <Link to="/" className="mb-6 inline-block no-underline shrink-0">
                 <Logo className="h-20 w-auto" />
             </Link>
-            <p className="text-slate-400 text-sm leading-relaxed mb-8 font-medium italic pr-4 text-center md:text-left">
+            <p className="text-white/80 text-sm leading-relaxed mb-8 font-medium italic px-4 text-center">
               Your premier destination for cinema news, reviews, trailers, and celebrity interviews. Experience the magic of the cinematic universe in premium quality.
             </p>
-            <div className="flex gap-3 justify-center md:justify-start">
+            <div className="flex gap-3 justify-center">
               <SocialIcon icon="fab fa-facebook-f" label="Follow us on Facebook" />
               <SocialIcon icon="fab fa-twitter" label="Follow us on Twitter" />
               <SocialIcon icon="fab fa-instagram" label="Follow us on Instagram" />
@@ -85,9 +85,9 @@ const Footer = () => {
           </div>
           
           {/* Newsletter */}
-          <div className="col-span-2 lg:col-span-4 bg-slate-900/50 p-6 sm:p-8 rounded-3xl border border-white/5 shadow-2xl">
+          <div className="col-span-2 lg:col-span-4 bg-white/5 p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl">
             <h3 className="text-lg font-black mb-4 text-white uppercase tracking-widest">Newsletter</h3>
-            <p className="text-slate-400 text-sm mb-6 leading-relaxed">Join our inner circle. Get the latest exclusive trailers, breaking news, and reviews directly to your inbox.</p>
+            <p className="text-white/80 text-sm mb-6 leading-relaxed">Join our inner circle. Get the latest exclusive trailers, breaking news, and reviews directly to your inbox.</p>
             <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
               <div className="relative">
                 <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
@@ -96,7 +96,7 @@ const Footer = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address" 
-                  className="w-full py-3.5 pl-11 pr-4 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm outline-none focus:border-primary-red focus:bg-slate-900 transition-all font-medium placeholder:text-slate-600"
+                  className="w-full py-3.5 pl-11 pr-4 bg-black border border-white/10 rounded-xl text-white text-sm outline-none focus:border-primary-red focus:bg-white/5 transition-all font-medium placeholder:text-white/40"
                   required 
                   disabled={loading}
                 />
@@ -119,7 +119,7 @@ const Footer = () => {
         
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-slate-400 text-xs font-bold tracking-wider uppercase">
+          <div className="text-white/80 text-xs font-bold tracking-wider uppercase">
             &copy; {new Date().getFullYear()} PB TADKA. All Rights Reserved.
           </div>
           
@@ -141,8 +141,8 @@ const SocialIcon = ({ icon, label }) => (
 
 const FooterLink = ({ text, path }) => (
   <li>
-    <Link to={path || "#"} className="text-slate-400 font-medium no-underline text-sm hover:text-yellow-400 hover:pl-2 transition-all flex items-center gap-2 group">
-      <i className="fas fa-chevron-right text-[8px] text-slate-600 group-hover:text-yellow-400 transition-colors"></i> {text}
+    <Link to={path || "#"} className="text-white/80 font-medium no-underline text-sm hover:text-yellow-400 hover:pl-2 transition-all flex items-center gap-2 group">
+      <i className="fas fa-chevron-right text-[8px] text-white/40 group-hover:text-yellow-400 transition-colors"></i> {text}
     </Link>
   </li>
 );

@@ -7,7 +7,6 @@ import MovieSlider from './components/MovieSlider';
 import MovieCalendar from './components/MovieCalendar';
 import NewsGrid from './components/NewsGrid';
 import CelebGrid from './components/CelebGrid';
-import TopComments from './components/TopComments';
 import Footer from './components/Footer';
 
 // Admin Imports
@@ -184,7 +183,6 @@ const HomePage = () => (
         <MovieSlider />
         <MovieCalendar />
         <NewsGrid />
-        <TopComments />
         <CelebGrid industry="Bollywood" />
         <CelebGrid industry="Hollywood" />
         <CelebGrid />

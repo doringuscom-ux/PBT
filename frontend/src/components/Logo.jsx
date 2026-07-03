@@ -4,7 +4,7 @@ const Logo = ({ className = "h-16 w-auto" }) => {
       <img 
         src="/Logo.png" 
         alt="PB TADKA Logo" 
-        className="h-full w-auto object-contain" 
+        className="h-full w-auto object-contain mix-blend-screen" 
         width="150" 
         height="50"
       />
