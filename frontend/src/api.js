@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.') || window.location.hostname.startsWith('10.') || import.meta.env.DEV;
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 export const API_BASE_URL = isLocal
     ? (import.meta.env.VITE_API_URL_LOCAL || 'http://localhost:5005/api').replace('/api', '')
@@ -23,8 +23,7 @@ export const login = (credentials) => api.post('/auth/login', credentials);
 export const register = (credentials) => api.post('/auth/register', credentials);
 export const verifyRegistration = (data) => api.post('/auth/verify-registration', data);
 
-export const getMovies = (page, limit) => api.get('/movies', { params: { page, limit } });
-export const getUpcomingMovies = () => api.get('/movies/upcoming');
+export const getMovies = () => api.get('/movies');
 export const addMovie = (data) => api.post('/movies', data);
 export const updateMovie = (id, data) => api.put(`/movies/${id}`, data);
 export const deleteMovie = (id) => api.delete(`/movies/${id}`);
@@ -34,7 +33,7 @@ export const likeMovieComment = (id, commentId) => api.post(`/movies/${id}/comme
 export const updateMovieComment = (id, commentId, data) => api.put(`/movies/${id}/comments/${commentId}`, data);
 export const rateMovie = (id, rating, review) => api.post(`/movies/${id}/rate`, { rating, review });
 
-export const getNews = (page, limit) => api.get('/news', { params: { page, limit } });
+export const getNews = () => api.get('/news');
 export const getTodayNews = () => api.get('/news/today');
 export const addNews = (data) => api.post('/news', data);
 export const updateNews = (id, data) => api.put(`/news/${id}`, data);
@@ -45,7 +44,7 @@ export const likeComment = (newsId, commentId) => api.post(`/news/${newsId}/comm
 export const reportComment = (newsId, commentId) => api.post(`/news/${newsId}/comments/${commentId}/report`);
 export const updateComment = (newsId, commentId, data) => api.put(`/news/${newsId}/comments/${commentId}`, data);
 
-export const getCelebrities = (page, limit) => api.get('/celebrities', { params: { page, limit } });
+export const getCelebrities = () => api.get('/celebrities');
 export const addCelebrity = (data) => api.post('/celebrities', data);
 export const updateCelebrity = (id, data) => api.put(`/celebrities/${id}`, data);
 export const deleteCelebrity = (id) => api.delete(`/celebrities/${id}`);
@@ -56,7 +55,7 @@ export const updateCelebComment = (id, commentId, data) => api.put(`/celebrities
 export const followCelebrity = (id) => api.post(`/celebrities/${id}/follow`);
 
 // Video API
-export const getVideos = (page, limit) => api.get('/videos', { params: { page, limit } });
+export const getVideos = () => api.get('/videos');
 export const addVideo = (data) => api.post('/videos', data);
 export const updateVideo = (id, data) => api.put(`/videos/${id}`, data);
 export const deleteVideo = (id) => api.delete(`/videos/${id}`);

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import CommentSection from '../components/CommentSection';
-import AutoLinker from '../components/AutoLinker';
 import { API_BASE_URL } from '../api';
 
 const VideoDetail = () => {
@@ -116,7 +115,10 @@ const VideoDetail = () => {
                         <div className="mt-8 max-w-none text-slate-700 font-article-text bg-gray-50 p-6 rounded-2xl border border-gray-100">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-primary-red mb-4">Description</h4>
                             {video.description ? (
-                                <AutoLinker html={video.description} />
+                                <div 
+                                    className="rich-text-content"
+                                    dangerouslySetInnerHTML={{ __html: video.description }} 
+                                />
                             ) : (
                                 <p>Exclusive {video.title} coverage only on our Cinematic Hub. Stay updated with the latest in entertainment world.</p>
                             )}

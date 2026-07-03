@@ -3,7 +3,6 @@ import { useParams, Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import CommentSection from '../components/CommentSection';
 import ImageModal from '../components/ImageModal';
-import AutoLinker from '../components/AutoLinker';
 
 const NewsDetail = () => {
     const params = useParams();
@@ -87,9 +86,11 @@ const NewsDetail = () => {
                             <p className="text-xl md:text-2xl font-black mb-8 italic text-slate-500 border-l-4 border-primary-red pl-6 py-2 leading-snug rich-text-content">
                                 {article.excerpt}
                             </p>
-                            <AutoLinker 
-                                html={article.fullStory || article.content || ''} 
-                                className="text-slate-700 leading-relaxed text-lg font-medium space-y-4"
+                            <div 
+                                className="rich-text-content space-y-6 font-medium text-lg text-slate-700"
+                                dangerouslySetInnerHTML={{ 
+                                    __html: (article.fullStory || article.content || '').replace(/&nbsp;|\u00a0/g, ' ') 
+                                }}
                             />
                         </div>
 

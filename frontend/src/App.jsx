@@ -1,4 +1,3 @@
-import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { DataProvider } from './context/DataContext';
 import Header from './components/Header';
@@ -8,51 +7,49 @@ import MovieSlider from './components/MovieSlider';
 import MovieCalendar from './components/MovieCalendar';
 import NewsGrid from './components/NewsGrid';
 import CelebGrid from './components/CelebGrid';
+import TopComments from './components/TopComments';
 import Footer from './components/Footer';
 
 // Admin Imports
-const AdminLayout = React.lazy(() => import('./layouts/AdminLayout'));
-const MainLayout = React.lazy(() => import('./layouts/MainLayout'));
-const Dashboard = React.lazy(() => import('./admin/Dashboard'));
-const ManageMovies = React.lazy(() => import('./admin/ManageMovies'));
-const ManageNews = React.lazy(() => import('./admin/ManageNews'));
-const ManageCelebs = React.lazy(() => import('./admin/ManageCelebs'));
-const ManageVideos = React.lazy(() => import('./admin/ManageVideos'));
-const ManageUsers = React.lazy(() => import('./admin/ManageUsers'));
-const ManageComments = React.lazy(() => import('./admin/ManageComments'));
-const AdminLogin = React.lazy(() => import('./admin/AdminLogin'));
+import AdminLayout from './layouts/AdminLayout';
+import MainLayout from './layouts/MainLayout';
+import Dashboard from './admin/Dashboard';
+import ManageMovies from './admin/ManageMovies';
+import ManageNews from './admin/ManageNews';
+import ManageCelebs from './admin/ManageCelebs';
+import ManageVideos from './admin/ManageVideos';
+import ManageUsers from './admin/ManageUsers';
+import ManageComments from './admin/ManageComments';
+import AdminLogin from './admin/AdminLogin';
 
 // Page Imports
-const NewsList = React.lazy(() => import('./pages/NewsList'));
-const NewsDetail = React.lazy(() => import('./pages/NewsDetail'));
-const MovieList = React.lazy(() => import('./pages/MovieList'));
-const MovieDetail = React.lazy(() => import('./pages/MovieDetail'));
-const ActorDetail = React.lazy(() => import('./pages/ActorDetail'));
-const CelebList = React.lazy(() => import('./pages/CelebList'));
-const CelebDetail = React.lazy(() => import('./pages/CelebDetail'));
-const VideosList = React.lazy(() => import('./pages/VideosList'));
-const VideoDetail = React.lazy(() => import('./pages/VideoDetail'));
-const TodayNews = React.lazy(() => import('./pages/TodayNews'));
-const SearchPage = React.lazy(() => import('./pages/SearchPage'));
-const SportsList = React.lazy(() => import('./pages/SportsList'));
-const ManageSports = React.lazy(() => import('./admin/ManageSports'));
-const SEOManager = React.lazy(() => import('./admin/SEOManager'));
-const ManageSubscribers = React.lazy(() => import('./admin/ManageSubscribers'));
-const ManageInquiries = React.lazy(() => import('./admin/ManageInquiries'));
-const ManageRedirects = React.lazy(() => import('./admin/ManageRedirects'));
+import NewsList from './pages/NewsList';
+import NewsDetail from './pages/NewsDetail';
+import MovieList from './pages/MovieList';
+import MovieDetail from './pages/MovieDetail';
+import ActorDetail from './pages/ActorDetail';
+import CelebList from './pages/CelebList';
+import CelebDetail from './pages/CelebDetail';
+import VideosList from './pages/VideosList';
+import VideoDetail from './pages/VideoDetail';
+import TodayNews from './pages/TodayNews';
+import SearchPage from './pages/SearchPage';
+import SportsList from './pages/SportsList';
+import ManageSports from './admin/ManageSports';
+import SEOManager from './admin/SEOManager';
+import ManageSubscribers from './admin/ManageSubscribers';
+import ManageInquiries from './admin/ManageInquiries';
+import ManageRedirects from './admin/ManageRedirects';
 
-const UpcomingList = React.lazy(() => import('./pages/UpcomingList'));
-const ManageUpcoming = React.lazy(() => import('./admin/ManageUpcoming'));
-const ContactUs = React.lazy(() => import('./pages/ContactUs'));
-const AboutUs = React.lazy(() => import('./pages/AboutUs'));
-const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
-const Disclaimer = React.lazy(() => import('./pages/Disclaimer'));
-const BoxOffice = React.lazy(() => import('./pages/BoxOffice'));
-const SubmitContent = React.lazy(() => import('./pages/SubmitContent'));
+import UpcomingList from './pages/UpcomingList';
+import ManageUpcoming from './admin/ManageUpcoming';
+import ContactUs from './pages/ContactUs';
+import BoxOffice from './pages/BoxOffice';
+import SubmitContent from './pages/SubmitContent';
 
 import WeatherWidget from './components/WeatherWidget';
 import MarketWidget from './components/MarketWidget';
-const NotFound = React.lazy(() => import('./components/NotFound'));
+import NotFound from './components/NotFound';
 import GlobalRedirector from './components/GlobalRedirector';
 
 import { useData } from './context/DataContext';
@@ -187,6 +184,7 @@ const HomePage = () => (
         <MovieSlider />
         <MovieCalendar />
         <NewsGrid />
+        <TopComments />
         <CelebGrid industry="Bollywood" />
         <CelebGrid industry="Hollywood" />
         <CelebGrid />
@@ -200,7 +198,6 @@ function App() {
     <DataProvider>
       <Router>
         <GlobalRedirector>
-          <Suspense fallback={<div className="flex h-screen items-center justify-center bg-[#050505] text-white font-bold tracking-widest uppercase">Loading...</div>}>
           <Routes>
             {/* Public Routes with MainLayout */}
             <Route element={<MainLayout />}>
@@ -220,9 +217,6 @@ function App() {
               <Route path="/search" element={<SearchPage />} />
               <Route path="/latest-news/sports" element={<SportsList />} />
               <Route path="/contact-us" element={<ContactUs />} />
-              <Route path="/about-us" element={<AboutUs />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/disclaimer" element={<Disclaimer />} />
               <Route path="/movie-box-office" element={<BoxOffice />} />
               <Route path="/submit-content" element={<SubmitContent />} />
               <Route path="*" element={<NotFound />} />
@@ -257,7 +251,6 @@ function App() {
 
             <Route path="/admin/login" element={<AdminLogin />} />
           </Routes>
-        </Suspense>
         </GlobalRedirector>
       </Router>
     </DataProvider>

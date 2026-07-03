@@ -1,16 +1,17 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import * as api from '../api';
+import { useData } from '../context/DataContext';
 
 const MovieCalendar = () => {
+  const { movies } = useData();
   const scrollRef = useRef(null);
-  const [upcomingMovies, setUpcomingMovies] = useState([]);
 
-  useEffect(() => {
-      api.getUpcomingMovies().then(res => {
-          setUpcomingMovies(res.data);
-      }).catch(err => console.error(err));
-  }, []);
+  // Filter for movies with a release date in the future
+  const upcomingMovies = movies
+    .filter(movie => movie.releaseDate && new Date(movie.releaseDate) > new Date())
+    .sort((a, b) => new Date(a.releaseDate) - new Date(b.releaseDate));
+
+  if (upcomingMovies.length === 0) return null;
 
   const scroll = (direction) => {
     const { current } = scrollRef;
@@ -60,8 +61,6 @@ const MovieCalendar = () => {
       slider.removeEventListener('touchend', handleMouseLeave);
     };
   }, [upcomingMovies]);
-
-  if (upcomingMovies.length === 0) return null;
 
   return (
     <div className="mb-16">
