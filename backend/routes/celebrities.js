@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Celebrity = require('../models/Celebrity');
 const { upload, uploadFromUrl } = require('../config/cloudinary');
-const { cacheMiddleware } = require('../middleware/cache');
 
 // Helper to enrich with isLiked status for comments
 const enrich = (items, sessionUser) => {
@@ -20,34 +19,17 @@ const enrich = (items, sessionUser) => {
     });
 };
 
-router.get('/', cacheMiddleware(300), async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const isAdmin = req.session.user && (req.session.user.role === 'admin' || req.session.user.role === 'sub-admin');
-        const page = parseInt(req.query.page);
-        const limit = parseInt(req.query.limit);
-
         let query = Celebrity.find();
         
         if (isAdmin) {
             query = query.populate('createdBy', 'username employeeId fullName');
         }
         
-        query = query.sort({ createdAt: -1 });
-
-        if (page && limit) {
-            const skip = (page - 1) * limit;
-            const celebrities = await query.skip(skip).limit(limit);
-            const totalItems = await Celebrity.countDocuments();
-            res.json({
-                data: enrich(celebrities, req.session.user),
-                currentPage: page,
-                totalPages: Math.ceil(totalItems / limit),
-                totalItems
-            });
-        } else {
-            const celebrities = await query;
-            res.json(enrich(celebrities, req.session.user));
-        }
+        const celebrities = await query.sort({ createdAt: -1 });
+        res.json(enrich(celebrities, req.session.user));
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

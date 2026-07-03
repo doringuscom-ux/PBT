@@ -2,7 +2,6 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
-const compression = require('compression');
 const connectDB = require('./config/db');
 const path = require('path');
 const { startHeartbeat } = require('./utils/heartbeat');
@@ -33,7 +32,7 @@ app.use(async (req, res, next) => {
         }
 
         const path = req.path.toLowerCase().replace(/\/$/, '') || '/';
-
+        
         // 1. Handle Automatic Space-to-Hyphen Redirects (e.g., %20 to -)
         if (req.path.includes('%20') || req.path.includes(' ')) {
             const cleanPath = req.path.toLowerCase().replace(/%20|\s+/g, '-').replace(/\/$/, '');
@@ -49,9 +48,9 @@ app.use(async (req, res, next) => {
         }
 
         // 3. Database Redirects
-        const redirect = await Redirect.findOne({
+        const redirect = await Redirect.findOne({ 
             fromPath: { $in: [path, path + '/'] },
-            isActive: true
+            isActive: true 
         });
 
         if (redirect) {
@@ -66,7 +65,6 @@ app.use(async (req, res, next) => {
 
 // Init Middleware
 app.set('trust proxy', 1); // Trust first proxy (Render, Heroku, etc.)
-app.use(compression());
 
 // Logging middleware
 app.use((req, res, next) => {
@@ -75,7 +73,7 @@ app.use((req, res, next) => {
 });
 
 const allowedOrigins = [
-    'http://localhost:5173',
+    'http://localhost:5173', 
     'http://127.0.0.1:5173',
     'https://pbtadka.com',
     'https://www.pbtadka.com',
@@ -86,11 +84,11 @@ app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps, curl, sitemap proxy)
         if (!origin) return callback(null, true);
-
-        const isAllowed = allowedOrigins.includes(origin) ||
-            origin.endsWith('.vercel.app') ||
-            /^https?:\/\/localhost:\d+$/.test(origin);
-
+        
+        const isAllowed = allowedOrigins.includes(origin) || 
+                          origin.endsWith('.vercel.app') ||
+                          /^https?:\/\/localhost:\d+$/.test(origin);
+                          
         if (isAllowed) {
             callback(null, true);
         } else {
@@ -154,7 +152,7 @@ app.use('/api/seo', require('./routes/seo'));
 app.use('/api/redirects', require('./routes/redirects'));
 app.use('/api/settings', require('./routes/settings'));
 
-const PORT = process.env.PORT || 5005;
+const PORT = process.env.PORT || 5000;
 if (!process.env.VERCEL) {
     app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
     startHeartbeat();

@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Announcement = require('../models/Announcement');
-const { cacheMiddleware } = require('../middleware/cache');
 
 // @route   GET /api/announcements
 // @desc    Get all active announcements
 // @access  Public
-router.get('/', cacheMiddleware(300), async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const announcements = await Announcement.find({ isActive: true }).sort({ createdAt: -1 });
         res.json(announcements);

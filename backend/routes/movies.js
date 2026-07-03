@@ -4,7 +4,7 @@ const Movie = require('../models/Movie');
 const Subscriber = require('../models/Subscriber');
 const { sendPostNotification } = require('../utils/emailService');
 const { upload, uploadFromUrl } = require('../config/cloudinary');
-const { cacheMiddleware } = require('../middleware/cache');
+
 // Helper to enrich with isLiked status for comments
 const enrich = (items, sessionUser) => {
     const userId = sessionUser ? sessionUser.id : null;
@@ -30,49 +30,16 @@ const enrich = (items, sessionUser) => {
 };
 
 // Get all movies
-router.get('/', cacheMiddleware(300), async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const isAdmin = req.session.user && (req.session.user.role === 'admin' || req.session.user.role === 'sub-admin');
-        const page = parseInt(req.query.page);
-        const limit = parseInt(req.query.limit);
-
         let query = Movie.find();
         
         if (isAdmin) {
             query = query.populate('createdBy', 'username employeeId fullName');
         }
         
-        query = query.populate('cast.celebrity').populate('trailerVideo').populate('userRatings.user', 'username fullName').sort({ createdAt: -1 });
-
-        if (page && limit) {
-            const skip = (page - 1) * limit;
-            const movies = await query.skip(skip).limit(limit);
-            const totalItems = await Movie.countDocuments();
-            res.json({
-                data: enrich(movies, req.session.user),
-                currentPage: page,
-                totalPages: Math.ceil(totalItems / limit),
-                totalItems
-            });
-        } else {
-            const movies = await query;
-            res.json(enrich(movies, req.session.user));
-        }
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-// Get upcoming movies specifically for calendar
-router.get('/upcoming', cacheMiddleware(300), async (req, res) => {
-    try {
-        const now = new Date();
-        const query = Movie.find({ releaseDate: { $gt: now } })
-            .populate('cast.celebrity')
-            .populate('trailerVideo')
-            .sort({ releaseDate: 1 });
-        
-        const movies = await query;
+        const movies = await query.populate('cast.celebrity').populate('trailerVideo').populate('userRatings.user', 'username fullName').sort({ createdAt: -1 });
         res.json(enrich(movies, req.session.user));
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -80,7 +47,7 @@ router.get('/upcoming', cacheMiddleware(300), async (req, res) => {
 });
 
 // Create a movie
-router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), async (req, res) => {
+router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }]), async (req, res) => {
     const movieData = { ...req.body };
     if (req.files && req.files['image']) {
         movieData.image = req.files['image'][0].path;
@@ -89,11 +56,6 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
     }
     if (req.files && req.files['trailer']) {
         movieData.trailerUrl = req.files['trailer'][0].path;
-    }
-    if (req.files && req.files['coverImage']) {
-        movieData.coverImage = req.files['coverImage'][0].path;
-    } else if (movieData.coverImage) {
-        movieData.coverImage = await uploadFromUrl(movieData.coverImage);
     }
     if (req.session.user) {
         movieData.createdBy = req.session.user.id;
@@ -146,7 +108,7 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
 });
 
 // Update a movie
-router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), async (req, res) => {
+router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }]), async (req, res) => {
     try {
         const updateData = { ...req.body };
         if (req.files && req.files['image']) {
@@ -156,11 +118,6 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trail
         }
         if (req.files && req.files['trailer']) {
             updateData.trailerUrl = req.files['trailer'][0].path;
-        }
-        if (req.files && req.files['coverImage']) {
-            updateData.coverImage = req.files['coverImage'][0].path;
-        } else if (updateData.coverImage) {
-            updateData.coverImage = await uploadFromUrl(updateData.coverImage);
         }
         if (req.session.user) {
             updateData.createdBy = req.session.user.id;
