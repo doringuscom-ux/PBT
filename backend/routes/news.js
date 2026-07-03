@@ -4,6 +4,7 @@ const News = require('../models/News');
 const Subscriber = require('../models/Subscriber');
 const { sendPostNotification } = require('../utils/emailService');
 const { upload, uploadFromUrl } = require('../config/cloudinary');
+const { cacheMiddleware } = require('../middleware/cache');
 
 // Helper to enrich news with isLiked status for comments
 const enrichNews = (articles, sessionUser) => {

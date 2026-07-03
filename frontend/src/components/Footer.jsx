@@ -80,7 +80,10 @@ const Footer = () => {
               <FooterLink text="Today's News" path="/latest-news/today" />
               <FooterLink text="Sports Actions" path="/latest-news/sports" />
               <FooterLink text="Upcoming Movies" path="/latest-movies/upcoming" />
+              <FooterLink text="About Us" path="/about-us" />
               <FooterLink text="Contact Us" path="/contact-us" />
+              <FooterLink text="Privacy Policy" path="/privacy-policy" />
+              <FooterLink text="Disclaimer" path="/disclaimer" />
             </ul>
           </div>
           

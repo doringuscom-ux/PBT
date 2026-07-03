@@ -42,7 +42,7 @@ const Header = () => {
 
   return (
     <header className="relative z-[150] bg-slate-950 border-b border-white/5 shadow-2xl">
-      <div className="page-container flex justify-between items-center py-2 md:py-3 gap-2 md:gap-4 lg:gap-8">
+      <div className="page-container flex justify-between items-center py-2 md:py-3 gap-2 md:gap-4 xl:gap-4 2xl:gap-8">
         {/* Logo */}
         <Link to="/" className="no-underline group shrink-0 relative z-30" aria-label="Pbtadka Home">
           <Logo className="h-8 md:h-12 lg:h-16 w-auto transition-transform duration-500 group-hover:scale-105" />
@@ -57,7 +57,7 @@ const Header = () => {
                 <li key={item.name} className="relative group/nav">
                   <Link
                     to={item.path}
-                    className={`flex items-center px-4 lg:px-6 py-2.5 rounded-full transition-all duration-100 text-[10px] lg:text-[11px] font-black uppercase tracking-widest no-underline relative group overflow-hidden ${item.name === 'Lets PROMOTE'
+                    className={`flex items-center px-4 xl:px-5 2xl:px-6 py-2.5 rounded-full transition-all duration-100 text-xs 2xl:text-sm font-semibold uppercase tracking-wider whitespace-nowrap no-underline relative group overflow-hidden ${item.name === 'Lets PROMOTE'
                       ? 'bg-gradient-to-r from-red-600 via-primary-red to-red-600 text-white shadow-[0_5px_0_rgb(153,27,27)] hover:shadow-[0_6px_0_rgb(153,27,27)] active:shadow-[0_2px_0_rgb(153,27,27)] active:translate-y-[3px] hover:-translate-y-[1px]'
                       : isActive
                         ? 'bg-accent-gold text-black shadow-xl shadow-accent-gold/20'
@@ -107,17 +107,17 @@ const Header = () => {
           {user ? (
             <div className="flex items-center gap-2 lg:gap-3">
               <div className="hidden sm:flex flex-col items-end mr-1">
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{user.role}</span>
-                <span className="text-xs font-bold text-white leading-tight">{user.username}</span>
+                <span className="text-[8px] font-semibold text-slate-500 uppercase tracking-widest">{user.role}</span>
+                <span className="text-xs font-semibold text-white leading-tight">{user.username}</span>
               </div>
-              <button onClick={logout} className="bg-accent-gold text-black px-4 py-1.5 lg:px-5 lg:py-2.5 rounded-full font-black text-[9px] lg:text-[10px] uppercase tracking-widest hover:bg-yellow-400 transition-all flex items-center gap-2 shadow-lg shadow-accent-gold/20">
+              <button onClick={logout} className="bg-accent-gold text-black px-5 py-1.5 xl:px-6 2xl:px-8 lg:py-2.5 rounded-full font-semibold text-xs 2xl:text-sm uppercase whitespace-nowrap tracking-wider hover:bg-yellow-400 transition-all flex items-center gap-2 shadow-lg shadow-accent-gold/20">
                 <i className="fas fa-sign-out-alt"></i> <span className="hidden sm:inline">LOGOUT</span>
               </button>
             </div>
           ) : (
             <button
               onClick={() => setShowUserAuth(true)}
-              className="bg-accent-gold text-black py-1.5 px-4 lg:py-2.5 lg:px-8 rounded-full font-black text-[9px] lg:text-[11px] uppercase tracking-widest hover:bg-yellow-400 transition-all shadow-lg shadow-accent-gold/20"
+              className="bg-accent-gold text-black py-1.5 px-5 lg:py-2.5 xl:px-8 2xl:px-10 rounded-full font-semibold text-xs 2xl:text-sm uppercase whitespace-nowrap tracking-wider hover:bg-yellow-400 transition-all shadow-lg shadow-accent-gold/20"
               aria-label="Sign In or Register"
             >
               Sign In
@@ -167,7 +167,7 @@ const Header = () => {
                       </span>
                     )}
                   </Link>
-                  
+
                   {/* Mobile Sub-items */}
                   {item.subItems && (
                     <div className="flex flex-col gap-1 ml-4 mt-1 border-l-2 border-white/5 pl-4">

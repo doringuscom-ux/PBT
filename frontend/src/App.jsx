@@ -7,7 +7,6 @@ import MovieSlider from './components/MovieSlider';
 import MovieCalendar from './components/MovieCalendar';
 import NewsGrid from './components/NewsGrid';
 import CelebGrid from './components/CelebGrid';
-import TopComments from './components/TopComments';
 import Footer from './components/Footer';
 
 // Admin Imports
@@ -44,6 +43,9 @@ import ManageRedirects from './admin/ManageRedirects';
 import UpcomingList from './pages/UpcomingList';
 import ManageUpcoming from './admin/ManageUpcoming';
 import ContactUs from './pages/ContactUs';
+import AboutUs from './pages/AboutUs';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Disclaimer from './pages/Disclaimer';
 import BoxOffice from './pages/BoxOffice';
 import SubmitContent from './pages/SubmitContent';
 
@@ -184,7 +186,6 @@ const HomePage = () => (
         <MovieSlider />
         <MovieCalendar />
         <NewsGrid />
-        <TopComments />
         <CelebGrid industry="Bollywood" />
         <CelebGrid industry="Hollywood" />
         <CelebGrid />
@@ -217,6 +218,9 @@ function App() {
               <Route path="/search" element={<SearchPage />} />
               <Route path="/latest-news/sports" element={<SportsList />} />
               <Route path="/contact-us" element={<ContactUs />} />
+              <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
               <Route path="/movie-box-office" element={<BoxOffice />} />
               <Route path="/submit-content" element={<SubmitContent />} />
               <Route path="*" element={<NotFound />} />

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Celebrity = require('../models/Celebrity');
 const { upload, uploadFromUrl } = require('../config/cloudinary');
+const { cacheMiddleware } = require('../middleware/cache');
 
 // Helper to enrich with isLiked status for comments
 const enrich = (items, sessionUser) => {

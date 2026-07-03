@@ -5,6 +5,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import { useData } from '../context/DataContext';
 import Modal from '../components/Modal';
 import { slugify } from '../utils/slugify';
+import ImageCropperModal from '../components/ImageCropperModal';
 
 const INDUSTRIES = ["Bollywood", "Hollywood", "Tollywood", "Kollywood", "Mollywood", "Sandalwood", "South Indian", "Haryanvi", "Bhojpuri", "Pollywood"];
 
@@ -37,6 +38,10 @@ const ManageMovies = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [trailerSource, setTrailerSource] = useState('url');
   const [trailerFile, setTrailerFile] = useState(null);
+  const [coverImageSource, setCoverImageSource] = useState('url');
+  const [selectedCoverFile, setSelectedCoverFile] = useState(null);
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [tempCoverImage, setTempCoverImage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('newest');
   const [isCustomIndustry, setIsCustomIndustry] = useState(false);
@@ -79,6 +84,8 @@ const ManageMovies = () => {
                 data.append(key, JSON.stringify(formData[key]));
             } else if (key === 'image') {
                 if (imageSource === 'url') data.append('image', formData[key]);
+            } else if (key === 'coverImage') {
+                if (coverImageSource === 'url') data.append('coverImage', formData[key]);
             } else if (key === 'trailerUrl') {
                 if (trailerSource === 'url' || trailerSource === 'link') {
                     data.append('trailerUrl', formData[key]);
@@ -91,6 +98,9 @@ const ManageMovies = () => {
 
     if (imageSource === 'file' && selectedFile) {
         data.append('image', selectedFile);
+    }
+    if (coverImageSource === 'file' && selectedCoverFile) {
+        data.append('coverImage', selectedCoverFile);
     }
     if (trailerSource === 'file' && trailerFile) {
         data.append('trailer', trailerFile);
@@ -115,6 +125,8 @@ const ManageMovies = () => {
     setImageSource('url');
     setTrailerFile(null);
     setTrailerSource('url');
+    setSelectedCoverFile(null);
+    setCoverImageSource('url');
     setShowForm(false);
     setEditingIndex(null);
     setActiveFormTab('Info');
@@ -133,6 +145,8 @@ const ManageMovies = () => {
       trailerVideo: movie.trailerVideo?._id || movie.trailerVideo || null,
       youtubeLinks: Array.isArray(movie.youtubeLinks) ? movie.youtubeLinks : []
     });
+    setCoverImageSource('url');
+    setSelectedCoverFile(null);
     setIsCustomIndustry(movie.industry && !INDUSTRIES.includes(movie.industry));
     setShowForm(true);
     setActiveFormTab('Info');
@@ -300,10 +314,32 @@ const ManageMovies = () => {
                         <input type="file" onChange={e => setSelectedFile(e.target.files[0])} className="w-full text-xs" />
                     )}
                 </div>
-                <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Cover Image (16:9)</label>
-                    <input placeholder="Cover Image URL" className="p-3 border rounded-xl" value={formData.coverImage} onChange={e => setFormData({...formData, coverImage: e.target.value})} />
+
+                <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Cover Banner (21:9)</label>
+                    <div className="flex gap-2">
+                        <button type="button" onClick={() => setCoverImageSource('url')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest ${coverImageSource === 'url' ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-500'}`}>URL</button>
+                        <button type="button" onClick={() => setCoverImageSource('file')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest ${coverImageSource === 'file' ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-500'}`}>Upload</button>
+                    </div>
+                    {coverImageSource === 'url' ? (
+                        <input placeholder="Cover Image URL" className="p-3 border rounded-xl w-full" value={formData.coverImage} onChange={e => setFormData({...formData, coverImage: e.target.value})} />
+                    ) : (
+                        <div className="flex flex-col gap-2">
+                            <input type="file" onChange={e => {
+                                if (e.target.files && e.target.files.length > 0) {
+                                    const reader = new FileReader();
+                                    reader.addEventListener('load', () => {
+                                        setTempCoverImage(reader.result?.toString() || '');
+                                        setIsCropperOpen(true);
+                                    });
+                                    reader.readAsDataURL(e.target.files[0]);
+                                }
+                            }} className="w-full text-xs" accept="image/*" />
+                            {selectedCoverFile && <span className="text-xs text-green-600 font-bold">✓ Cropped Image Ready ({selectedCoverFile.name})</span>}
+                        </div>
+                    )}
                 </div>
+
                 
                 <div className="space-y-3">
                     <label className="text-[10px] font-black uppercase text-gray-400 ml-1 italic tracking-widest">Trailer / Promotional Video</label>
@@ -608,6 +644,15 @@ const ManageMovies = () => {
           </div>
         </form>
       </Modal>
+
+      <ImageCropperModal 
+          isOpen={isCropperOpen}
+          onClose={() => setIsCropperOpen(false)}
+          imageSrc={tempCoverImage}
+          onCropComplete={(file) => {
+              setSelectedCoverFile(file);
+          }}
+      />
 
       <div className="bg-white border rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
         <table className="w-full text-left">

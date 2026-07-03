@@ -6,12 +6,13 @@ import Footer from '../components/Footer';
 import SEOHead from '../components/SEOHead';
 import AnnouncementBar from '../components/AnnouncementBar';
 import InquiryPopup from '../components/InquiryPopup';
+import PageSkeleton from '../components/PageSkeleton';
 import { useData } from '../context/DataContext';
 
 const MainLayout = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
-  const { movies, news, celebs, videos } = useData();
+  const { movies, news, celebs, videos, isLoading } = useData();
 
   // Check if any data is loaded from the backend
   const hasData = (movies?.length > 0) || (news?.length > 0) || (celebs?.length > 0) || (videos?.length > 0);
@@ -32,7 +33,7 @@ const MainLayout = () => {
       </div>
       {isHomePage && <AnnouncementBar />}
       <main className="flex-1">
-        <Outlet />
+        {isLoading ? <PageSkeleton /> : <Outlet />}
       </main>
       {hasData && (
         <div className="w-full text-center my-4 overflow-hidden flex justify-center">

@@ -4,6 +4,7 @@ import { useData } from '../context/DataContext';
 import CommentSection from '../components/CommentSection';
 import ImageModal from '../components/ImageModal';
 import UserAuthModal from '../components/UserAuthModal';
+import AutoLinker from '../components/AutoLinker';
 
 const CelebDetail = () => {
     const params = useParams();
@@ -20,10 +21,9 @@ const CelebDetail = () => {
         if (!text) return { first: '', second: '' };
         const parts = text.split(' ');
         if (parts.length > 1) {
-            return { first: parts[0], second: text.slice(parts[0].length) };
+            return { first: parts[0], second: parts.slice(1).join(' ') };
         }
-        const mid = Math.ceil(text.length / 2);
-        return { first: text.slice(0, mid), second: text.slice(mid) };
+        return { first: text, second: '' };
     };
  
     const { first: firstName, second: lastName } = splitText(celeb?.name);
@@ -142,9 +142,9 @@ const CelebDetail = () => {
                                             {celeb.industry === 'Sports' ? 'SPORTS STAR' : celeb.industry === 'Business' ? 'BUSINESS LEADER' : 'CINEMA STAR'}
                                         </span>
                                     </div>
-                                    <h1 className="text-4xl md:text-6xl font-black italic tracking-[0.15em] leading-[0.9] flex flex-wrap justify-center lg:justify-start gap-4">
-                                        <span className="text-white uppercase">{firstName}</span>
-                                        <span className="text-yellow-400 uppercase">{lastName}</span>
+                                    <h1 className="text-4xl md:text-5xl lg:text-4xl xl:text-5xl font-black italic tracking-[0.15em] leading-[1.1] text-center lg:text-left whitespace-nowrap overflow-visible">
+                                        <span className={`text-white uppercase ${lastName ? 'mr-3 md:mr-4' : ''}`}>{firstName}</span>
+                                        {lastName && <span className="text-yellow-400 uppercase">{lastName}</span>}
                                     </h1>
                                 </div>
                                 <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-4 gap-y-2 text-sm font-bold text-slate-400 uppercase tracking-wide italic">
@@ -172,19 +172,21 @@ const CelebDetail = () => {
                             </div>
 
                             <div className="space-y-8 max-w-3xl mx-auto lg:mx-0">
-                                <p className="text-slate-300 leading-relaxed text-xl italic font-medium pl-8 border-l-4 border-yellow-400 py-2 relative">
-                                    "{celeb.bio ? (celeb.bio.split(' ').length > 25 && !isBioExpanded ? celeb.bio.split(' ').slice(0, 25).join(' ') + '...' : celeb.bio) : ''}"
-                                    {celeb.bio && celeb.bio.split(' ').length > 25 && (
+                                <div className="pl-8 border-l-4 border-yellow-400 py-2 relative">
+                                    <p className={`text-slate-300 leading-relaxed text-xl italic font-medium ${!isBioExpanded ? 'line-clamp-2' : ''}`}>
+                                        "{celeb.bio || ''}"
+                                    </p>
+                                    {celeb.bio && celeb.bio.length > 80 && (
                                         <button 
                                             onClick={() => setIsBioExpanded(!isBioExpanded)}
-                                            className="text-[10px] font-black uppercase tracking-widest text-yellow-400 hover:text-white transition-colors ml-2 not-italic"
+                                            className="text-[10px] font-black uppercase tracking-widest text-yellow-400 hover:text-white transition-colors mt-2 inline-block not-italic"
                                         >
                                             {isBioExpanded ? 'View Less' : 'View More'}
                                         </button>
                                     )}
-                                </p>
+                                </div>
                                 
-                                <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
+                                <div className="flex flex-col sm:flex-row flex-nowrap justify-center lg:justify-start items-center gap-3 md:gap-4 pt-4">
                                     <button 
                                         onClick={() => {
                                             if (user) {
@@ -195,19 +197,18 @@ const CelebDetail = () => {
                                                 }
                                             }
                                         }}
-                                  className={`${celeb.isFollowing ? 'bg-white/20 border-white/40 text-white' : 'bg-yellow-400 text-slate-950 border-yellow-400 shadow-yellow-400/20'} px-8 md:px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl flex items-center justify-center gap-2 border w-full sm:w-auto shrink-0`}
+                                        className={`${celeb.isFollowing ? 'bg-white/20 border-white/40 text-white' : 'bg-yellow-400 text-slate-950 border-yellow-400 shadow-yellow-400/20'} px-6 md:px-8 py-3.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl flex items-center justify-center gap-2 border whitespace-nowrap`}
                                     >
                                         <i className={`fas ${celeb.isFollowing ? 'fa-check' : 'fa-plus'}`}></i> {celeb.isFollowing ? 'Following' : 'Follow'}
                                     </button>
                                     
-                                    <div className="flex gap-4 w-full sm:w-auto">
-                                        <button className="flex-1 sm:flex-none bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 md:px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:bg-white/20 transition-all shadow-lg whitespace-nowrap">
-                                            Add to Collection
-                                        </button>
-                                        <button className="w-14 h-14 shrink-0 rounded-full bg-white/5 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/60 hover:text-primary-red hover:border-primary-red transition-all shadow-xl">
-                                            <i className="fas fa-share-alt"></i>
-                                        </button>
-                                    </div>
+                                    <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 md:px-8 py-3.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest hover:bg-white/20 transition-all shadow-lg whitespace-nowrap">
+                                        Add to Collection
+                                    </button>
+                                    
+                                    <button className="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-full bg-white/5 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/60 hover:text-primary-red hover:border-primary-red transition-all shadow-xl">
+                                        <i className="fas fa-share-alt"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -328,11 +329,9 @@ const CelebDetail = () => {
                                         <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900">Celebrity Biography</h2>
                                     </div>
                                     <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                                            <div 
-                                                className="rich-text-content text-slate-700 leading-relaxed text-lg font-medium space-y-4"
-                                                dangerouslySetInnerHTML={{ 
-                                                    __html: (celeb.fullBio || `<p>${celeb.bio} ... Career details coming soon.</p>`).replace(/&nbsp;|\u00a0/g, ' ') 
-                                                }} 
+                                            <AutoLinker 
+                                                html={celeb.fullBio || `<p>${celeb.bio} ... Career details coming soon.</p>`} 
+                                                className="text-slate-700 leading-relaxed text-lg font-medium space-y-4"
                                             />
                                     </div>
                                 </section>

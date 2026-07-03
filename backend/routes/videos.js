@@ -4,6 +4,7 @@ const Video = require('../models/Video');
 const Subscriber = require('../models/Subscriber');
 const { sendPostNotification } = require('../utils/emailService');
 const { upload: cloudinaryUpload, uploadFromUrl } = require('../config/cloudinary');
+const { cacheMiddleware } = require('../middleware/cache');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -27,7 +28,7 @@ const enrich = (items, sessionUser) => {
 /* Local storage fallback removed for Cloudinary */
 
 // GET all videos
-router.get('/', async (req, res) => {
+router.get('/', cacheMiddleware(300), async (req, res) => {
     try {
         const isAdmin = req.session.user && (req.session.user.role === 'admin' || req.session.user.role === 'sub-admin');
         let query = Video.find();

@@ -4,7 +4,7 @@ const Movie = require('../models/Movie');
 const Subscriber = require('../models/Subscriber');
 const { sendPostNotification } = require('../utils/emailService');
 const { upload, uploadFromUrl } = require('../config/cloudinary');
-
+const { cacheMiddleware } = require('../middleware/cache');
 // Helper to enrich with isLiked status for comments
 const enrich = (items, sessionUser) => {
     const userId = sessionUser ? sessionUser.id : null;
@@ -30,7 +30,7 @@ const enrich = (items, sessionUser) => {
 };
 
 // Get all movies
-router.get('/', async (req, res) => {
+router.get('/', cacheMiddleware(300), async (req, res) => {
     try {
         const isAdmin = req.session.user && (req.session.user.role === 'admin' || req.session.user.role === 'sub-admin');
         let query = Movie.find();
@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
 });
 
 // Create a movie
-router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }]), async (req, res) => {
+router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), async (req, res) => {
     const movieData = { ...req.body };
     if (req.files && req.files['image']) {
         movieData.image = req.files['image'][0].path;
@@ -56,6 +56,11 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
     }
     if (req.files && req.files['trailer']) {
         movieData.trailerUrl = req.files['trailer'][0].path;
+    }
+    if (req.files && req.files['coverImage']) {
+        movieData.coverImage = req.files['coverImage'][0].path;
+    } else if (movieData.coverImage) {
+        movieData.coverImage = await uploadFromUrl(movieData.coverImage);
     }
     if (req.session.user) {
         movieData.createdBy = req.session.user.id;
@@ -108,7 +113,7 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
 });
 
 // Update a movie
-router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }]), async (req, res) => {
+router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), async (req, res) => {
     try {
         const updateData = { ...req.body };
         if (req.files && req.files['image']) {
@@ -118,6 +123,11 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trail
         }
         if (req.files && req.files['trailer']) {
             updateData.trailerUrl = req.files['trailer'][0].path;
+        }
+        if (req.files && req.files['coverImage']) {
+            updateData.coverImage = req.files['coverImage'][0].path;
+        } else if (updateData.coverImage) {
+            updateData.coverImage = await uploadFromUrl(updateData.coverImage);
         }
         if (req.session.user) {
             updateData.createdBy = req.session.user.id;

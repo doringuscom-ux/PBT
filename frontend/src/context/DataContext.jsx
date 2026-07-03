@@ -449,8 +449,6 @@ export const DataProvider = ({ children }) => {
     //   combinedAnnouncements.push({ text: "Stay tuned for the latest film updates!", link: null });
     // }
 
-    if (isLoading) return <Loading progress={loadingProgress} />;
-
     return (
       <DataContext.Provider value={{
         movies, addMovie, updateMovie, deleteMovie,

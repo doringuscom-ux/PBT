@@ -11,8 +11,6 @@ const MovieCalendar = () => {
     .filter(movie => movie.releaseDate && new Date(movie.releaseDate) > new Date())
     .sort((a, b) => new Date(a.releaseDate) - new Date(b.releaseDate));
 
-  if (upcomingMovies.length === 0) return null;
-
   const scroll = (direction) => {
     const { current } = scrollRef;
     if (current) {
@@ -61,6 +59,8 @@ const MovieCalendar = () => {
       slider.removeEventListener('touchend', handleMouseLeave);
     };
   }, [upcomingMovies]);
+
+  if (upcomingMovies.length === 0) return null;
 
   return (
     <div className="mb-16">
