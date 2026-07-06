@@ -78,18 +78,11 @@ const NewsList = () => {
 
 const InlineFluidAd = () => {
   useEffect(() => {
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {}
+    
   }, []);
   return (
     <div className="w-full text-center overflow-hidden flex justify-center">
-      <ins className="adsbygoogle w-full"
-           style={{ display: 'block' }}
-           data-ad-format="fluid"
-           data-ad-layout-key="-7r+eo+1+2-5"
-           data-ad-client="ca-pub-6214614018313479"
-           data-ad-slot="4901268619"></ins>
+      
     </div>
   );
 };

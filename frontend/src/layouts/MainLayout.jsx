@@ -18,9 +18,7 @@ const MainLayout = () => {
 
   useEffect(() => {
     if (hasData) {
-      try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      } catch (err) {}
+      
     }
   }, [hasData]);
 
@@ -34,16 +32,7 @@ const MainLayout = () => {
       <main className="flex-1">
         <Outlet />
       </main>
-      {hasData && (
-        <div className="w-full text-center my-4 overflow-hidden flex justify-center">
-          <ins className="adsbygoogle w-full"
-               style={{ display: 'block' }}
-               data-ad-client="ca-pub-6214614018313479"
-               data-ad-slot="9896265377"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-        </div>
-      )}
+      
       <InquiryPopup />
       <Footer />
     </div>
