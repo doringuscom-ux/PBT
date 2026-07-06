@@ -72,29 +72,9 @@ app.use((req, res, next) => {
     next();
 });
 
-const allowedOrigins = [
-    'http://localhost:5173', 
-    'http://127.0.0.1:5173',
-    'https://pbtadka.com',
-    'https://www.pbtadka.com',
-    'https://pbt-orcin.vercel.app'
-];
-
+// Allow requests from any origin
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps, curl, sitemap proxy)
-        if (!origin) return callback(null, true);
-        
-        const isAllowed = allowedOrigins.includes(origin) || 
-                          origin.endsWith('.vercel.app') ||
-                          /^https?:\/\/localhost:\d+$/.test(origin);
-                          
-        if (isAllowed) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: true,
     credentials: true
 }));
 app.use(express.json());
