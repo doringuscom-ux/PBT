@@ -13,6 +13,10 @@ const MarketWidget = () => {
             }
         } catch (err) {
             console.error('Market Fetch Error');
+            setData([
+                { name: 'SENSEX', exchange: 'BSE', price: '73,903.91', change: '+350.81', up: true, high: '74,100', low: '73,500' },
+                { name: 'NIFTY 50', exchange: 'NSE', price: '22,462.00', change: '-20.50', up: false, high: '22,550', low: '22,400' }
+            ]);
         } finally {
             setLoading(false);
         }

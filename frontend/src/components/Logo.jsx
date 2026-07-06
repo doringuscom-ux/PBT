@@ -1,10 +1,10 @@
-const Logo = ({ className = "h-16 w-auto" }) => {
+const Logo = ({ className = "h-16 w-auto", src = "/Logo.png", transparent = false }) => {
   return (
     <div className={`flex items-center justify-center ${className}`}>
       <img 
-        src="/Logo.png" 
+        src={src} 
         alt="PB TADKA Logo" 
-        className="h-full w-auto object-contain mix-blend-screen" 
+        className={`h-full w-auto object-contain ${!transparent ? 'mix-blend-screen' : ''}`} 
         width="150" 
         height="50"
       />

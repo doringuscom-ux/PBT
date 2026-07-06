@@ -19,7 +19,7 @@ const Loading = ({ fullScreen = true, progress = 0 }) => {
 
         {/* Logo with Soft Pulse */}
         <div className="relative px-12 py-8 bg-black/40 backdrop-blur-md rounded-2xl border border-accent-gold/10 shadow-2xl animate-pulse-gentle">
-           <Logo className="h-24 md:h-32 w-auto mix-blend-screen filter drop-shadow-[0_0_30px_rgba(255,193,7,0.5)] drop-shadow-[0_0_15px_rgba(211,47,47,0.4)]" />
+           <Logo src="/Logo1.png" transparent={true} className="h-24 md:h-32 w-auto filter drop-shadow-[0_0_30px_rgba(255,193,7,0.5)] drop-shadow-[0_0_15px_rgba(211,47,47,0.4)]" />
         </div>
 
         {/* corner accents */}
