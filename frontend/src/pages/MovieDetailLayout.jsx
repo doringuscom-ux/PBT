@@ -315,7 +315,17 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                             {/* Action Buttons (Desktop Only) */}
                             <div className="hidden md:flex flex-wrap items-center justify-start gap-4 px-0 mt-8">
                                 <button 
-                                    onClick={() => (movie.trailerUrl || movie.trailerVideo) && setShowFullPlayer(true)}
+                                    onClick={() => {
+                                        if (movie.watchNowUrl) {
+                                            if (movie.isWatchNowRedirect) {
+                                                window.open(movie.watchNowUrl, '_blank');
+                                            } else {
+                                                setShowFullPlayer(true);
+                                            }
+                                        } else if (movie.trailerUrl || movie.trailerVideo) {
+                                            setShowFullPlayer(true);
+                                        }
+                                    }}
                                     className="bg-yellow-400 hover:bg-yellow-500 text-black px-10 py-4 rounded-full font-black uppercase tracking-widest flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-yellow-400/20 group"
                                 >
                                     <i className="fas fa-play text-lg group-hover:animate-pulse"></i>
@@ -970,7 +980,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
         />
 
         {/* Full Screen Trailer Modal */}
-        {showFullPlayer && (movie.trailerUrl || movie.trailerVideo) && (
+        {showFullPlayer && (movie.watchNowUrl || movie.trailerUrl || movie.trailerVideo) && (
             <div className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300">
                 {/* Background Click to Close */}
                 <div className="absolute inset-0 z-0" onClick={() => setShowFullPlayer(false)}></div>
@@ -993,7 +1003,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
 
                     <div className="flex-1 w-full bg-black">
                         {(() => {
-                            const url = movie.trailerVideo?.videoUrl || movie.trailerUrl;
+                            const url = (!movie.isWatchNowRedirect && movie.watchNowUrl) ? movie.watchNowUrl : (movie.trailerVideo?.videoUrl || movie.trailerUrl);
                             if (url?.includes('youtube.com') || url?.includes('youtu.be')) {
                                 const vid = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
                                 return (

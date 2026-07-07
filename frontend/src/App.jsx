@@ -45,6 +45,9 @@ import ManageUpcoming from './admin/ManageUpcoming';
 import ContactUs from './pages/ContactUs';
 import BoxOffice from './pages/BoxOffice';
 import SubmitContent from './pages/SubmitContent';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Disclaimer from './pages/Disclaimer';
+import AboutUs from './pages/AboutUs';
 
 import WeatherWidget from './components/WeatherWidget';
 import MarketWidget from './components/MarketWidget';
@@ -217,6 +220,9 @@ function App() {
               <Route path="/contact-us" element={<ContactUs />} />
               <Route path="/movie-box-office" element={<BoxOffice />} />
               <Route path="/submit-content" element={<SubmitContent />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
+              <Route path="/about-us" element={<AboutUs />} />
               <Route path="*" element={<NotFound />} />
             </Route>
 

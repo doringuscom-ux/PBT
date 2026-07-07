@@ -61,6 +61,8 @@ const MovieSchema = new mongoose.Schema({
         title: { type: String },
         url: { type: String }
     }],
+    watchNowUrl: { type: String },
+    isWatchNowRedirect: { type: Boolean, default: false },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 
