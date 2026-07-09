@@ -79,7 +79,7 @@ const CommentSection = ({ itemId, comments = [], onAdd, onLike, onReport, onUpda
   return (
     <div className="mt-8 pt-8 border-t border-gray-100">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-black text-slate-900 uppercase tracking-tighter">
+        <h3 className="text-xl font-black text-white md:text-slate-900 uppercase tracking-tighter">
           Discussions <span className="text-primary-red ml-2 bg-primary-red/5 px-2 py-0.5 rounded text-sm">{comments.length}</span>
         </h3>
         {!user && (
