@@ -131,6 +131,7 @@ app.use('/api/inquiries', require('./routes/inquiries'));
 app.use('/api/seo', require('./routes/seo'));
 app.use('/api/redirects', require('./routes/redirects'));
 app.use('/api/settings', require('./routes/settings'));
+app.use('/api/promotions', require('./routes/promotions'));
 
 const PORT = process.env.PORT || 5000;
 if (!process.env.VERCEL) {
