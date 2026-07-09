@@ -24,6 +24,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Cache middleware for Vercel Edge Caching (stale-while-revalidate)
+app.use((req, res, next) => {
+    if (req.method === 'GET' && req.path === '/api/widgets') {
+        // Cache for 2 minutes, serve stale data for up to 10 minutes while fetching fresh data in background
+        res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=600');
+    }
+    next();
+});
+
 // Connect Database in background
 const connectDB = async () => {
     try {
