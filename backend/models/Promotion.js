@@ -10,6 +10,14 @@ const promotionSchema = new mongoose.Schema({
         type: String, // URL of the uploaded image
         required: true
     },
+    mobileImage: {
+        type: String, // URL of the mobile-specific banner
+        default: ''
+    },
+    tabletImage: {
+        type: String, // URL of the tablet-specific banner
+        default: ''
+    },
     link: {
         type: String, // Target URL when user clicks the banner
         default: ''
