@@ -18,6 +18,13 @@ const storage = new CloudinaryStorage({
             allowed_formats: ['mp4', 'mov', 'avi', 'mkv', 'webm']
         };
     }
+    if (file.mimetype === 'image/svg+xml' || (file.originalname && file.originalname.endsWith('.svg'))) {
+        return {
+            folder: 'punjabi_film_news',
+            allowed_formats: ['svg'],
+            resource_type: 'image'
+        };
+    }
     return {
         folder: 'punjabi_film_news',
         allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
