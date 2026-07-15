@@ -47,13 +47,25 @@ router.get('/', async (req, res) => {
 });
 
 // Create a movie
-router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }]), async (req, res) => {
+router.post('/', upload.fields([
+    { name: 'image', maxCount: 1 }, 
+    { name: 'coverImage', maxCount: 1 }, 
+    { name: 'trailer', maxCount: 1 },
+    { name: 'photosFiles', maxCount: 20 }
+]), async (req, res) => {
     const movieData = { ...req.body };
     if (req.files && req.files['image']) {
         movieData.image = req.files['image'][0].path;
     } else if (movieData.image) {
         movieData.image = await uploadFromUrl(movieData.image);
     }
+    
+    if (req.files && req.files['coverImage']) {
+        movieData.coverImage = req.files['coverImage'][0].path;
+    } else if (movieData.coverImage) {
+        movieData.coverImage = await uploadFromUrl(movieData.coverImage);
+    }
+    
     if (req.files && req.files['trailer']) {
         movieData.trailerUrl = req.files['trailer'][0].path;
     }
@@ -73,6 +85,18 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
     }
     if (typeof movieData.youtubeLinks === 'string') {
         try { movieData.youtubeLinks = JSON.parse(movieData.youtubeLinks); } catch (e) { console.error("YoutubeLinks parse error:", e); }
+    }
+
+    let uploadedPhotos = [];
+    if (req.files && req.files['photosFiles']) {
+        uploadedPhotos = req.files['photosFiles'].map(file => file.path);
+    }
+    if (uploadedPhotos.length > 0) {
+        if (Array.isArray(movieData.photos)) {
+            movieData.photos = [...movieData.photos, ...uploadedPhotos];
+        } else {
+            movieData.photos = uploadedPhotos;
+        }
     }
 
     // Sanitize all stringified nulls/undefineds from FormData
@@ -108,7 +132,12 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer
 });
 
 // Update a movie
-router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }]), async (req, res) => {
+router.put('/:id', upload.fields([
+    { name: 'image', maxCount: 1 }, 
+    { name: 'coverImage', maxCount: 1 }, 
+    { name: 'trailer', maxCount: 1 },
+    { name: 'photosFiles', maxCount: 20 }
+]), async (req, res) => {
     try {
         const updateData = { ...req.body };
         if (req.files && req.files['image']) {
@@ -116,6 +145,13 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trail
         } else if (updateData.image) {
             updateData.image = await uploadFromUrl(updateData.image);
         }
+        
+        if (req.files && req.files['coverImage']) {
+            updateData.coverImage = req.files['coverImage'][0].path;
+        } else if (updateData.coverImage) {
+            updateData.coverImage = await uploadFromUrl(updateData.coverImage);
+        }
+        
         if (req.files && req.files['trailer']) {
             updateData.trailerUrl = req.files['trailer'][0].path;
         }
@@ -135,6 +171,18 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trail
         }
         if (typeof updateData.youtubeLinks === 'string') {
             try { updateData.youtubeLinks = JSON.parse(updateData.youtubeLinks); } catch (e) { console.error("YoutubeLinks parse error:", e); }
+        }
+
+        let uploadedPhotos = [];
+        if (req.files && req.files['photosFiles']) {
+            uploadedPhotos = req.files['photosFiles'].map(file => file.path);
+        }
+        if (uploadedPhotos.length > 0) {
+            if (Array.isArray(updateData.photos)) {
+                updateData.photos = [...updateData.photos, ...uploadedPhotos];
+            } else {
+                updateData.photos = uploadedPhotos;
+            }
         }
 
         // Sanitize all stringified nulls/undefineds from FormData
