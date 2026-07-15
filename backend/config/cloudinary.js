@@ -21,8 +21,7 @@ const storage = new CloudinaryStorage({
     if (file.mimetype === 'image/svg+xml' || (file.originalname && file.originalname.endsWith('.svg'))) {
         return {
             folder: 'punjabi_film_news',
-            allowed_formats: ['svg'],
-            resource_type: 'image'
+            resource_type: 'raw' // Bypasses Cloudinary's image format restrictions for SVGs
         };
     }
     return {
