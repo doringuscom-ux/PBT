@@ -68,19 +68,44 @@ router.get('/metadata', async (req, res) => {
 // Create or Update SEO record
 router.post('/', async (req, res) => {
     try {
-        const { url, title, description, keywords, canonical, robots, isAuto } = req.body;
+        let { _id, url, title, description, keywords, canonical, robots, isAuto } = req.body;
         if (!url) return res.status(400).json({ message: 'URL is required' });
+
+        // Clean up URL if the user pastes the full domain instead of just the slug
+        if (url.includes('pbtadka.com')) {
+            url = url.split('pbtadka.com')[1];
+        }
+        
+        // Strip any trailing slashes and ensure it starts with a slash
+        url = url.trim();
+        if (url.length > 1 && url.endsWith('/')) {
+            url = url.slice(0, -1);
+        }
+        if (!url.startsWith('/')) {
+            url = '/' + url;
+        }
 
         // Block Admin pages from SEO
         if (url.toLowerCase().startsWith('/admin')) {
             return res.status(400).json({ message: 'Cannot create SEO entries for Admin pages.' });
         }
 
-        const updatedSEO = await SEO.findOneAndUpdate(
-            { url: url.toLowerCase() },
-            { title, description, keywords, canonical, robots, isAuto },
-            { new: true, upsert: true }
-        );
+        let updatedSEO;
+        if (_id) {
+            // Update existing record by ID so URL can be changed without creating duplicates
+            updatedSEO = await SEO.findByIdAndUpdate(
+                _id,
+                { url: url.toLowerCase(), title, description, keywords, canonical, robots, isAuto },
+                { new: true }
+            );
+        } else {
+            // Create or fallback update by URL
+            updatedSEO = await SEO.findOneAndUpdate(
+                { url: url.toLowerCase() },
+                { title, description, keywords, canonical, robots, isAuto },
+                { new: true, upsert: true }
+            );
+        }
 
         res.json(updatedSEO);
     } catch (err) {
@@ -184,11 +209,26 @@ router.post('/auto-generate', async (req, res) => {
 
         // Process Movies
         for (const item of movies) {
-            const url = `/latest-movies/${item.slug || item._id}`.toLowerCase();
-            const exists = await SEO.findOne({ url });
+            const isReleased = item.releaseDate && new Date(item.releaseDate) <= new Date();
+            const correctUrl = `${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${item.slug || item._id}`.toLowerCase();
+            const wrongUrl = `${isReleased ? '/latest-movies/upcoming' : '/latest-movies'}/${item.slug || item._id}`.toLowerCase();
+
+            // First, migrate any existing wrong URL to the correct URL
+            const wrongEntry = await SEO.findOne({ url: wrongUrl });
+            if (wrongEntry) {
+                const existingCorrect = await SEO.findOne({ url: correctUrl });
+                if (!existingCorrect) {
+                    wrongEntry.url = correctUrl;
+                    await wrongEntry.save();
+                } else {
+                    await SEO.deleteOne({ _id: wrongEntry._id });
+                }
+            }
+
+            const exists = await SEO.findOne({ url: correctUrl });
             if (!exists) {
                 await SEO.create({
-                    url,
+                    url: correctUrl,
                     title: `${item.title} | Movie Details & Reviews | Pbtadka`,
                     description: (item.description || '').substring(0, 160).trim(),
                     isAuto: true
@@ -249,7 +289,10 @@ router.post('/auto-generate', async (req, res) => {
         const validSystemUrls = new Set([
             ...staticPages.map(p => p.url),
             ...news.map(item => `/latest-news/${item.slug || item._id}`.toLowerCase()),
-            ...movies.map(item => `/latest-movies/${item.slug || item._id}`.toLowerCase()),
+            ...movies.map(item => {
+                const isReleased = item.releaseDate && new Date(item.releaseDate) <= new Date();
+                return `${isReleased ? '/latest-movies' : '/latest-movies/upcoming'}/${item.slug || item._id}`.toLowerCase();
+            }),
             ...celebs.map(item => `/celebrities/${item.slug || item._id}`.toLowerCase()),
             ...videos.map(item => `/latest-viral-videos/${item.slug || item._id}`.toLowerCase())
         ]);
@@ -371,6 +414,16 @@ router.post('/auto-generate-celebs', async (req, res) => {
             message: `Successfully updated SEO for ${updatedCount} celebrities.`,
             count: updatedCount
         });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+// Delete SEO record
+router.delete('/:id', async (req, res) => {
+    try {
+        const deleted = await SEO.findByIdAndDelete(req.params.id);
+        if (!deleted) return res.status(404).json({ message: 'SEO record not found' });
+        res.json({ success: true, message: 'SEO record deleted successfully' });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
