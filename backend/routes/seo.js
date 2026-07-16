@@ -30,7 +30,7 @@ router.get('/stats', async (req, res) => {
 
         const staticPagesCount = 9; // Home, News, Movies, Celebs, Videos, Upcoming, Sports, Contact, Box Office
         const systemPages = news + movies + celebs + videos + staticPagesCount;
-        
+
         // Final Total includes system pages + any extra custom URLs added manually
         const totalPages = Math.max(systemPages, seoCount);
 
@@ -58,7 +58,7 @@ router.get('/metadata', async (req, res) => {
 
         const entry = await SEO.findOne({ url });
         if (!entry) return res.status(404).json({ message: 'SEO not found' });
-        
+
         res.json(entry);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -75,7 +75,7 @@ router.post('/', async (req, res) => {
         if (url.includes('pbtadka.com')) {
             url = url.split('pbtadka.com')[1];
         }
-        
+
         // Strip any trailing slashes and ensure it starts with a slash
         url = url.trim();
         if (url.length > 1 && url.endsWith('/')) {
@@ -118,7 +118,7 @@ router.post('/auto-generate', async (req, res) => {
     try {
         const [news, movies, celebs, videos] = await Promise.all([
             News.find({}, 'title slug excerpt fullStory'),
-            Movie.find({}, 'title slug description'),
+            Movie.find({}, 'title slug description releaseDate'),
             Celebrity.find({}, 'name slug bio'),
             Video.find({}, 'title slug description')
         ]);
@@ -136,7 +136,7 @@ router.post('/auto-generate', async (req, res) => {
 
         for (const pattern of oldPatterns) {
             const regex = pattern.old ? new RegExp('^' + pattern.old.replace(/\//g, '\\/'), 'i') : null;
-            
+
             if (regex) {
                 // Bulk update all records starting with the old pattern
                 const entriesToUpdate = await SEO.find({ url: { $regex: regex } });
@@ -223,6 +223,7 @@ router.post('/auto-generate', async (req, res) => {
                 } else {
                     await SEO.deleteOne({ _id: wrongEntry._id });
                 }
+
             }
 
             const exists = await SEO.findOne({ url: correctUrl });
@@ -303,17 +304,17 @@ router.post('/auto-generate', async (req, res) => {
         let deletedCount = 0;
 
         for (const entry of allSeoEntries) {
-            const isSystemPage = systemPrefixes.some(p => entry.url.startsWith(p)) || 
-                                 staticPages.some(p => p.url === entry.url);
-            
+            const isSystemPage = systemPrefixes.some(p => entry.url.startsWith(p)) ||
+                staticPages.some(p => p.url === entry.url);
+
             if (isSystemPage && !validSystemUrls.has(entry.url)) {
                 await SEO.deleteOne({ _id: entry._id });
                 deletedCount++;
             }
         }
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             message: `Successfully updated SEO. Migrated old URLs, added ${createdCount} new records, and cleaned up ${deletedCount} invalid entries.`,
             createdCount,
             deletedCount
@@ -398,9 +399,9 @@ router.post('/auto-generate-celebs', async (req, res) => {
 
             await SEO.findOneAndUpdate(
                 { url },
-                { 
-                    title, 
-                    description, 
+                {
+                    title,
+                    description,
                     isAuto: true,
                     robots: 'index, follow'
                 },
@@ -409,8 +410,8 @@ router.post('/auto-generate-celebs', async (req, res) => {
             updatedCount++;
         }
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             message: `Successfully updated SEO for ${updatedCount} celebrities.`,
             count: updatedCount
         });
