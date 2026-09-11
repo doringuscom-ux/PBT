@@ -130,6 +130,27 @@ router.get('/today', async (req, res) => {
     }
 });
 
+// Upload image to Cloudinary for Rich Text (Quill Editor)
+router.post('/upload-image', (req, res, next) => {
+    upload.single('image')(req, res, (err) => {
+        if (err) {
+            console.error("Editor Image Multer Error:", err);
+            return res.status(500).json({ message: "Image upload failed: " + (err.message || "Unknown error") });
+        }
+        next();
+    });
+}, (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: "No image file provided" });
+        }
+        return res.json({ url: req.file.path });
+    } catch (err) {
+        console.error("Editor Image Upload Error:", err);
+        return res.status(500).json({ message: err.message });
+    }
+});
+
 router.post('/', (req, res, next) => {
     upload.single('image')(req, res, (err) => {
         if (err) {
